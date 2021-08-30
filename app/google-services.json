@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "913031910028",
+    "project_id": "nutrihanjum",
+    "storage_bucket": "nutrihanjum.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:913031910028:android:6571b4713cf9764dc061a9",
+        "android_client_info": {
+          "package_name": "com.example.nutrihanjum"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "913031910028-prr8utnrelive27pj4klm795ek1lm86n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVIxaoAsttOJCK8_VcIucABs_aWiQ_llA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "913031910028-prr8utnrelive27pj4klm795ek1lm86n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
