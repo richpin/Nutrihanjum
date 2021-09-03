@@ -2,15 +2,15 @@ package com.example.nutrihanjum
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.nutrihanjum.databinding.ActivityLoginBinding
 import com.example.nutrihanjum.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+class LoginActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.Theme_Nutrihanjum)
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
 }

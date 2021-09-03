@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Nutrihanjum</string>
+    <string name="home">home</string>
+    <string name="diary">diary</string>
+    <string name="chatbot">chatbot</string>
+    <string name="news">news</string>
+    <string name="user">user</string>
 </resources>

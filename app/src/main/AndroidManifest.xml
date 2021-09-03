@@ -10,9 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Nutrihanjum">
         <activity
+            android:name=".LoginActivity"
+            android:exported="true" />
+        <activity
             android:name=".MainActivity"
-            android:theme="@style/SplashTheme"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,7 +23,5 @@
             </intent-filter>
         </activity>
     </application>
-
-
 
 </manifest>
