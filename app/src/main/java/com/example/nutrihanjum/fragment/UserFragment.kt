@@ -11,6 +11,14 @@ import com.example.nutrihanjum.R
 class UserFragment : Fragment() {
 
     companion object {
+        @Volatile private var instance: UserFragment? = null
+
+        @JvmStatic fun getInstance(): UserFragment = instance ?: synchronized(this) {
+            instance ?: UserFragment().also {
+                instance = it
+            }
+        }
+
         fun newInstance() = UserFragment()
     }
 

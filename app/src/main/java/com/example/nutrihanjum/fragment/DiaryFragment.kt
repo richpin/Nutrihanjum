@@ -11,6 +11,14 @@ import com.example.nutrihanjum.R
 class DiaryFragment : Fragment() {
 
     companion object {
+        @Volatile private var instance: DiaryFragment? = null
+
+        @JvmStatic fun getInstance(): DiaryFragment = instance ?: synchronized(this) {
+            instance ?: DiaryFragment().also {
+                instance = it
+            }
+        }
+
         fun newInstance() = DiaryFragment()
     }
 

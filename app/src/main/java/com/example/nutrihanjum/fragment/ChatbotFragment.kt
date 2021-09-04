@@ -11,6 +11,14 @@ import com.example.nutrihanjum.R
 class ChatbotFragment : Fragment() {
 
     companion object {
+        @Volatile private var instance: ChatbotFragment? = null
+
+        @JvmStatic fun getInstance(): ChatbotFragment = instance ?: synchronized(this) {
+            instance ?: ChatbotFragment().also {
+                instance = it
+            }
+        }
+
         fun newInstance() = ChatbotFragment()
     }
 
