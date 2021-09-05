@@ -5,4 +5,7 @@
     <string name="chatbot">chatbot</string>
     <string name="news">news</string>
     <string name="user">user</string>
+
+    <string name="google_login">Google Login</string>
+    <string name="web_client_id">913031910028-prr8utnrelive27pj4klm795ek1lm86n.apps.googleusercontent.com</string>
 </resources>

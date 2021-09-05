@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.fragment
+package com.example.nutrihanjum.viewmodel
 
 import androidx.lifecycle.ViewModel
 
