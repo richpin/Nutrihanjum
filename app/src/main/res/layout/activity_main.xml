@@ -5,11 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/top_app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@color/white"
+        android:elevation="0dp"
+        android:theme="@style/ToolbarTheme"
+        app:titleTextAppearance="@style/Toolbar.TitleText"/>
 
     <FrameLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/top_app_bar"
         android:layout_above="@id/nav_division">
     </FrameLayout>
     <LinearLayout

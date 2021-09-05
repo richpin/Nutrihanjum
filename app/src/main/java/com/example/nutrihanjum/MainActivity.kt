@@ -40,26 +40,31 @@ class MainActivity : AppCompatActivity() {
                 R.id.action_home -> {
                     transaction.show(CommunityFragment.getInstance()).commit()
                     curFragment = CommunityFragment.getInstance()
+                    binding.topAppBar.title= getString(R.string.home_category)
                     return@setOnItemSelectedListener true
                 }
                 R.id.action_chatbot -> {
                     transaction.show(ChatbotFragment.getInstance()).commit()
                     curFragment = ChatbotFragment.getInstance()
+                    binding.topAppBar.title= getString(R.string.chatbot_category)
                     return@setOnItemSelectedListener true
                 }
                 R.id.action_diary -> {
                     transaction.show(DiaryFragment.getInstance()).commit()
                     curFragment = DiaryFragment.getInstance()
+                    binding.topAppBar.title= getString(R.string.diary_category)
                     return@setOnItemSelectedListener true
                 }
                 R.id.action_news -> {
                     transaction.show(NewsFragment.getInstance()).commit()
                     curFragment = NewsFragment.getInstance()
+                    binding.topAppBar.title= getString(R.string.news_category)
                     return@setOnItemSelectedListener true
                 }
                 R.id.action_user -> {
                     transaction.show(UserFragment.getInstance()).commit()
                     curFragment = UserFragment.getInstance()
+                    binding.topAppBar.title= getString(R.string.user_category)
                     return@setOnItemSelectedListener true
                 }
             }
