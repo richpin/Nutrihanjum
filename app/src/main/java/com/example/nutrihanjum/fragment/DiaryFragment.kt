@@ -7,8 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.nutrihanjum.R
+import com.example.nutrihanjum.viewmodel.DiaryViewModel
 
-class DiaryFragment : Fragment() {
+class DiaryFragment private constructor() : Fragment() {
 
     companion object {
         @Volatile private var instance: DiaryFragment? = null
@@ -18,8 +19,6 @@ class DiaryFragment : Fragment() {
                 instance = it
             }
         }
-
-        fun newInstance() = DiaryFragment()
     }
 
     private lateinit var viewModel: DiaryViewModel

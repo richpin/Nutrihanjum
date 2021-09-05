@@ -7,8 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.nutrihanjum.R
+import com.example.nutrihanjum.viewmodel.ChatbotViewModel
 
-class ChatbotFragment : Fragment() {
+class ChatbotFragment private constructor() : Fragment() {
 
     companion object {
         @Volatile private var instance: ChatbotFragment? = null
@@ -18,8 +19,6 @@ class ChatbotFragment : Fragment() {
                 instance = it
             }
         }
-
-        fun newInstance() = ChatbotFragment()
     }
 
     private lateinit var viewModel: ChatbotViewModel
