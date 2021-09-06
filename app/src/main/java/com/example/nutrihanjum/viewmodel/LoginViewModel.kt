@@ -10,12 +10,12 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
-    val loginResult : MutableLiveData<Pair<Boolean, String?>> = MutableLiveData()
-    val isSigned get() = Repository.userID != null
+    private val _loginResult = MutableLiveData<Pair<Boolean, String?>>()
+    val loginResult : LiveData<Pair<Boolean, String?>> get() = _loginResult
 
     fun authWithGoogle(credential : AuthCredential) = viewModelScope.launch {
         Repository.authWithGoogle(credential).collect {
-            loginResult.postValue(it)
+            _loginResult.postValue(it)
         }
     }
 }

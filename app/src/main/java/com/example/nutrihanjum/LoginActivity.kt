@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.example.nutrihanjum.databinding.ActivityLoginBinding
 import com.example.nutrihanjum.viewmodel.LoginViewModel
@@ -15,15 +17,16 @@ import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
 
-    private lateinit var loginViewModel : LoginViewModel
+    private val loginViewModel : LoginViewModel by viewModels()
 
-    private lateinit var googleLoginLauncher : ActivityResultLauncher<String>
+    private lateinit var googleLoginLauncher : ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,9 +35,9 @@ class LoginActivity : AppCompatActivity() {
 
         setLoginListener()
 
-        loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
         loginViewModel.loginResult.observe(this) {
             if (it.first) {
+                setResult(Activity.RESULT_OK)
                 finish()
             }
             else {
@@ -44,12 +47,29 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun googleLogin() {
-        googleLoginLauncher.launch(getString(R.string.web_client_id))
+        val gso = GoogleSignInOptions
+            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.web_client_id))
+            .requestEmail()
+            .build()
+
+        val client = GoogleSignIn.getClient(this@LoginActivity, gso)
+
+        googleLoginLauncher.launch(client.signInIntent)
     }
 
     private fun setLoginListener() {
-        googleLoginLauncher = registerForActivityResult(GoogleLoginIntentContract()) {
-            it?.let{ loginViewModel.authWithGoogle(it) }
+
+        googleLoginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+
+            try {
+                val credential = GoogleAuthProvider.getCredential(task.result.idToken, null)
+                loginViewModel.authWithGoogle(credential)
+            }
+            catch(e: Exception) {
+                Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+            }
         }
 
         binding.btnGoogleLogin.setOnClickListener {
@@ -57,36 +77,4 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    inner class GoogleLoginIntentContract : ActivityResultContract<String, AuthCredential?>() {
-        private lateinit var client : GoogleSignInClient
-        override fun createIntent(context: Context, clientID: String): Intent {
-            val gso = GoogleSignInOptions
-                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(clientID)
-                .requestEmail()
-                .build()
-
-            client = GoogleSignIn.getClient(this@LoginActivity, gso)
-
-            return client.signInIntent
-        }
-
-        override fun parseResult(resultCode: Int, intent: Intent?): AuthCredential? {
-            return when (resultCode) {
-                Activity.RESULT_OK -> getCredential(intent)
-                else -> null
-            }
-        }
-
-        private fun getCredential(intent : Intent?) : AuthCredential? {
-            return try {
-                val result = Auth.GoogleSignInApi.getSignInResultFromIntent(intent!!)!!
-                GoogleAuthProvider.getCredential(result.signInAccount!!.idToken, null)
-            } catch(e : Error) {
-                Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_LONG).show()
-                null
-            }
-        }
-
-    }
 }
