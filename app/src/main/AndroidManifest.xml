@@ -12,6 +12,7 @@
         android:theme="@style/Theme.Nutrihanjum">
         <activity
             android:name=".LoginActivity"
+            android:theme="@style/Theme.Login"
             android:exported="true" />
         <activity
             android:name=".MainActivity"

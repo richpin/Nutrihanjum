@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="50dp"
+    android:padding="15dp"
+    android:layout_centerVertical="true"
     tools:context=".LoginActivity">
 
     <ImageView
         android:id="@+id/imageview_app_logo"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
         android:layout_alignParentTop="true"
         android:src="@drawable/app_logo" />
 
@@ -18,8 +21,8 @@
         android:id="@+id/layout_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_below="@id/imageview_app_logo"
-        android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatButton
@@ -29,8 +32,10 @@
             android:layout_gravity="center"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:background="@color/white"
-            android:text="@string/google_login" />
+            android:background="@color/google_red"
+            android:text="@string/google_login"
+            android:textColor="@color/white"
+            android:textSize="16dp" />
 
     </LinearLayout>
 
