@@ -3,6 +3,7 @@ package com.example.nutrihanjum
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.example.nutrihanjum.databinding.ActivityMainBinding
 import com.example.nutrihanjum.fragment.*
@@ -28,6 +29,8 @@ class MainActivity : AppCompatActivity() {
 
         if (userViewModel.userID != null) {
             userViewModel.userSigned()
+        } else {
+            userViewModel.userSignedOut()
         }
     }
 

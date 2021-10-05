@@ -14,4 +14,6 @@
 
     <string name="google_login">Google Login</string>
     <string name="web_client_id">913031910028-prr8utnrelive27pj4klm795ek1lm86n.apps.googleusercontent.com</string>
+
+    <string name="add_diary">등록</string>
 </resources>

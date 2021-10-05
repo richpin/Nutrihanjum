@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.nutrihanjum">
 
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+
     <application
         android:name=".ApplicationClass"
         android:allowBackup="true"
@@ -10,6 +12,20 @@
         android:roundIcon="@mipmap/app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Nutrihanjum">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.nutrihanjum.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity
+            android:name=".AddDiaryActivity"
+            android:exported="true" />
         <activity
             android:name=".LoginActivity"
             android:exported="true" />
