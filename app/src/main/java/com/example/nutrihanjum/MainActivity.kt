@@ -2,14 +2,19 @@ package com.example.nutrihanjum
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.example.nutrihanjum.databinding.ActivityMainBinding
 import com.example.nutrihanjum.fragment.*
+import com.example.nutrihanjum.viewmodel.UserViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     lateinit var curFragment : Fragment
+
+    private val userViewModel : UserViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_Nutrihanjum)
@@ -21,6 +26,12 @@ class MainActivity : AppCompatActivity() {
         curFragment = CommunityFragment.getInstance()
         addFragments()
         binding.bottomNavigation.selectedItemId = R.id.action_home
+
+        if (userViewModel.isSigned()) {
+            userViewModel.notifyUserSigned()
+        } else {
+            userViewModel.notifyUserSignedOut()
+        }
     }
 
     private fun addFragments() {
