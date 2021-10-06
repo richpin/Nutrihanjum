@@ -12,11 +12,19 @@ class UserViewModel : ViewModel() {
     private val _signed = MutableLiveData<Boolean>()
     val signed : LiveData<Boolean> get() = _signed
 
-    fun userSigned() {
+    fun isSigned() = userID != null
+
+    fun signOut() {
+        if (isSigned()) {
+            Repository.signOut()
+        }
+    }
+
+    fun notifyUserSigned() {
         _signed.value = true
     }
 
-    fun userSignedOut() {
+    fun notifyUserSignedOut() {
         _signed.value = false
     }
 }

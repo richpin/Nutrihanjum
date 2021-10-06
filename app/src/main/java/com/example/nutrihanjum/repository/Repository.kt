@@ -30,4 +30,8 @@ object Repository {
 
         awaitClose()
     }
+
+    fun signOut() {
+        auth.signOut()
+    }
 }

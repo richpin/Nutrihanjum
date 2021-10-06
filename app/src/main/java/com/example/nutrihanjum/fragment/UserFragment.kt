@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,6 +16,7 @@ import androidx.fragment.app.activityViewModels
 import com.example.nutrihanjum.LoginActivity
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.UserFragmentBinding
+import com.example.nutrihanjum.util.OnSwipeTouchListener
 import com.example.nutrihanjum.viewmodel.UserViewModel
 
 class UserFragment private constructor() : Fragment() {
@@ -40,7 +42,7 @@ class UserFragment private constructor() : Fragment() {
 
         loginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                userViewModel.userSigned()
+                userViewModel.notifyUserSigned()
             }
         }
 
@@ -48,7 +50,8 @@ class UserFragment private constructor() : Fragment() {
             loginLauncher.launch(Intent(activity, LoginActivity::class.java))
         }
         binding.btnLogout.setOnClickListener {
-            userViewModel.userSignedOut()
+            userViewModel.signOut()
+            userViewModel.notifyUserSignedOut()
         }
 
         return binding.root
@@ -62,7 +65,7 @@ class UserFragment private constructor() : Fragment() {
                 binding.textviewUserEmail.text = userViewModel.userEmail
             }
             else {
-                binding.textviewUserEmail.text = "로그인 해주세요!!"
+                binding.textviewUserEmail.text = getString(R.string.request_login)
             }
         }
     }

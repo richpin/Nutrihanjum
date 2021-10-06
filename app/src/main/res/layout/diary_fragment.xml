@@ -10,32 +10,31 @@
         android:id="@+id/calendar_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        app:mcv_allowClickDaysOutsideCurrentMonth="true"
+        app:mcv_showOtherDates="all" />
 
-
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview_diary"
+        android:layout_below="@id/calendar_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/calendar_view"
+        android:visibility="gone"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_add_diary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview_diary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </androidx.recyclerview.widget.RecyclerView>
-
-        <ImageView
-            android:id="@+id/btn_add_diary"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_baseline_add" />
-
-
-    </LinearLayout>
+        android:layout_margin="25dp"
+        android:backgroundTint="@color/yellow_200"
+        android:src="@drawable/ic_baseline_add"
+        app:tint="@color/white"
+        app:borderWidth="0dp"
+        app:fabCustomSize="65dp"
+        app:maxImageSize="50dp"
+        android:elevation="6dp"/>
 
 
 

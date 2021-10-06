@@ -46,32 +46,59 @@ class DiaryFragment private constructor() : Fragment() {
     ): View {
         _binding = DiaryFragmentBinding.inflate(layoutInflater)
 
+        collapseCalendar()
+
+        binding.calendarView.currentDate = CalendarDay.today()
         binding.calendarView.selectedDate = CalendarDay.today()
+
+        binding.recyclerviewDiary.visibility = View.VISIBLE
 
         setListeners()
 
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.calendarView.currentDate = binding.calendarView.selectedDate
+    }
+
 
     private fun setListeners() {
         binding.calendarView.setOnDateChangedListener { widget, date, _ ->
-            widget.state().edit()
-                .setCalendarDisplayMode(CalendarMode.WEEKS)
-                .commit()
+            collapseCalendar()
 
             widget.currentDate = date
         }
 
         binding.calendarView.setOnTitleClickListener {
-            binding.calendarView.state().edit()
-                .setCalendarDisplayMode(CalendarMode.MONTHS)
-                .commit()
+            if (binding.calendarView.calendarMode == CalendarMode.WEEKS) {
+                expandCalendar()
+            }
+            else {
+                collapseCalendar()
+            }
         }
 
         binding.btnAddDiary.setOnClickListener {
             startActivity(Intent(activity, AddDiaryActivity::class.java))
         }
+    }
+
+    private fun expandCalendar() {
+        binding.calendarView.state().edit()
+            .setCalendarDisplayMode(CalendarMode.MONTHS)
+            .commit()
+
+        binding.recyclerviewDiary.visibility = View.GONE
+    }
+
+    private fun collapseCalendar() {
+        binding.calendarView.state().edit()
+            .setCalendarDisplayMode(CalendarMode.WEEKS)
+            .commit()
+
+        binding.recyclerviewDiary.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {

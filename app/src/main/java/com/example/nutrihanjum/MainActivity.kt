@@ -27,10 +27,10 @@ class MainActivity : AppCompatActivity() {
         addFragments()
         binding.bottomNavigation.selectedItemId = R.id.action_home
 
-        if (userViewModel.userID != null) {
-            userViewModel.userSigned()
+        if (userViewModel.isSigned()) {
+            userViewModel.notifyUserSigned()
         } else {
-            userViewModel.userSignedOut()
+            userViewModel.notifyUserSignedOut()
         }
     }
 
