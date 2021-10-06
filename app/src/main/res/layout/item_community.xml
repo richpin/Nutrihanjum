@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/communityitem_profile_imageview"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_margin="7.5dp"
+            android:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/communityitem_profile_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/font_bold"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp">
+        <ImageView
+            android:id="@+id/communityitem_content_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"/>
+    </androidx.cardview.widget.CardView>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="15dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/gray"
+            android:fontFamily="@font/font_regular"
+            android:text="좋아요 8개 댓글 3개"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <kr.co.prnd.readmore.ReadMoreTextView
+            android:id="@+id/communityitem_content_textview"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:fontFamily="@font/font_regular"
+            app:readMoreMaxLine="2"
+            app:readMoreColor="@color/gray"
+            app:readMoreText="@string/read_more"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:layout_marginBottom="30dp">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/press_like_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_favorite_border"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/like"
+                android:fontFamily="@font/font_bold"
+                android:textColor="@color/black"
+                android:layout_marginLeft="5dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/press_comment_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_comment"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/comment"
+                android:fontFamily="@font/font_bold"
+                android:textColor="@color/black"
+                android:layout_marginLeft="5dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/press_report_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_report"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/report"
+                android:fontFamily="@font/font_bold"
+                android:textColor="@color/black"
+                android:layout_marginLeft="5dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

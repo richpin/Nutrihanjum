@@ -11,6 +11,10 @@
     <string name="chatbot_category">챗봇상담</string>
     <string name="news_category">영양뉴스</string>
     <string name="user_category">마이페이지</string>
+    <string name="like">좋아요</string>
+    <string name="comment">댓글</string>
+    <string name="report">신고</string>
+    <string name="read_more">...더보기</string>
 
     <string name="google_login">Google Login</string>
     <string name="web_client_id">913031910028-prr8utnrelive27pj4klm795ek1lm86n.apps.googleusercontent.com</string>
