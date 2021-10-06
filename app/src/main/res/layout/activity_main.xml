@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/top_app_bar"
         android:layout_width="match_parent"
@@ -12,7 +13,7 @@
         android:background="@color/white"
         android:elevation="0dp"
         android:theme="@style/ToolbarTheme"
-        app:titleTextAppearance="@style/Toolbar.TitleText"/>
+        app:titleTextAppearance="@style/Toolbar.TitleText" />
 
     <FrameLayout
         android:id="@+id/main_content"

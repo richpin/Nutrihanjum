@@ -5,9 +5,10 @@
     android:layout_height="match_parent"
     tools:context=".fragment.NewsFragment">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/newsfragment_recylerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="News" />
+        android:layout_height="wrap_content">
+    </androidx.recyclerview.widget.RecyclerView>
 
 </FrameLayout>
