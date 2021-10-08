@@ -9,12 +9,18 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.nutrihanjum.AddDiaryActivity
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.DiaryFragmentBinding
+import com.example.nutrihanjum.databinding.ItemCommunityBinding
+import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.util.OnSwipeTouchListener
 import com.example.nutrihanjum.viewmodel.DiaryViewModel
 import com.example.nutrihanjum.viewmodel.UserViewModel
@@ -40,6 +46,8 @@ class DiaryFragment private constructor() : Fragment() {
     private val viewModel: DiaryViewModel by viewModels()
     private val userViewModel: UserViewModel by activityViewModels()
 
+    private val diaryList = ArrayList<ContentDTO>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -53,6 +61,9 @@ class DiaryFragment private constructor() : Fragment() {
 
         binding.recyclerviewDiary.visibility = View.VISIBLE
 
+        binding.recyclerviewDiary.adapter = DiaryRecyclerViewAdapter(diaryList)
+        binding.recyclerviewDiary.layoutManager = LinearLayoutManager(activity)
+
         setListeners()
 
         return binding.root
@@ -63,11 +74,45 @@ class DiaryFragment private constructor() : Fragment() {
         binding.calendarView.currentDate = binding.calendarView.selectedDate
     }
 
+    inner class DiaryRecyclerViewAdapter(
+        private val diaryList: ArrayList<ContentDTO>
+    ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            val itemBinding = ItemCommunityBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            val holder = ViewHolder(itemBinding)
+
+            return holder
+        }
+
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            (holder as ViewHolder).bind(position)
+        }
+
+        override fun getItemCount() = diaryList.size
+
+        inner class ViewHolder(private val itemBinding: ItemCommunityBinding): RecyclerView.ViewHolder(itemBinding.root) {
+            fun bind(position: Int) {
+                Glide.with(this@DiaryFragment)
+                    .load(diaryList[position].profileUrl)
+                    .circleCrop()
+                    .into(itemBinding.communityitemProfileImageview)
+
+                Glide.with(this@DiaryFragment)
+                    .load(diaryList[position].imageUrl)
+                    .into(itemBinding.communityitemContentImageview)
+
+                itemBinding.communityitemProfileTextview.text = diaryList[position].userId
+                itemBinding.communityitemContentTextview.text = diaryList[position].content
+            }
+        }
+    }
 
     private fun setListeners() {
         binding.calendarView.setOnDateChangedListener { widget, date, _ ->
             collapseCalendar()
-
+            if (date != CalendarDay.from(2021, 10, 7)) {
+                binding.recyclerviewDiary.visibility = View.GONE
+            }
             widget.currentDate = date
         }
 

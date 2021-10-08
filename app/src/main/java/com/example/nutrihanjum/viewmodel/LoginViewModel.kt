@@ -11,10 +11,10 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
     private val _loginResult = MutableLiveData<Pair<Boolean, String?>>()
-    val loginResult : LiveData<Pair<Boolean, String?>> get() = _loginResult
+    val loginResult: LiveData<Pair<Boolean, String?>> get() = _loginResult
 
-    fun authWithGoogle(credential : AuthCredential) = viewModelScope.launch {
-        Repository.authWithGoogle(credential).collect {
+    fun authWithCredential(credential: AuthCredential) = viewModelScope.launch {
+        Repository.authWithCredential(credential).collect {
             _loginResult.postValue(it)
         }
     }

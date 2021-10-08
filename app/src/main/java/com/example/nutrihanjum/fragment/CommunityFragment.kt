@@ -40,7 +40,7 @@ class CommunityFragment private constructor() : Fragment() {
 
         val temp = arrayListOf<ContentDTO>()
         temp.add(ContentDTO("오늘은 김치찌개를 해보았어요~ 너무 맛있더라구요!","https://recipe1.ezmember.co.kr/cache/recipe/2018/03/26/2534479bee6df21a0504761742af7a6d1.jpg","https://recipe1.ezmember.co.kr/cache/recipe/2016/03/16/4b2ad9b10dd6253ae2236658bab43b0b1.jpg","temp","계란말이",934))
-        temp.add(ContentDTO("오늘은 유영석 때문에 다시 한 번 고구려 짬뽕에 가게 되었다. 맛도 ㅈ같이 없는데 또 엿같은 기분이 사라지지 않아서 먹다가 토를 해버리고 말았다..","https://t1.daumcdn.net/cfile/tistory/99A8FB375E2D95C21A","https://pds.joins.com/news/component/htmlphoto_mmdata/201502/08/htm_20150208195421a010a012.jpg","temp2","내이름은조현웅",45))
+        temp.add(ContentDTO("오늘은 맛있는 오징어 짬뽕 먹는 날^^ \n저번에 갔을 때 주문이 잘못 들어가서 슬펐지만, 오늘은 제대로 나왔다!!!","https://t1.daumcdn.net/cfile/tistory/99A8FB375E2D95C21A","https://pds.joins.com/news/component/htmlphoto_mmdata/201502/08/htm_20150208195421a010a012.jpg","temp2","내이름은조현웅",45))
 
         binding.communityfragmentRecylerview.adapter = CommunityRecyclerViewAdapter(temp)
         binding.communityfragmentRecylerview.layoutManager = LinearLayoutManager(activity)

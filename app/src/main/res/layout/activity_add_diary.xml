@@ -216,6 +216,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:inputType="textMultiLine"
                     android:background="@drawable/box_rounded_boarder"
                     android:padding="7dp"
                     android:gravity="top"
