@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">Nutrihanjum</string>
-    <string name="home">home</string>
-    <string name="diary">diary</string>
-    <string name="chatbot">chatbot</string>
-    <string name="news">news</string>
-    <string name="user">user</string>
+    <string name="home">영양한줌</string>
+    <string name="diary">식단일지</string>
+    <string name="chatbot">챗봇상담</string>
+    <string name="news">영양뉴스</string>
+    <string name="user">마이페이지</string>
 
     <string name="home_category">영양한줌</string>
     <string name="diary_category">식단일지</string>

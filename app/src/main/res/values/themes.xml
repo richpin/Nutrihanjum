@@ -16,13 +16,9 @@
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@drawable/splash</item>
     </style>
-    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Light">
-        <item name="android:fontFamily">@font/font_bold</item>
+    <style name="BottomNavigationViewTitle" parent="Widget.Design.BottomNavigationView">
+        <item name="fontFamily">@font/font_bold</item>
     </style>
-    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textSize">50sp</item>
-    </style>
-
     <style name="Theme.Login" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
