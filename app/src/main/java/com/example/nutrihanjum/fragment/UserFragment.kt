@@ -32,7 +32,7 @@ class UserFragment private constructor() : Fragment() {
     }
     private var _binding : UserFragmentBinding? = null
     private val binding get() = _binding!!
-    private val userViewModel : UserViewModel by activityViewModels()
+    private lateinit var userViewModel : UserViewModel
     private lateinit var loginLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreateView(
@@ -40,6 +40,7 @@ class UserFragment private constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = UserFragmentBinding.inflate(layoutInflater)
+        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
 
         loginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -61,6 +62,15 @@ class UserFragment private constructor() : Fragment() {
                 updateForSignOut()
             }
         }
+
+        userViewModel.signOutResult.observe(viewLifecycleOwner) {
+            if (it) {
+                updateForSignOut()
+                userViewModel.notifyUserSignedOut()
+            } else {
+                Toast.makeText(activity, getString(R.string.logout_failed), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun updateForSignIn() {
@@ -74,7 +84,6 @@ class UserFragment private constructor() : Fragment() {
 
         binding.btnLogin.setOnClickListener {
             userViewModel.signOut(requireContext())
-            userViewModel.notifyUserSignedOut()
         }
         binding.btnLogin.text = getString(R.string.logout_btn)
     }

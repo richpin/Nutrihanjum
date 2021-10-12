@@ -12,8 +12,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="20dp"
-        app:mcv_allowClickDaysOutsideCurrentMonth="true"
-        app:mcv_showOtherDates="all" />
+        app:mcv_headerTextAppearance="@style/CalendarTitleAppearance"
+        app:mcv_weekDayTextAppearance="@style/CalendarWeekDayAppearance"
+        app:mcv_dateTextAppearance="@style/CalendarDateAppearance"
+        app:mcv_selectionColor="@color/yellow_200"
+        app:mcv_selectionMode="single"
+        app:mcv_showOtherDates="out_of_range"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_diary"
