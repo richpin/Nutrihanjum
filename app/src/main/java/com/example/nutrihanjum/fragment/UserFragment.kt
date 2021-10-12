@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.activityViewModels
+import com.bumptech.glide.Glide
 import com.example.nutrihanjum.LoginActivity
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.UserFragmentBinding
@@ -31,27 +32,20 @@ class UserFragment private constructor() : Fragment() {
     }
     private var _binding : UserFragmentBinding? = null
     private val binding get() = _binding!!
-    private val userViewModel : UserViewModel by activityViewModels()
+    private lateinit var userViewModel : UserViewModel
     private lateinit var loginLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = UserFragmentBinding.inflate(layoutInflater)
+        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
 
         loginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 userViewModel.notifyUserSigned()
             }
-        }
-
-        binding.btnLogin.setOnClickListener {
-            loginLauncher.launch(Intent(activity, LoginActivity::class.java))
-        }
-        binding.btnLogout.setOnClickListener {
-            userViewModel.signOut()
-            userViewModel.notifyUserSignedOut()
         }
 
         return binding.root
@@ -62,12 +56,45 @@ class UserFragment private constructor() : Fragment() {
 
         userViewModel.signed.observe(viewLifecycleOwner) { signed ->
             if (signed) {
-                binding.textviewUserEmail.text = userViewModel.userEmail
+                updateForSignIn()
             }
             else {
-                binding.textviewUserEmail.text = getString(R.string.request_login)
+                updateForSignOut()
             }
         }
+
+        userViewModel.signOutResult.observe(viewLifecycleOwner) {
+            if (it) {
+                updateForSignOut()
+                userViewModel.notifyUserSignedOut()
+            } else {
+                Toast.makeText(activity, getString(R.string.logout_failed), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun updateForSignIn() {
+        binding.textviewUserId.text = userViewModel.userID
+
+        binding.imageviewUserPhoto.visibility = View.VISIBLE
+        Glide.with(this)
+            .load(userViewModel.photoUrl)
+            .circleCrop()
+            .into(binding.imageviewUserPhoto)
+
+        binding.btnLogin.setOnClickListener {
+            userViewModel.signOut(requireContext())
+        }
+        binding.btnLogin.text = getString(R.string.logout_btn)
+    }
+
+    private fun updateForSignOut() {
+        binding.textviewUserId.text = getString(R.string.request_login)
+        binding.imageviewUserPhoto.visibility = View.GONE
+        binding.btnLogin.setOnClickListener {
+            loginLauncher.launch(Intent(activity, LoginActivity::class.java))
+        }
+        binding.btnLogin.text = getString(R.string.login_btn)
     }
 
     override fun onDestroyView() {

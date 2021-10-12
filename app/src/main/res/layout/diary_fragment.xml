@@ -11,15 +11,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        app:mcv_allowClickDaysOutsideCurrentMonth="true"
-        app:mcv_showOtherDates="all" />
+        android:layout_marginBottom="20dp"
+        app:mcv_headerTextAppearance="@style/CalendarTitleAppearance"
+        app:mcv_weekDayTextAppearance="@style/CalendarWeekDayAppearance"
+        app:mcv_dateTextAppearance="@style/CalendarDateAppearance"
+        app:mcv_selectionColor="@color/yellow_200"
+        app:mcv_selectionMode="single"
+        app:mcv_showOtherDates="out_of_range"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_diary"
-        android:layout_below="@id/calendar_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
+        android:layout_height="match_parent"
+        android:layout_below="@id/calendar_view"
+        android:layout_alignParentBottom="true"
+        android:clipToPadding="false"
+        android:paddingBottom="100dp"
+        android:visibility="gone" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_add_diary"

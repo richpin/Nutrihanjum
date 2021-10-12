@@ -43,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
                 finish()
             }
             else {
-                Toast.makeText(this, it.second, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.login_failed), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -56,7 +56,6 @@ class LoginActivity : AppCompatActivity() {
             .build()
 
         val client = GoogleSignIn.getClient(this@LoginActivity, gso)
-
         googleLoginLauncher.launch(client.signInIntent)
     }
 
@@ -67,7 +66,7 @@ class LoginActivity : AppCompatActivity() {
 
             try {
                 val credential = GoogleAuthProvider.getCredential(task.result.idToken, null)
-                loginViewModel.authWithGoogle(credential)
+                loginViewModel.authWithCredential(credential)
             }
             catch(e: Exception) {
                 Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
