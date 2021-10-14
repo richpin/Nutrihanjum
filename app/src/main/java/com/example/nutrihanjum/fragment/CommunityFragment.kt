@@ -8,10 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.R
+import com.example.nutrihanjum.RecyclerViewAdapter.CommunityRecyclerViewAdapter
 import com.example.nutrihanjum.viewmodel.CommunityViewModel
 import com.example.nutrihanjum.databinding.CommunityFragmentBinding
 import com.example.nutrihanjum.model.ContentDTO
@@ -38,6 +40,15 @@ class CommunityFragment private constructor() : Fragment() {
     ): View? {
         _binding = CommunityFragmentBinding.inflate(inflater, container, false)
 
+        viewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
+
+        binding.communityfragmentRecylerview.adapter = CommunityRecyclerViewAdapter(temp)
+        binding.communityfragmentRecylerview.layoutManager = LinearLayoutManager(activity)
+
+        viewModel.getContents().observe(this, Observer<ArrayList<ContentDTO>>{ contents ->
+            // update UI
+        })
+
         return binding.root
     }
 
@@ -46,4 +57,5 @@ class CommunityFragment private constructor() : Fragment() {
         viewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
 
     }
+
 }

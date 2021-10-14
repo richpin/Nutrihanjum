@@ -8,7 +8,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatbotfragment_recylerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="5dp">
     </androidx.recyclerview.widget.RecyclerView>
 
 </FrameLayout>

@@ -9,5 +9,8 @@ data class ContentDTO(
     var likes: MutableMap<String, Boolean> = HashMap(),
     var mealTime: String = "",
     var isPublic: Boolean = true,
-    ){
+){
+    data class Comment(var uid : String = "",
+                       var comment : String = "",
+                       var timeStamp: Long = 0)
 }
