@@ -6,13 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.nutrihanjum.R
 import com.example.nutrihanjum.RecyclerViewAdapter.CommunityRecyclerViewAdapter
 import com.example.nutrihanjum.viewmodel.CommunityViewModel
 import com.example.nutrihanjum.databinding.CommunityFragmentBinding
@@ -42,11 +37,16 @@ class CommunityFragment private constructor() : Fragment() {
 
         viewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
 
-        binding.communityfragmentRecylerview.adapter = CommunityRecyclerViewAdapter(temp)
         binding.communityfragmentRecylerview.layoutManager = LinearLayoutManager(activity)
+        binding.communityfragmentRecylerview.setHasFixedSize(true)
 
-        viewModel.getContents().observe(this, Observer<ArrayList<ContentDTO>>{ contents ->
-            // update UI
+        val recyclerViewAdapter = CommunityRecyclerViewAdapter()
+        binding.communityfragmentRecylerview.adapter = recyclerViewAdapter
+
+        viewModel.eventContents()
+        viewModel.getContents().observe(viewLifecycleOwner, Observer {
+            recyclerViewAdapter.updateList(it)
+            recyclerViewAdapter.notifyDataSetChanged()
         })
 
         return binding.root

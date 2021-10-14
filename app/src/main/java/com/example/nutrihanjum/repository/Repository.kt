@@ -3,8 +3,6 @@ package com.example.nutrihanjum.repository
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
-import com.example.nutrihanjum.R
 import com.example.nutrihanjum.model.ContentDTO
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -13,14 +11,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.isActive
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -44,14 +38,31 @@ object Repository {
                     it.result.documents.forEach { item ->
                         offer(Pair(item.toObject(ContentDTO::class.java)!!, item.id))
                     }
-                }
-                else {
+                } else {
                     Log.wtf("Repository", "${it.exception?.message}")
                 }
                 close()
             }
 
         awaitClose()
+    }
+
+    fun eventContents() = callbackFlow {
+        val registration =
+            store.collection("posts").orderBy("timestamp", Query.Direction.DESCENDING)
+                .whereEqualTo("public", true)
+                .addSnapshotListener { value, error ->
+                    if (error != null) {
+                        Log.w("Repository", "listen:error", error)
+                        return@addSnapshotListener
+                    }
+
+                    value?.documentChanges?.forEach {
+                        offer(it)
+                    }
+                }
+
+        awaitClose { registration.remove() }
     }
 
     fun modifyDiaryWithoutPhoto(content: ContentDTO, documentId: String) = callbackFlow {
@@ -141,8 +152,7 @@ object Repository {
                     content.uid = uid!!
 
                     store.collection("posts").document().set(content)
-                }
-                else {
+                } else {
                     offer(false)
                     close()
                     null
@@ -160,12 +170,11 @@ object Repository {
         awaitClose()
     }
 
-    fun authWithCredential(credential : AuthCredential) = callbackFlow {
+    fun authWithCredential(credential: AuthCredential) = callbackFlow {
         auth.signInWithCredential(credential).continueWith { result ->
             if (result.isSuccessful) {
                 offer(Pair(true, ""))
-            }
-            else {
+            } else {
                 offer(Pair(false, result.exception?.message))
             }
             close()
@@ -188,8 +197,7 @@ object Repository {
                     GoogleSignIn.getClient(context, gso).signOut().continueWith {
                         if (it.isSuccessful) {
                             offer(true)
-                        }
-                        else {
+                        } else {
                             offer(false)
                         }
                         close()
