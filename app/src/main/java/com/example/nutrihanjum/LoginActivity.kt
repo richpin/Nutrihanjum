@@ -32,7 +32,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(binding.root)
 
         setLoginListener()

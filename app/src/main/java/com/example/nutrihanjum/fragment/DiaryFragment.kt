@@ -1,43 +1,28 @@
 package com.example.nutrihanjum.fragment
 
+import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Typeface
-import android.os.Build
 import android.os.Bundle
-import android.text.style.*
-import android.util.Log
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.Toast
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.nutrihanjum.AddDiaryActivity
 import com.example.nutrihanjum.R
+import com.example.nutrihanjum.RecyclerViewAdapter.DiaryRecyclerViewAdapter
 import com.example.nutrihanjum.databinding.DiaryFragmentBinding
-import com.example.nutrihanjum.databinding.ItemDiaryBinding
 import com.example.nutrihanjum.decorator.SaturdayDecorator
 import com.example.nutrihanjum.decorator.SundayDecorator
 import com.example.nutrihanjum.model.ContentDTO
-import com.example.nutrihanjum.util.OnSwipeTouchListener
 import com.example.nutrihanjum.viewmodel.DiaryViewModel
 import com.example.nutrihanjum.viewmodel.UserViewModel
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.CalendarMode
-import com.prolificinteractive.materialcalendarview.DayViewDecorator
-import com.prolificinteractive.materialcalendarview.DayViewFacade
-import com.prolificinteractive.materialcalendarview.format.CalendarWeekDayFormatter
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.util.*
 
 class DiaryFragment private constructor() : Fragment() {
 
@@ -57,6 +42,8 @@ class DiaryFragment private constructor() : Fragment() {
     private lateinit var viewModel: DiaryViewModel
     private lateinit var userViewModel: UserViewModel
 
+    private lateinit var addDiaryLauncher: ActivityResultLauncher<Intent>
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -65,23 +52,144 @@ class DiaryFragment private constructor() : Fragment() {
         viewModel = ViewModelProvider(this).get(DiaryViewModel::class.java)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
 
-        binding.recyclerviewDiary.visibility = View.VISIBLE
-        binding.recyclerviewDiary.adapter = DiaryRecyclerViewAdapter(arrayListOf())
-        binding.recyclerviewDiary.layoutManager = LinearLayoutManager(activity)
+        addDiaryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                binding.calendarView.selectedDate?.let { date ->
+                    viewModel.loadAllDiaryAtDate(getFormattedDate(date.year, date.month, date.day))
+                }
+            }
 
-        initCalendar()
+            binding.btnAddDiary.isClickable = true
+        }
+
+        initView()
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        addLiveDataObserver()
+    }
 
+    override fun onResume() {
+        super.onResume()
+        binding.calendarView.currentDate = binding.calendarView.selectedDate
+    }
+
+    private fun updateForSignIn() {
+        binding.calendarView.setOnDateChangedListener { widget, date, _ ->
+            collapseCalendar()
+            widget.currentDate = date
+            binding.recyclerviewDiary.visibility = View.GONE
+            viewModel.loadAllDiaryAtDate(getFormattedDate(date.year, date.month, date.day))
+        }
+
+        binding.btnAddDiary.isClickable = true
+
+        if (binding.calendarView.calendarMode == CalendarMode.WEEKS) {
+            binding.recyclerviewDiary.visibility = View.VISIBLE
+            binding.calendarView.selectedDate?.let {
+                viewModel.loadAllDiaryAtDate(getFormattedDate(it.year, it.month, it.day))
+            }
+        }
+    }
+
+    private fun updateForSignOut() {
+        binding.calendarView.setOnDateChangedListener { widget, date, _ ->
+            collapseCalendar()
+            widget.currentDate = date
+        }
+        binding.btnAddDiary.isClickable = false
+        binding.recyclerviewDiary.visibility = View.GONE
+    }
+
+    private fun initCalendar() {
+        with (binding.calendarView) {
+            currentDate = CalendarDay.today()
+            selectedDate = CalendarDay.today()
+            state().edit()
+                .setMaximumDate(CalendarDay.today())
+                .commit()
+
+            collapseCalendar()
+
+            setOnTitleClickListener {
+                if (calendarMode == CalendarMode.WEEKS) {
+                    expandCalendar()
+                } else {
+                    collapseCalendar()
+                }
+            }
+
+            addDecorator(SundayDecorator(requireContext()))
+            addDecorator(SaturdayDecorator(requireContext()))
+        }
+    }
+
+
+    private fun makePopupClickListener() = { view: View, diary: Pair<ContentDTO, String> ->
+        val popup = PopupMenu(activity, view)
+        popup.menuInflater.inflate(R.menu.diary_popup, popup.menu)
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_delete -> {
+                    viewModel.deleteDiary(diary.second, diary.first.imageUrl)
+                    true
+                }
+                R.id.action_modify -> {
+                    val mIntent = Intent(activity, AddDiaryActivity::class.java)
+                    mIntent.putExtra("content", diary)
+
+                    addDiaryLauncher.launch(mIntent)
+
+                    true
+                }
+                else -> false
+            }
+        }
+
+        popup.show()
+    }
+
+
+    private fun initView() {
+        with(binding.recyclerviewDiary) {
+            visibility = View.VISIBLE
+            layoutManager = LinearLayoutManager(activity)
+            adapter = DiaryRecyclerViewAdapter(arrayListOf())
+            (adapter as DiaryRecyclerViewAdapter).onPopupClickListener = makePopupClickListener()
+        }
+
+        binding.btnAddDiary.setOnClickListener {
+            binding.calendarView.selectedDate?.let { date ->
+                it.isClickable = false
+                val mIntent = Intent(activity, AddDiaryActivity::class.java)
+
+                mIntent.putExtra("date", getFormattedDate(date.year, date.month, date.day))
+                addDiaryLauncher.launch(mIntent)
+            }
+        }
+
+        initCalendar()
+    }
+
+
+    private fun addLiveDataObserver() {
         viewModel.diaryList.observe(viewLifecycleOwner) {
             with (binding.recyclerviewDiary.adapter as DiaryRecyclerViewAdapter) {
                 diaryList = it
                 notifyDataSetChanged()
                 binding.recyclerviewDiary.visibility = View.VISIBLE
+            }
+        }
+
+        viewModel.diaryChanged.observe(viewLifecycleOwner) {
+            if (it) {
+                binding.calendarView.selectedDate?.let { date ->
+                     viewModel.loadAllDiaryAtDate(getFormattedDate(date.year, date.month, date.day))
+                }
             }
         }
 
@@ -93,120 +201,6 @@ class DiaryFragment private constructor() : Fragment() {
                 updateForSignOut()
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        binding.calendarView.currentDate = binding.calendarView.selectedDate
-    }
-
-    inner class DiaryRecyclerViewAdapter(
-        var diaryList: ArrayList<Pair<ContentDTO, String>>,
-    ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val itemBinding =
-                ItemDiaryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-
-            itemBinding.btnMore.setOnClickListener { view ->
-                val popup = PopupMenu(activity, view)
-                popup.menuInflater.inflate(R.menu.diary_popup, popup.menu)
-
-                popup.setOnMenuItemClickListener { item ->
-                    return@setOnMenuItemClickListener when (item.itemId) {
-                        R.id.action_delete -> {
-
-                            true
-                        }
-                        R.id.action_modify -> {
-                            true
-                        }
-                        else -> false
-                    }
-                }
-
-                popup.show()
-            }
-
-            return ViewHolder(itemBinding)
-        }
-
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            (holder as ViewHolder).bind(position)
-        }
-
-        override fun getItemCount() = diaryList.size
-
-        inner class ViewHolder(private val itemBinding: ItemDiaryBinding): RecyclerView.ViewHolder(itemBinding.root) {
-            fun bind(position: Int) {
-                with(itemBinding) {
-                    Glide.with(this@DiaryFragment)
-                        .load(diaryList[position].first.imageUrl)
-                        .into(communityitemContentImageview)
-
-                    communityitemContentTextview.text = diaryList[position].first.content
-                    textviewMealTime.text = diaryList[position].first.mealTime
-                }
-            }
-        }
-    }
-
-    private fun updateForSignIn() {
-        binding.calendarView.setOnDateChangedListener { widget, date, _ ->
-            collapseCalendar()
-            widget.currentDate = date
-            binding.recyclerviewDiary.visibility = View.GONE
-            viewModel.getDiary("${date.year}_${date.month}_${date.day}")
-        }
-
-        binding.btnAddDiary.setOnClickListener {
-
-            binding.calendarView.selectedDate?.let {
-                val mIntent = Intent(activity, AddDiaryActivity::class.java)
-
-                mIntent.putExtra("date", "${it.year}_${it.month}_${it.day}")
-                startActivity(mIntent)
-            }
-        }
-
-        if (binding.calendarView.calendarMode == CalendarMode.WEEKS) {
-            binding.recyclerviewDiary.visibility = View.VISIBLE
-            binding.calendarView.selectedDate?.let {
-                viewModel.getDiary("${it.year}_${it.month}_${it.day}")
-            }
-        }
-    }
-
-    private fun updateForSignOut() {
-        binding.calendarView.setOnDateChangedListener { widget, date, _ ->
-            collapseCalendar()
-            widget.currentDate = date
-        }
-
-        binding.btnAddDiary.setOnClickListener(null)
-        binding.recyclerviewDiary.visibility = View.GONE
-    }
-
-    private fun initCalendar() {
-        binding.calendarView.currentDate = CalendarDay.today()
-        binding.calendarView.selectedDate = CalendarDay.today()
-        binding.calendarView.state().edit()
-            .setMaximumDate(CalendarDay.today())
-            .commit()
-
-        collapseCalendar()
-
-        binding.calendarView.setOnTitleClickListener {
-            if (binding.calendarView.calendarMode == CalendarMode.WEEKS) {
-                expandCalendar()
-            }
-            else {
-                collapseCalendar()
-            }
-        }
-
-        binding.calendarView.addDecorator(SundayDecorator(requireContext()))
-        binding.calendarView.addDecorator(SaturdayDecorator(requireContext()))
     }
 
     private fun expandCalendar() {
@@ -225,9 +219,15 @@ class DiaryFragment private constructor() : Fragment() {
         binding.recyclerviewDiary.visibility = View.VISIBLE
     }
 
+    private fun getFormattedDate(year: Int, month: Int, date: Int)
+        = "${year}_${month}_${date}"
+
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+
 
 }

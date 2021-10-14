@@ -26,7 +26,8 @@
     <string name="web_client_id">913031910028-prr8utnrelive27pj4klm795ek1lm86n.apps.googleusercontent.com</string>
 
     <string name="add_diary">추가하기</string>
-    <string name="request_login">로그인 해주세요</string>
+    <string name="modify_diary">수정하기</string>
+    <string name="request_login">로그인하기</string>
 
     <string name="diary_menu">메뉴</string>
     <string name="diary_hashtag">해시태그</string>
@@ -48,5 +49,7 @@
     <string name="diary_popup_delete">삭제</string>
     <string name="diary_popup_modify">수정</string>
     <string name="diary_popup_public">비공개</string>
+    <string name="login_email">이메일</string>
+    <string name="login_password">비밀번호</string>
 
 </resources>
