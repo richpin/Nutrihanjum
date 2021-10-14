@@ -1,5 +1,7 @@
 package com.example.nutrihanjum.model
 
+import java.io.Serializable
+
 data class ContentDTO(
     var content: String = "",
     var imageUrl: String = "",
@@ -9,5 +11,5 @@ data class ContentDTO(
     var likes: MutableMap<String, Boolean> = HashMap(),
     var mealTime: String = "",
     var isPublic: Boolean = true,
-    ){
+    ): Serializable{
 }

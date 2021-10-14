@@ -35,7 +35,7 @@ object Repository {
     val userID get() = auth.currentUser?.displayName
     val userPhoto get() = auth.currentUser?.photoUrl
 
-    fun getDiary(date: String) = callbackFlow {
+    fun loadAllDiaryAtDate(date: String) = callbackFlow {
         store.collection("posts")
             .whereEqualTo("date", date)
             .whereEqualTo("uid", uid)
@@ -54,31 +54,107 @@ object Repository {
         awaitClose()
     }
 
-    fun setDiary(content: ContentDTO) = callbackFlow {
-        val filename = "IMG_${SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())}.png"
-        storage.reference.child("images").child(filename)
-            .putFile(Uri.parse(content.imageUrl))
+    fun modifyDiaryWithoutPhoto(content: ContentDTO, documentId: String) = callbackFlow {
+        store.collection("posts")
+            .document(documentId)
+            .set(content)
+            .continueWith {
+                if (it.isSuccessful) {
+                    offer(true)
+                } else {
+                    offer(false)
+                }
+                close()
+            }
+
+        awaitClose()
+    }
+    fun modifyDiaryWithPhoto(content: ContentDTO, documentId: String, imageUri: String) = callbackFlow {
+
+        storage.getReferenceFromUrl(content.imageUrl)
+            .putFile(Uri.parse(imageUri))
             .continueWithTask {
                 it.result.storage.downloadUrl
             }
-            .continueWith {
+            .continueWithTask {
                 if (it.isSuccessful) {
                     content.imageUrl = it.result.toString()
-                    content.uid = uid!!
 
-                    store.collection("posts").document().set(content).continueWith { result ->
-                        if (result.isSuccessful) {
-                            offer(true)
-                        } else {
-                            offer(false)
-                        }
-                        close()
-                    }
+                    store.collection("posts").document(documentId).set(content)
                 }
                 else {
                     offer(false)
                     close()
+                    null
                 }
+            }
+            .continueWith { result ->
+                if (result.isSuccessful) {
+                    offer(true)
+                } else {
+                    offer(false)
+                }
+                close()
+            }
+
+        awaitClose()
+    }
+
+    fun deleteDiary(documentId: String, imageUrl: String) = callbackFlow {
+        storage.getReferenceFromUrl(imageUrl).delete()
+            .continueWithTask {
+                if (it.isSuccessful) {
+                    store.collection("posts").document(documentId).delete()
+                }
+                else {
+                    offer(false)
+                    close()
+                    null
+                }
+            }
+            .continueWith {
+                if (it.isSuccessful) {
+                    offer(true)
+                } else {
+                    offer(false)
+                }
+                close()
+            }
+
+        awaitClose()
+    }
+
+    fun addDiary(content: ContentDTO, imageUri: String) = callbackFlow {
+        val filename = "IMG_${SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())}.png"
+        storage.reference.child("images").child(filename)
+            .putFile(Uri.parse(imageUri))
+            .continueWithTask {
+                if (it.isSuccessful) {
+                    it.result.storage.downloadUrl
+                } else {
+                    null
+                }
+            }
+            .continueWithTask {
+                if (it.isSuccessful) {
+                    content.imageUrl = it.result.toString()
+                    content.uid = uid!!
+
+                    store.collection("posts").document().set(content)
+                }
+                else {
+                    offer(false)
+                    close()
+                    null
+                }
+            }
+            .continueWith { result ->
+                if (result.isSuccessful) {
+                    offer(true)
+                } else {
+                    offer(false)
+                }
+                close()
             }
 
         awaitClose()

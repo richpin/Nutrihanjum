@@ -48,6 +48,14 @@ class UserFragment private constructor() : Fragment() {
             }
         }
 
+        binding.btnLogout.setOnClickListener {
+            userViewModel.signOut(requireContext())
+        }
+
+        binding.layoutProfileSignedOut.setOnClickListener {
+            loginLauncher.launch(Intent(activity, LoginActivity::class.java))
+        }
+
         return binding.root
     }
 
@@ -76,25 +84,22 @@ class UserFragment private constructor() : Fragment() {
     private fun updateForSignIn() {
         binding.textviewUserId.text = userViewModel.userID
 
-        binding.imageviewUserPhoto.visibility = View.VISIBLE
         Glide.with(this)
             .load(userViewModel.photoUrl)
             .circleCrop()
             .into(binding.imageviewUserPhoto)
 
-        binding.btnLogin.setOnClickListener {
-            userViewModel.signOut(requireContext())
-        }
-        binding.btnLogin.text = getString(R.string.logout_btn)
+        binding.layoutProfileSigned.visibility = View.VISIBLE
+        binding.layoutProfileSignedOut.visibility = View.GONE
+        binding.btnLogout.visibility = View.VISIBLE
     }
 
     private fun updateForSignOut() {
         binding.textviewUserId.text = getString(R.string.request_login)
-        binding.imageviewUserPhoto.visibility = View.GONE
-        binding.btnLogin.setOnClickListener {
-            loginLauncher.launch(Intent(activity, LoginActivity::class.java))
-        }
-        binding.btnLogin.text = getString(R.string.login_btn)
+
+        binding.layoutProfileSigned.visibility = View.GONE
+        binding.layoutProfileSignedOut.visibility = View.VISIBLE
+        binding.btnLogout.visibility = View.GONE
     }
 
     override fun onDestroyView() {
