@@ -128,14 +128,14 @@ class DiaryFragment private constructor() : Fragment() {
     }
 
 
-    private fun makePopupClickListener() = { view: View, diary: Pair<ContentDTO, String> ->
+    private fun makePopupClickListener() = { view: View, diary: ContentDTO ->
         val popup = PopupMenu(activity, view)
         popup.menuInflater.inflate(R.menu.diary_popup, popup.menu)
 
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_delete -> {
-                    viewModel.deleteDiary(diary.second, diary.first.imageUrl)
+                    viewModel.deleteDiary(diary.id, diary.imageUrl)
                     true
                 }
                 R.id.action_modify -> {

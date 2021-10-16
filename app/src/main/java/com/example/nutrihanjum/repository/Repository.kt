@@ -10,9 +10,13 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firestore.v1.ArrayValue
+import com.google.firestore.v1.MapValue
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import java.text.SimpleDateFormat
@@ -36,7 +40,7 @@ object Repository {
             .get().continueWith {
                 if (it.isSuccessful) {
                     it.result.documents.forEach { item ->
-                        offer(Pair(item.toObject(ContentDTO::class.java)!!, item.id))
+                        offer(item.toObject(ContentDTO::class.java)!!)
                     }
                 } else {
                     Log.wtf("Repository", "${it.exception?.message}")
@@ -65,9 +69,9 @@ object Repository {
         awaitClose { registration.remove() }
     }
 
-    fun modifyDiaryWithoutPhoto(content: ContentDTO, documentId: String) = callbackFlow {
+    fun modifyDiaryWithoutPhoto(content: ContentDTO) = callbackFlow {
         store.collection("posts")
-            .document(documentId)
+            .document(content.id)
             .set(content)
             .continueWith {
                 if (it.isSuccessful) {
@@ -80,7 +84,7 @@ object Repository {
 
         awaitClose()
     }
-    fun modifyDiaryWithPhoto(content: ContentDTO, documentId: String, imageUri: String) = callbackFlow {
+    fun modifyDiaryWithPhoto(content: ContentDTO, imageUri: String) = callbackFlow {
 
         storage.getReferenceFromUrl(content.imageUrl)
             .putFile(Uri.parse(imageUri))
@@ -91,7 +95,7 @@ object Repository {
                 if (it.isSuccessful) {
                     content.imageUrl = it.result.toString()
 
-                    store.collection("posts").document(documentId).set(content)
+                    store.collection("posts").document(content.id).set(content)
                 }
                 else {
                     offer(false)
@@ -150,8 +154,9 @@ object Repository {
                 if (it.isSuccessful) {
                     content.imageUrl = it.result.toString()
                     content.uid = uid!!
+                    content.id = uid + content.timestamp
 
-                    store.collection("posts").document().set(content)
+                    store.collection("posts").document(content.id).set(content)
                 } else {
                     offer(false)
                     close()

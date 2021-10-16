@@ -13,10 +13,10 @@ import com.example.nutrihanjum.viewmodel.DiaryViewModel
 import java.util.ArrayList
 
 class DiaryRecyclerViewAdapter(
-    var diaryList: ArrayList<Pair<ContentDTO, String>>
+    var diaryList: ArrayList<ContentDTO>
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var onPopupClickListener: ((view: View, item: Pair<ContentDTO, String>) -> Unit)? = null
+    var onPopupClickListener: ((view: View, item: ContentDTO) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val itemBinding =
@@ -44,12 +44,12 @@ class DiaryRecyclerViewAdapter(
     inner class ViewHolder(val itemBinding: ItemDiaryBinding): RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(position: Int) {
             with(itemBinding) {
-                Glide.with(communityitemContentImageview.context)
-                    .load(diaryList[position].first.imageUrl)
-                    .into(communityitemContentImageview)
+                Glide.with(imageviewPostImage.context)
+                    .load(diaryList[position].imageUrl)
+                    .into(imageviewPostImage)
 
-                communityitemContentTextview.text = diaryList[position].first.content
-                textviewMealTime.text = diaryList[position].first.mealTime
+                textviewPostMemo.text = diaryList[position].content
+                textviewMealTime.text = diaryList[position].mealTime
             }
         }
     }

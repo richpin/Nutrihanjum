@@ -3,6 +3,7 @@ package com.example.nutrihanjum.model
 import java.io.Serializable
 
 data class ContentDTO(
+    var id: String = "",
     var content: String = "",
     var imageUrl: String = "",
     var uid: String = "",

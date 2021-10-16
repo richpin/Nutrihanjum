@@ -20,13 +20,15 @@ import android.os.Build
 import android.view.View
 import androidx.activity.viewModels
 import com.bumptech.glide.Glide
+import com.canhub.cropper.*
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.viewmodel.DiaryViewModel
 
 class AddDiaryActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityAddDiaryBinding
-    private lateinit var photoLauncher: ActivityResultLauncher<Uri>
+    private lateinit var cropImageLauncher: ActivityResultLauncher<CropImageContractOptions>
+
     private var photoURI: Uri? = null
     private var isPhotoExist = false
 
@@ -81,15 +83,15 @@ class AddDiaryActivity : AppCompatActivity() {
     }
 
     private fun initForModifyDiary() {
-        val content = intent.getSerializableExtra("content") as Pair<ContentDTO, String>
+        val content = intent.getSerializableExtra("content") as ContentDTO
 
         with(binding) {
             btnRegisterDiary.text = getString(R.string.modify_diary)
-            edittextDiaryMemo.setText(content.first.content)
-            radioGroupMealTime.check(mapMealTimeStringToId(content.first.mealTime))
-            switchPublic.isChecked = content.first.isPublic
+            edittextDiaryMemo.setText(content.content)
+            radioGroupMealTime.check(mapMealTimeStringToId(content.mealTime))
+            switchPublic.isChecked = content.isPublic
             Glide.with(this@AddDiaryActivity)
-                .load(content.first.imageUrl)
+                .load(content.imageUrl)
                 .into(imageviewPreview)
 
 
@@ -98,14 +100,14 @@ class AddDiaryActivity : AppCompatActivity() {
 
                 it.isClickable = false
 
-                with(content.first) {
+                with(content) {
                     this.content = edittextDiaryMemo.text.toString()
                     mealTime = selectedMealTime!!
                     isPublic = switchPublic.isChecked
                     timestamp = System.currentTimeMillis()
 
                     viewModel.modifyDiary(
-                        content.first, content.second,
+                        content,
                         if (isPhotoExist) photoURI.toString() else null
                     )
                 }
@@ -120,12 +122,11 @@ class AddDiaryActivity : AppCompatActivity() {
             getPhoto()
         }
 
-        photoLauncher = registerForActivityResult(TakePictureContract()) {
-            if (it) {
+        cropImageLauncher = registerForActivityResult(CropImageContract()) {
+            if (it.isSuccessful) {
+                photoURI = it.uriContent
                 binding.imageviewPreview.setImageURI(photoURI)
-                isPhotoExist = isPhotoExist or true
-            } else {
-                isPhotoExist = isPhotoExist or false
+                isPhotoExist = true
             }
         }
 
@@ -143,28 +144,13 @@ class AddDiaryActivity : AppCompatActivity() {
     }
 
     private fun getPhoto() {
-        if (photoURI == null) {
-            val photoFile = createImageFile()
-
-            photoFile?.also {
-                photoURI = FileProvider.getUriForFile(this, "${packageName}.fileprovider", it)
-                photoLauncher.launch(photoURI)
+        cropImageLauncher.launch(
+            options {
+                setGuidelines(CropImageView.Guidelines.ON)
+                setAspectRatio(1,1)
+                setFixAspectRatio(true)
             }
-        } else {
-            photoLauncher.launch(photoURI)
-        }
-
-    }
-
-    private fun createImageFile(): File? {
-        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-
-        return try {
-            File.createTempFile("DIARY_${timestamp}_", ".jpg", storageDir)
-        } catch (e: Exception) {
-            null
-        }
+        )
     }
 
     private fun mapMealTimeIdToString(mealtime: Int) = when (mealtime) {
@@ -183,19 +169,6 @@ class AddDiaryActivity : AppCompatActivity() {
         getString(R.string.meal_time_dinner) -> R.id.radio_btn_snack
         getString(R.string.meal_time_midnight_snack) -> R.id.radio_btn_midnight
         else -> View.NO_ID
-    }
-
-
-    inner class TakePictureContract: ActivityResultContracts.TakePicture() {
-        override fun createIntent(context: Context, input: Uri): Intent {
-            val takePictureIntent = super.createIntent(context, input)
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
-                takePictureIntent.clipData = ClipData.newRawUri("", photoURI)
-                takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
-
-            return takePictureIntent
-        }
     }
 
 }
