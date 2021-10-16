@@ -41,6 +41,8 @@ class CommunityFragment private constructor() : Fragment() {
         binding.communityfragmentRecylerview.setHasFixedSize(true)
 
         val recyclerViewAdapter = CommunityRecyclerViewAdapter()
+        recyclerViewAdapter.is_liked = { viewModel.is_liked(it) }
+        recyclerViewAdapter.likeClickEvent = { viewModel.eventLikes(it) }
         binding.communityfragmentRecylerview.adapter = recyclerViewAdapter
 
         viewModel.eventContents()
@@ -57,5 +59,4 @@ class CommunityFragment private constructor() : Fragment() {
         viewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
 
     }
-
 }

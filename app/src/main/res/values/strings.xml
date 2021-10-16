@@ -11,10 +11,12 @@
     <string name="chatbot_category">챗봇상담</string>
     <string name="news_category">영양뉴스</string>
     <string name="user_category">마이페이지</string>
+
     <string name="like">좋아요</string>
     <string name="comment">댓글</string>
     <string name="report">신고</string>
     <string name="read_more">...더보기</string>
+    <string name="count">개</string>
 
 
     <string name="google_login">구글로 로그인</string>
@@ -52,4 +54,10 @@
     <string name="login_email">이메일</string>
     <string name="login_password">비밀번호</string>
 
+    <string name="time_just_now">방금 전</string>
+    <string name="time_minute_before">분 전</string>
+    <string name="time_hour_before">시간 전</string>
+    <string name="time_day_before">일 전</string>
+    <string name="time_month_before">달 전</string>
+    <string name="time_year_before">년 전</string>
 </resources>

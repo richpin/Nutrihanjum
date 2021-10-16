@@ -9,9 +9,9 @@ data class ContentDTO(
     var uid: String = "",
     var timestamp: Long = 0,
     var date: String = "",
-    var likes: MutableMap<String, Boolean> = HashMap(),
+    var likes: List<String> = listOf(),
     var mealTime: String = "",
-    var isPublic: Boolean = true,
+    var isPublic: Boolean = true
     ): Serializable{
     data class Comment(var uid : String = "",
                        var comment : String = "",

@@ -52,20 +52,22 @@
         android:layout_width="match_parent"
         android:layout_height="25dp">
         <TextView
+            android:id="@+id/communityitem_lccount_textview"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:textColor="@color/gray"
             android:fontFamily="@font/font_regular"
             android:text="좋아요 8개 댓글 3개"/>
+
         <TextView
+            android:id="@+id/communityitem_timeago_textview"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:textColor="@color/gray"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
             android:fontFamily="@font/font_regular"
-            android:text="1시간 전"/>
+            android:textColor="@color/gray" />
     </RelativeLayout>
 
     <LinearLayout
@@ -101,6 +103,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginBottom="20dp">
         <LinearLayout
+            android:id="@+id/press_like_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -126,12 +129,12 @@
             android:layout_marginVertical="5dp">
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/press_comment_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center">
             <ImageView
-                android:id="@+id/press_comment_imageview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_comment"/>
@@ -151,12 +154,12 @@
             android:layout_marginVertical="5dp">
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/press_report_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center">
             <ImageView
-                android:id="@+id/press_report_imageview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_report"/>
