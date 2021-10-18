@@ -1,8 +1,8 @@
 package com.example.nutrihanjum.model
 
 data class UserDTO(
-  var userID : String = "",
+  var name : String = "",
   var profileUrl : String = "",
-  var saved: MutableMap<String, Boolean> = HashMap(),
-  var posts: MutableMap<String, Boolean> = HashMap()
+  var saved: List<String> = listOf(),
+  var posts: List<String> = listOf()
 ){}

@@ -27,8 +27,10 @@ class CommunityRecyclerViewAdapter() :
         const val MONTH = 12
     }
 
-    lateinit var is_liked: ((List<String>) -> Boolean)
+    lateinit var isLiked: ((List<String>) -> Boolean)
+    lateinit var isSaved: ((List<String>) -> Boolean)
     lateinit var likeClickEvent: ((ContentDTO) -> Unit)
+    lateinit var savedClickEvent: ((ContentDTO) -> Unit)
 
     fun updateList(data: ArrayList<ContentDTO>) {
         contentDTOs = data
@@ -75,6 +77,7 @@ class CommunityRecyclerViewAdapter() :
         val press_comment_layout: LinearLayout
         val press_report_layout: LinearLayout
         val press_like_imageview: ImageView
+        val press_saved_imageview: ImageView
 
         init {
             communityitem_profile_imageview =
@@ -89,9 +92,13 @@ class CommunityRecyclerViewAdapter() :
             press_comment_layout = view.findViewById(R.id.press_comment_layout)
             press_report_layout = view.findViewById(R.id.press_report_layout)
             press_like_imageview = view.findViewById(R.id.press_like_imageview)
+            press_saved_imageview = view.findViewById(R.id.press_saved_imageview)
 
             press_like_layout.setOnClickListener {
                 likeClickEvent(contentDTOs[adapterPosition])
+            }
+            press_saved_imageview.setOnClickListener {
+                savedClickEvent(contentDTOs[adapterPosition])
             }
         }
     }
@@ -113,13 +120,19 @@ class CommunityRecyclerViewAdapter() :
         viewHolder.communityitem_content_textview.text = contentDTOs[position].content
 
         with(viewHolder.press_like_imageview) {
-            if (is_liked(contentDTOs[position].likes)) {
+            if (isLiked(contentDTOs[position].likes)) {
                 setImageResource(R.drawable.ic_favorite)
             } else {
                 setImageResource(R.drawable.ic_favorite_border)
             }
         }
-
+        with(viewHolder.press_saved_imageview) {
+            if(isSaved(contentDTOs[position].saved)){
+                setImageResource(R.drawable.ic_bookmark)
+            } else {
+                setImageResource(R.drawable.ic_bookmark_border)
+            }
+        }
     }
 
     override fun getItemCount(): Int {

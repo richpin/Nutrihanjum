@@ -12,22 +12,26 @@ import com.example.nutrihanjum.RecyclerViewAdapter.CommunityRecyclerViewAdapter
 import com.example.nutrihanjum.viewmodel.CommunityViewModel
 import com.example.nutrihanjum.databinding.CommunityFragmentBinding
 import com.example.nutrihanjum.model.ContentDTO
+import com.example.nutrihanjum.viewmodel.UserViewModel
+import com.google.firebase.firestore.auth.User
 
 class CommunityFragment private constructor() : Fragment() {
-    private var _binding : CommunityFragmentBinding? = null
+    private var _binding: CommunityFragmentBinding? = null
     private val binding get() = _binding!!
 
     companion object {
-        @Volatile private var instance: CommunityFragment? = null
+        @Volatile
+        private var instance: CommunityFragment? = null
 
-        @JvmStatic fun getInstance(): CommunityFragment = instance ?: synchronized(this) {
+        @JvmStatic
+        fun getInstance(): CommunityFragment = instance ?: synchronized(this) {
             instance ?: CommunityFragment().also {
                 instance = it
             }
         }
     }
 
-    private lateinit var viewModel: CommunityViewModel
+    private lateinit var communityViewModel: CommunityViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,28 +39,26 @@ class CommunityFragment private constructor() : Fragment() {
     ): View? {
         _binding = CommunityFragmentBinding.inflate(inflater, container, false)
 
-        viewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
+        communityViewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
 
-        binding.communityfragmentRecylerview.layoutManager = LinearLayoutManager(activity)
+        val linearLayoutManager = LinearLayoutManager(activity)
+        linearLayoutManager.reverseLayout = true
+        linearLayoutManager.stackFromEnd = true
+        binding.communityfragmentRecylerview.layoutManager = linearLayoutManager
+
         binding.communityfragmentRecylerview.setHasFixedSize(true)
 
         val recyclerViewAdapter = CommunityRecyclerViewAdapter()
-        recyclerViewAdapter.is_liked = { viewModel.is_liked(it) }
-        recyclerViewAdapter.likeClickEvent = { viewModel.eventLikes(it) }
+        recyclerViewAdapter.isLiked = { communityViewModel.isLiked(it) }
+        recyclerViewAdapter.isSaved = { communityViewModel.isSaved(it) }
+        recyclerViewAdapter.likeClickEvent = { communityViewModel.eventLikes(it) }
+        recyclerViewAdapter.savedClickEvent = { communityViewModel.eventSaved(it)}
         binding.communityfragmentRecylerview.adapter = recyclerViewAdapter
 
-        viewModel.eventContents()
-        viewModel.getContents().observe(viewLifecycleOwner, Observer {
-            recyclerViewAdapter.updateList(it)
-            recyclerViewAdapter.notifyDataSetChanged()
+        communityViewModel.eventContents()
+        communityViewModel.contents.observe(viewLifecycleOwner, Observer {
         })
 
         return binding.root
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
-
     }
 }

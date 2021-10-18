@@ -12,6 +12,7 @@
         <entry key="app/src/main/res/drawable/box_rounded_boarder.xml" value="0.3546875" />
         <entry key="app/src/main/res/drawable/box_rounded_chatbot.xml" value="0.3546875" />
         <entry key="app/src/main/res/drawable/ic_baseline_add.xml" value="0.3546875" />
+        <entry key="app/src/main/res/drawable/ic_bookmark.xml" value="0.3546875" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.45" />
         <entry key="app/src/main/res/layout/chatbot_fragment.xml" value="0.2617753623188406" />
         <entry key="app/src/main/res/layout/community_fragment.xml" value="0.2617753623188406" />

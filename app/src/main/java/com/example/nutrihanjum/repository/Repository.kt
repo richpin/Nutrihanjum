@@ -6,6 +6,7 @@ import android.util.Log
 import com.example.nutrihanjum.model.ContentDTO
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthProvider
@@ -51,7 +52,7 @@ object Repository {
     fun eventContents() = callbackFlow {
         val registration =
             store.collection("posts")
-                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .orderBy("timestamp")
                 .whereEqualTo("public", true)
                 .addSnapshotListener { value, error ->
                     if (error != null) {
@@ -67,26 +68,65 @@ object Repository {
         awaitClose { registration.remove() }
     }
 
-    fun is_liked(likes: List<String>): Boolean {
+    fun isLiked(likes: List<String>): Boolean {
         return likes.contains(uid)
+    }
+
+    fun isSaved(saved: List<String>): Boolean {
+        return saved.contains(uid)
     }
 
     fun eventLikes(contentDTO: ContentDTO) = callbackFlow {
         val registration = store.collection("posts").document(contentDTO.id)
 
         with(registration) {
-            if (contentDTO.likes.contains(uid)) {
+            if (isLiked(contentDTO.likes)) {
                 this.update("likes", FieldValue.arrayRemove(uid))
             } else {
                 this.update("likes", FieldValue.arrayUnion(uid))
             }
         }.continueWith {
-            if(it.isSuccessful) {
+            if (it.isSuccessful) {
                 offer(true)
             } else {
                 offer(false)
             }
             close()
+        }
+
+        awaitClose()
+    }
+
+    fun eventSaved(contentDTO: ContentDTO) = callbackFlow {
+        val postRegistration = store.collection("posts").document(contentDTO.id)
+        val userRegistration = store.collection("users").document(uid!!)
+
+        if (isSaved(contentDTO.saved)) {
+            postRegistration.update("saved", FieldValue.arrayRemove(uid)).continueWithTask {
+                if (it.isSuccessful) {
+                    userRegistration.update("saved", FieldValue.arrayRemove(contentDTO.id))
+                } else {
+                    offer(false)
+                    close()
+                    null
+                }
+            }.continueWith {
+                if(it.isSuccessful) offer(true)
+                else offer(false)
+            }
+        } else {
+            postRegistration.update("saved", FieldValue.arrayUnion(uid)).continueWithTask {
+                if (it.isSuccessful) {
+                    userRegistration.update("saved", FieldValue.arrayUnion(contentDTO.id))
+                } else {
+                    offer(false)
+                    close()
+                    null
+                }
+            }.continueWith {
+                if(it.isSuccessful) offer(true)
+                else offer(false)
+            }
         }
 
         awaitClose()
@@ -107,6 +147,7 @@ object Repository {
 
         awaitClose()
     }
+
     fun modifyDiaryWithPhoto(content: ContentDTO, imageUri: String) = callbackFlow {
 
         storage.getReferenceFromUrl(content.imageUrl)
@@ -119,8 +160,7 @@ object Repository {
                     content.imageUrl = it.result.toString()
 
                     store.collection("posts").document(content.id).set(content)
-                }
-                else {
+                } else {
                     offer(false)
                     close()
                     null
@@ -143,8 +183,7 @@ object Repository {
             .continueWithTask {
                 if (it.isSuccessful) {
                     store.collection("posts").document(documentId).delete()
-                }
-                else {
+                } else {
                     offer(false)
                     close()
                     null

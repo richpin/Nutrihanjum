@@ -10,6 +10,7 @@ data class ContentDTO(
     var timestamp: Long = 0,
     var date: String = "",
     var likes: List<String> = listOf(),
+    var saved: List<String> = listOf(),
     var mealTime: String = "",
     var isPublic: Boolean = true
     ): Serializable{

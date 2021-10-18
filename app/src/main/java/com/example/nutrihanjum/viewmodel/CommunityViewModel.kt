@@ -15,7 +15,7 @@ class CommunityViewModel : ViewModel() {
     private val list = arrayListOf<ContentDTO>()
 
     private val _contents = MutableLiveData<ArrayList<ContentDTO>>()
-
+    val contents: LiveData<ArrayList<ContentDTO>> get() = _contents
 
     init {
         _contents.postValue(list)
@@ -42,11 +42,17 @@ class CommunityViewModel : ViewModel() {
         }
     }
 
-    fun is_liked(likes: List<String>): Boolean {
-        return Repository.is_liked(likes)
+    fun eventSaved(contentDTO: ContentDTO) = viewModelScope.launch {
+        Repository.eventSaved(contentDTO).collect {
+            if(!it) Log.wtf("Saved", it.toString())
+        }
     }
 
-    fun getContents(): LiveData<ArrayList<ContentDTO>> {
-        return _contents
+    fun isLiked(likes: List<String>): Boolean {
+        return Repository.isLiked(likes)
+    }
+
+    fun isSaved(saved: List<String>): Boolean {
+        return Repository.isSaved(saved)
     }
 }
