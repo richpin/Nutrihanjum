@@ -24,9 +24,9 @@ class CommunityRecyclerViewAdapter() :
         const val MONTH = 12
     }
 
-    lateinit var uid: String
-    lateinit var likeClickEvent: ((ContentDTO, Boolean) -> Unit)
-    lateinit var savedClickEvent: ((ContentDTO, Boolean) -> Unit)
+    var uid: String? = null
+    var likeClickEvent: ((ContentDTO, Boolean) -> Unit)? = null
+    var savedClickEvent: ((ContentDTO, Boolean) -> Unit)? = null
 
     fun updateContents(data: ArrayList<ContentDTO>) {
         contentDTOs = data
@@ -99,35 +99,37 @@ class CommunityRecyclerViewAdapter() :
             press_saved_imageview = view.findViewById(R.id.press_saved_imageview)
 
             press_like_layout.setOnClickListener {
-                likeClickEvent(
-                    contentDTOs[bindingAdapterPosition],
-                    isLiked(contentDTOs[bindingAdapterPosition].likes)
-                )
-
-                if (isLiked(contentDTOs[bindingAdapterPosition].likes)) {
-                    contentDTOs[bindingAdapterPosition].likes.remove(uid)
-                    communityitem_lccount_textview.text =
-                        formatCount(itemView.context, contentDTOs[bindingAdapterPosition].likes.size, 0)
-                    press_like_imageview.setImageResource(R.drawable.ic_favorite_border)
-                } else {
-                    contentDTOs[bindingAdapterPosition].likes.add(uid)
-                    communityitem_lccount_textview.text =
-                        formatCount(itemView.context, contentDTOs[bindingAdapterPosition].likes.size, 0)
-                    press_like_imageview.setImageResource(R.drawable.ic_favorite)
+                likeClickEvent?.let {
+                    it(
+                        contentDTOs[bindingAdapterPosition],
+                        isLiked(contentDTOs[bindingAdapterPosition].likes)
+                    )
+                    if (isLiked(contentDTOs[bindingAdapterPosition].likes)) {
+                        contentDTOs[bindingAdapterPosition].likes.remove(uid)
+                        communityitem_lccount_textview.text =
+                            formatCount(itemView.context, contentDTOs[bindingAdapterPosition].likes.size, 0)
+                        press_like_imageview.setImageResource(R.drawable.ic_favorite_border)
+                    } else {
+                        contentDTOs[bindingAdapterPosition].likes.add(uid!!)
+                        communityitem_lccount_textview.text =
+                            formatCount(itemView.context, contentDTOs[bindingAdapterPosition].likes.size, 0)
+                        press_like_imageview.setImageResource(R.drawable.ic_favorite)
+                    }
                 }
             }
             press_saved_imageview.setOnClickListener {
-                savedClickEvent(
-                    contentDTOs[bindingAdapterPosition],
-                    isSaved(contentDTOs[bindingAdapterPosition].saved)
-                )
-
-                if (isSaved(contentDTOs[bindingAdapterPosition].saved)){
-                    contentDTOs[bindingAdapterPosition].saved.remove(uid)
-                    press_saved_imageview.setImageResource(R.drawable.ic_bookmark_border)
-                } else {
-                    contentDTOs[bindingAdapterPosition].saved.add(uid)
-                    press_saved_imageview.setImageResource(R.drawable.ic_bookmark)
+                savedClickEvent?.let {
+                    it(
+                        contentDTOs[bindingAdapterPosition],
+                        isSaved(contentDTOs[bindingAdapterPosition].saved)
+                    )
+                    if (isSaved(contentDTOs[bindingAdapterPosition].saved)){
+                        contentDTOs[bindingAdapterPosition].saved.remove(uid)
+                        press_saved_imageview.setImageResource(R.drawable.ic_bookmark_border)
+                    } else {
+                        contentDTOs[bindingAdapterPosition].saved.add(uid!!)
+                        press_saved_imageview.setImageResource(R.drawable.ic_bookmark)
+                    }
                 }
             }
         }

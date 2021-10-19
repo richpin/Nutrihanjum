@@ -49,9 +49,6 @@ class CommunityFragment : Fragment() {
         }
 
         val recyclerViewAdapter = CommunityRecyclerViewAdapter()
-        recyclerViewAdapter.uid = userViewModel.uid!!
-        recyclerViewAdapter.likeClickEvent = { first, second -> communityViewModel.eventLikes(first, second) }
-        recyclerViewAdapter.savedClickEvent = { first, second -> communityViewModel.eventSaved(first, second)}
         binding.communityfragmentRecylerview.adapter = recyclerViewAdapter
 
         communityViewModel.loadContents()
@@ -59,6 +56,18 @@ class CommunityFragment : Fragment() {
             recyclerViewAdapter.updateContents(it)
             recyclerViewAdapter.notifyDataSetChanged()
         })
+
+        userViewModel.signed.observe(viewLifecycleOwner) {
+            if(it) {
+                recyclerViewAdapter.uid = userViewModel.uid!!
+                recyclerViewAdapter.likeClickEvent = { first, second -> communityViewModel.eventLikes(first, second) }
+                recyclerViewAdapter.savedClickEvent = { first, second -> communityViewModel.eventSaved(first, second)}
+            } else {
+                recyclerViewAdapter.uid = null
+                recyclerViewAdapter.likeClickEvent = null
+                recyclerViewAdapter.savedClickEvent = null
+            }
+        }
 
         return binding.root
     }
