@@ -20,7 +20,7 @@ import com.example.nutrihanjum.databinding.UserFragmentBinding
 import com.example.nutrihanjum.util.OnSwipeTouchListener
 import com.example.nutrihanjum.viewmodel.UserViewModel
 
-class UserFragment private constructor() : Fragment() {
+class UserFragment: Fragment() {
     companion object {
         @Volatile private var instance: UserFragment? = null
 
@@ -50,6 +50,7 @@ class UserFragment private constructor() : Fragment() {
 
         binding.btnLogout.setOnClickListener {
             userViewModel.signOut(requireContext())
+            userViewModel.notifyUserSignedOut()
         }
 
         binding.layoutProfileSignedOut.setOnClickListener {
@@ -71,18 +72,19 @@ class UserFragment private constructor() : Fragment() {
             }
         }
 
-        userViewModel.signOutResult.observe(viewLifecycleOwner) {
+        userViewModel.userProfileChanged.observe(viewLifecycleOwner) {
             if (it) {
-                updateForSignOut()
-                userViewModel.notifyUserSignedOut()
-            } else {
-                Toast.makeText(activity, getString(R.string.logout_failed), Toast.LENGTH_SHORT).show()
+                binding.textviewUserId.text = userViewModel.userName
+                Glide.with(this)
+                    .load(userViewModel.photoUrl)
+                    .circleCrop()
+                    .into(binding.imageviewUserPhoto)
             }
         }
     }
 
     private fun updateForSignIn() {
-        binding.textviewUserId.text = userViewModel.userID
+        binding.textviewUserId.text = userViewModel.userName
 
         Glide.with(this)
             .load(userViewModel.photoUrl)

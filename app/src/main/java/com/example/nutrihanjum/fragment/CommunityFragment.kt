@@ -8,12 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.nutrihanjum.RecyclerViewAdapter.CommunityRecyclerViewAdapter
 import com.example.nutrihanjum.viewmodel.CommunityViewModel
 import com.example.nutrihanjum.databinding.CommunityFragmentBinding
 import com.example.nutrihanjum.model.ContentDTO
 
-class CommunityFragment private constructor() : Fragment() {
+class CommunityFragment : Fragment() {
     private var _binding : CommunityFragmentBinding? = null
     private val binding get() = _binding!!
 
@@ -37,12 +38,17 @@ class CommunityFragment private constructor() : Fragment() {
 
         viewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
 
-        binding.communityfragmentRecylerview.layoutManager = LinearLayoutManager(activity)
+        val linearLayoutManager = LinearLayoutManager(activity)
+        linearLayoutManager.reverseLayout = true
+        linearLayoutManager.stackFromEnd = true
+
+        binding.communityfragmentRecylerview.layoutManager = linearLayoutManager
         binding.communityfragmentRecylerview.setHasFixedSize(true)
 
         val recyclerViewAdapter = CommunityRecyclerViewAdapter()
         recyclerViewAdapter.is_liked = { viewModel.is_liked(it) }
         recyclerViewAdapter.likeClickEvent = { viewModel.eventLikes(it) }
+        recyclerViewAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.communityfragmentRecylerview.adapter = recyclerViewAdapter
 
         viewModel.eventContents()

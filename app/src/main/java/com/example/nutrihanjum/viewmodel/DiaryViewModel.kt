@@ -18,7 +18,7 @@ class DiaryViewModel : ViewModel() {
     private val _diaryChanged = MutableLiveData<Boolean>()
     val diaryChanged: LiveData<Boolean> get() = _diaryChanged
 
-    private val _diaryList = MutableLiveData<ArrayList<ContentDTO>>()
+    private val _diaryList = MutableLiveData<ArrayList<ContentDTO>>(arrayListOf())
     val diaryList: LiveData<ArrayList<ContentDTO>> get() = _diaryList
 
     fun addDiary(content: ContentDTO, imageUri: String) = viewModelScope.launch {
@@ -48,12 +48,13 @@ class DiaryViewModel : ViewModel() {
     }
 
     fun loadAllDiaryAtDate(date: String) = viewModelScope.launch {
-        val list = ArrayList<ContentDTO>()
+        val list = _diaryList.value!!
+        list.clear()
 
         Repository.loadAllDiaryAtDate(date).collect {
-            list!!.add(it)
+            list.add(it)
         }
 
-        _diaryList.postValue(list!!)
+        _diaryList.postValue(list)
     }
 }

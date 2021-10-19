@@ -17,7 +17,7 @@ import com.example.nutrihanjum.databinding.ChatbotFragmentBinding
 import com.example.nutrihanjum.model.ChatbotDTO
 import com.example.nutrihanjum.viewmodel.ChatbotViewModel
 
-class ChatbotFragment private constructor() : Fragment() {
+class ChatbotFragment : Fragment() {
     private var _binding: ChatbotFragmentBinding? = null
     private val binding get() = _binding!!
 

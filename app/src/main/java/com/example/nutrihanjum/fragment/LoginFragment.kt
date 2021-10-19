@@ -1,0 +1,80 @@
+package com.example.nutrihanjum.fragment
+
+import android.content.Intent
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.ViewModelProvider
+import com.example.nutrihanjum.R
+import com.example.nutrihanjum.databinding.FragmentLoginBinding
+import com.example.nutrihanjum.viewmodel.LoginViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.GoogleAuthProvider
+
+class LoginFragment : Fragment() {
+
+    private var _binding: FragmentLoginBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var viewModel: LoginViewModel
+    private lateinit var googleLoginLauncher : ActivityResultLauncher<Intent>
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentLoginBinding.inflate(layoutInflater)
+
+        viewModel = ViewModelProvider(requireActivity()).get(LoginViewModel::class.java)
+
+        setLoginListener()
+
+        return binding.root
+    }
+
+
+    private fun googleLogin() {
+        val gso = GoogleSignInOptions
+            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.web_client_id))
+            .requestEmail()
+            .build()
+
+        val client = GoogleSignIn.getClient(requireActivity(), gso)
+        googleLoginLauncher.launch(client.signInIntent)
+    }
+
+    private fun setLoginListener() {
+
+        googleLoginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+
+            try {
+                val credential = GoogleAuthProvider.getCredential(task.result.idToken, null)
+                viewModel.authWithCredential(credential)
+            }
+            catch(e: Exception) {
+                Toast.makeText(activity, e.message, Toast.LENGTH_LONG).show()
+            }
+        }
+
+        binding.btnGoogleLogin.setOnClickListener {
+            googleLogin()
+        }
+
+        binding.btnSignUp.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction().apply {
+                hide(this@LoginFragment)
+                add(R.id.layout_fragment_container, SignUpFragment())
+                addToBackStack(null)
+                commit()
+            }
+        }
+    }
+}

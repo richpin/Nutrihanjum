@@ -4,15 +4,15 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.example.nutrihanjum.model.ContentDTO
+import com.example.nutrihanjum.model.UserDTO
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthProvider
-import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.*
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
@@ -27,7 +27,7 @@ object Repository {
     private val uid get() = auth.currentUser?.uid
 
     val userEmail get() = auth.currentUser?.email
-    val userID get() = auth.currentUser?.displayName
+    val userName get() = auth.currentUser?.displayName
     val userPhoto get() = auth.currentUser?.photoUrl
 
     fun loadAllDiaryAtDate(date: String) = callbackFlow {
@@ -51,7 +51,7 @@ object Repository {
     fun eventContents() = callbackFlow {
         val registration =
             store.collection("posts")
-                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .orderBy("timestamp")
                 .whereEqualTo("public", true)
                 .addSnapshotListener { value, error ->
                     if (error != null) {
@@ -81,7 +81,7 @@ object Repository {
                 this.update("likes", FieldValue.arrayUnion(uid))
             }
         }.continueWith {
-            if(it.isSuccessful) {
+            if (it.isSuccessful) {
                 offer(true)
             } else {
                 offer(false)
@@ -92,11 +92,60 @@ object Repository {
         awaitClose()
     }
 
-    fun modifyDiaryWithoutPhoto(content: ContentDTO) = callbackFlow {
-        store.collection("posts")
-            .document(content.id)
-            .set(content)
-            .continueWith {
+    fun updateUserProfileName(name: String) = callbackFlow {
+        auth.currentUser!!.updateProfile(userProfileChangeRequest {
+            displayName = name
+        }).continueWithTask {
+            if (it.isSuccessful) {
+                store.collection("users").document(uid!!).update("name", name)
+            } else {
+                trySend(false)
+                close()
+                null
+            }
+        }.continueWith {
+            if (it.isSuccessful) {
+                offer(true)
+            } else {
+                offer(false)
+            }
+            close()
+        }
+
+        awaitClose()
+    }
+
+    fun updateUserProfilePhoto(photo: Uri) = callbackFlow {
+        storage.reference.child("profileImages").child(uid!!)
+            .putFile(photo)
+            .continueWithTask {
+                if (it.isSuccessful) {
+                    it.result.storage.downloadUrl
+                } else {
+                    trySend(false)
+                    close()
+                    null
+                }
+            }.continueWithTask {
+                if (it.isSuccessful) {
+                    auth.currentUser!!.updateProfile(userProfileChangeRequest {
+                        photoUri = it.result
+                    })
+                } else {
+                    trySend(false)
+                    close()
+                    null
+                }
+            }
+            .continueWithTask {
+                if (it.isSuccessful) {
+                    store.collection("users").document(uid!!).update("profileUrl", userPhoto)
+                } else {
+                    trySend(false)
+                    close()
+                    null
+                }
+            }.continueWith {
                 if (it.isSuccessful) {
                     offer(true)
                 } else {
@@ -107,20 +156,52 @@ object Repository {
 
         awaitClose()
     }
+
+    fun modifyDiaryWithoutPhoto(content: ContentDTO) = callbackFlow {
+        store.collection("posts")
+            .document(content.id)
+            .update(
+                "content", content.content,
+                "mealTime", content.mealTime,
+                "public", content.isPublic
+            )
+            .continueWith {
+                if (it.isSuccessful) {
+                    offer(true)
+                } else {
+                    offer(false)
+                }
+                close()
+            }
+
+
+        awaitClose()
+    }
+
     fun modifyDiaryWithPhoto(content: ContentDTO, imageUri: String) = callbackFlow {
 
         storage.getReferenceFromUrl(content.imageUrl)
             .putFile(Uri.parse(imageUri))
             .continueWithTask {
-                it.result.storage.downloadUrl
+                if (it.isSuccessful) {
+                    it.result.storage.downloadUrl
+                } else {
+                    trySend(false)
+                    close()
+                    null
+                }
             }
             .continueWithTask {
                 if (it.isSuccessful) {
                     content.imageUrl = it.result.toString()
 
-                    store.collection("posts").document(content.id).set(content)
-                }
-                else {
+                    store.collection("posts").document(content.id).update(
+                        "content", content.content,
+                        "mealTime", content.mealTime,
+                        "public", content.isPublic,
+                        "imageUrl", content.imageUrl
+                    )
+                } else {
                     offer(false)
                     close()
                     null
@@ -143,18 +224,29 @@ object Repository {
             .continueWithTask {
                 if (it.isSuccessful) {
                     store.collection("posts").document(documentId).delete()
+                } else {
+                    trySend(false)
+                    close()
+                    null
                 }
-                else {
-                    offer(false)
+            }
+            .continueWithTask {
+                if (it.isSuccessful) {
+                    store.collection("users").document(uid!!).update(
+                        "posts",
+                        FieldValue.arrayRemove(documentId)
+                    )
+                } else {
+                    trySend(false)
                     close()
                     null
                 }
             }
             .continueWith {
                 if (it.isSuccessful) {
-                    offer(true)
+                    trySend(true)
                 } else {
-                    offer(false)
+                    trySend(false)
                 }
                 close()
             }
@@ -170,6 +262,8 @@ object Repository {
                 if (it.isSuccessful) {
                     it.result.storage.downloadUrl
                 } else {
+                    trySend(false)
+                    close()
                     null
                 }
             }
@@ -186,12 +280,25 @@ object Repository {
                     null
                 }
             }
-            .continueWith { result ->
+            .continueWithTask { result ->
                 if (result.isSuccessful) {
-                    offer(true)
+                    store.collection("users").document(uid!!).update(
+                        "posts",
+                        FieldValue.arrayUnion(content.id)
+                    )
                 } else {
-                    offer(false)
+                    trySend(false)
+                    close()
+                    null
                 }
+            }
+            .continueWith {
+                if (it.isSuccessful) {
+                    trySend(true)
+                } else {
+                    trySend(false)
+                }
+
                 close()
             }
 
@@ -199,19 +306,39 @@ object Repository {
     }
 
     fun authWithCredential(credential: AuthCredential) = callbackFlow {
-        auth.signInWithCredential(credential).continueWith { result ->
-            if (result.isSuccessful) {
-                offer(Pair(true, ""))
+        auth.signInWithCredential(credential).continueWithTask { task ->
+            if (task.isSuccessful) {
+                Log.wtf("Repository", "${task.result.additionalUserInfo!!.isNewUser}")
+                if (task.result.additionalUserInfo!!.isNewUser) {
+                    val user = UserDTO()
+                    with(task.result.user!!) {
+                        user.name = this.displayName ?: ""
+                        user.userID = this.uid
+                        user.profileUrl = this.photoUrl.toString()
+                    }
+                    store.collection("users").document(task.result.user!!.uid).set(user)
+                } else {
+                    trySend(Pair(true, ""))
+                    close()
+                    null
+                }
             } else {
-                offer(Pair(false, result.exception?.message))
+                trySend(Pair(false, task.exception?.message))
+                close()
+                null
             }
-            close()
+        }.continueWith { task ->
+            if (task.isSuccessful) {
+                trySend(Pair(true, ""))
+            } else {
+                trySend(Pair(false, task.exception?.message))
+            }
         }
 
         awaitClose()
     }
 
-    fun signOut(context: Context) = callbackFlow {
+    fun signOut(context: Context) {
         for (provider in auth.currentUser!!.providerData) {
             when (provider.providerId) {
                 FirebaseAuthProvider.PROVIDER_ID -> {
@@ -222,19 +349,10 @@ object Repository {
                         .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .build()
 
-                    GoogleSignIn.getClient(context, gso).signOut().continueWith {
-                        if (it.isSuccessful) {
-                            offer(true)
-                        } else {
-                            offer(false)
-                        }
-                        close()
-                    }
+                    GoogleSignIn.getClient(context, gso).signOut()
                 }
             }
         }
-
-        awaitClose()
     }
 
     fun isSigned() = auth.currentUser != null

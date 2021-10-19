@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.viewmodel.NewsViewModel
 
-class NewsFragment private constructor() : Fragment() {
+class NewsFragment : Fragment() {
 
     companion object {
         @Volatile private var instance: NewsFragment? = null

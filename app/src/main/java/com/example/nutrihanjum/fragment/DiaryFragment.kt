@@ -12,6 +12,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.nutrihanjum.AddDiaryActivity
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.RecyclerViewAdapter.DiaryRecyclerViewAdapter
@@ -24,7 +25,7 @@ import com.example.nutrihanjum.viewmodel.UserViewModel
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.CalendarMode
 
-class DiaryFragment private constructor() : Fragment() {
+class DiaryFragment: Fragment() {
 
     companion object {
         @Volatile private var instance: DiaryFragment? = null
@@ -159,6 +160,7 @@ class DiaryFragment private constructor() : Fragment() {
             visibility = View.VISIBLE
             layoutManager = LinearLayoutManager(activity)
             adapter = DiaryRecyclerViewAdapter(arrayListOf())
+            adapter!!.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             (adapter as DiaryRecyclerViewAdapter).onPopupClickListener = makePopupClickListener()
         }
 
