@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.nutrihanjum.RecyclerViewAdapter.CommunityRecyclerViewAdapter
 import com.example.nutrihanjum.viewmodel.CommunityViewModel
 import com.example.nutrihanjum.databinding.CommunityFragmentBinding
@@ -16,16 +17,14 @@ import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.viewmodel.UserViewModel
 import com.google.firebase.firestore.auth.User
 
-class CommunityFragment private constructor() : Fragment() {
+class CommunityFragment : Fragment() {
     private var _binding: CommunityFragmentBinding? = null
     private val binding get() = _binding!!
 
     companion object {
-        @Volatile
-        private var instance: CommunityFragment? = null
+        @Volatile private var instance: CommunityFragment? = null
 
-        @JvmStatic
-        fun getInstance(): CommunityFragment = instance ?: synchronized(this) {
+        @JvmStatic fun getInstance(): CommunityFragment = instance ?: synchronized(this) {
             instance ?: CommunityFragment().also {
                 instance = it
             }

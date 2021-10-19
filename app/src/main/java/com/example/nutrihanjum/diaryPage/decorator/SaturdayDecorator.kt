@@ -1,8 +1,6 @@
-package com.example.nutrihanjum.decorator
+package com.example.nutrihanjum.diaryPage.decorator
 
 import android.content.Context
-import android.graphics.Typeface
-import android.text.style.StyleSpan
 import android.text.style.TextAppearanceSpan
 import androidx.core.content.res.ResourcesCompat
 import com.example.nutrihanjum.R

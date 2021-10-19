@@ -1,28 +1,19 @@
-package com.example.nutrihanjum
+package com.example.nutrihanjum.diaryPage
 
 import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.FileProvider
 import com.example.nutrihanjum.databinding.ActivityAddDiaryBinding
-import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
-import android.content.ClipData
-import android.os.Build
 import android.view.View
 import androidx.activity.viewModels
 import com.bumptech.glide.Glide
 import com.canhub.cropper.*
+import com.example.nutrihanjum.R
 import com.example.nutrihanjum.model.ContentDTO
-import com.example.nutrihanjum.viewmodel.DiaryViewModel
 
 class AddDiaryActivity : AppCompatActivity() {
 
@@ -165,7 +156,7 @@ class AddDiaryActivity : AppCompatActivity() {
     private fun mapMealTimeStringToId(mealtime: String) = when(mealtime) {
         getString(R.string.meal_time_breakfast) -> R.id.radio_btn_breakfast
         getString(R.string.meal_time_lunch) -> R.id.radio_btn_lunch
-        getString(R.string.meal_time_dinner) ->  R.id.radio_btn_dinner
+        getString(R.string.meal_time_dinner) -> R.id.radio_btn_dinner
         getString(R.string.meal_time_dinner) -> R.id.radio_btn_snack
         getString(R.string.meal_time_midnight_snack) -> R.id.radio_btn_midnight
         else -> View.NO_ID

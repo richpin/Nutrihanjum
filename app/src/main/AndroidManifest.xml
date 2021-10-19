@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.nutrihanjum">
+    package="com.example.nutrihanjum" >
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
 
     <application
         android:name=".ApplicationClass"
@@ -16,25 +17,24 @@
         android:roundIcon="@mipmap/app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Nutrihanjum">
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.nutrihanjum.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true" >
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name="com.canhub.cropper.CropImageActivity"
-            android:theme="@style/Theme.AppCompat.Light"/>
-
         <activity
-            android:name=".AddDiaryActivity"
+            android:name="com.canhub.cropper.CropImageActivity"
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity
+            android:name=".diaryPage.AddDiaryActivity"
             android:exported="true" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".userPage.LoginActivity"
             android:exported="true" />
         <activity
             android:name=".MainActivity"

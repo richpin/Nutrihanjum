@@ -2,19 +2,20 @@ package com.example.nutrihanjum
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.nutrihanjum.databinding.ActivityMainBinding
+import com.example.nutrihanjum.diaryPage.DiaryFragment
 import com.example.nutrihanjum.fragment.*
-import com.example.nutrihanjum.viewmodel.UserViewModel
+import com.example.nutrihanjum.userPage.UserFragment
+import com.example.nutrihanjum.userPage.UserViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     lateinit var curFragment : Fragment
 
-    private val userViewModel : UserViewModel by viewModels()
+    private lateinit var userViewModel : UserViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_Nutrihanjum)
@@ -22,10 +23,20 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
 
-        curFragment = CommunityFragment.getInstance()
-        addFragments()
-        binding.bottomNavigation.selectedItemId = R.id.action_home
+        initFragments()
+
+        if (savedInstanceState?.containsKey("curFragment") == true) {
+            val id = savedInstanceState.getInt("curFragment")
+
+            curFragment = getFragmentFromResId(id)
+            binding.bottomNavigation.selectedItemId = id
+        } else {
+            curFragment = CommunityFragment.getInstance()
+            binding.bottomNavigation.selectedItemId = R.id.action_home
+        }
+
 
         if (userViewModel.isSigned()) {
             userViewModel.notifyUserSigned()
@@ -34,7 +45,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun addFragments() {
+    private fun initFragments() {
+        val transaction = supportFragmentManager.beginTransaction()
+
+        supportFragmentManager.fragments.forEach {
+            transaction.remove(it)
+        }
+
+        transaction.commitNow()
+
         supportFragmentManager.beginTransaction()
             .add(R.id.main_content, ChatbotFragment.getInstance()).hide(ChatbotFragment.getInstance())
             .add(R.id.main_content, CommunityFragment.getInstance()).hide(CommunityFragment.getInstance())
@@ -82,5 +101,28 @@ class MainActivity : AppCompatActivity() {
 
             false
         }
+    }
+
+    private fun getFragmentFromResId(id: Int) = when(id) {
+        R.id.action_home -> CommunityFragment.getInstance()
+        R.id.action_diary -> DiaryFragment.getInstance()
+        R.id.action_chatbot -> ChatbotFragment.getInstance()
+        R.id.action_news -> NewsFragment.getInstance()
+        R.id.action_user -> UserFragment.getInstance()
+        else -> CommunityFragment.getInstance()
+    }
+
+    private fun getResIdFromFragment(fragment: Fragment) = when (fragment) {
+        is CommunityFragment -> R.id.action_home
+        is DiaryFragment -> R.id.action_diary
+        is ChatbotFragment -> R.id.action_chatbot
+        is NewsFragment -> R.id.action_news
+        is UserFragment -> R.id.action_user
+        else -> R.id.action_home
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("curFragment", getResIdFromFragment(curFragment))
     }
 }

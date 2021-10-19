@@ -1,15 +1,12 @@
-package com.example.nutrihanjum.RecyclerViewAdapter
+package com.example.nutrihanjum.diaryPage
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.ItemDiaryBinding
 import com.example.nutrihanjum.model.ContentDTO
-import com.example.nutrihanjum.repository.Repository
-import com.example.nutrihanjum.viewmodel.DiaryViewModel
 import java.util.ArrayList
 
 class DiaryRecyclerViewAdapter(
@@ -25,7 +22,7 @@ class DiaryRecyclerViewAdapter(
         val viewHolder = ViewHolder(itemBinding)
 
         itemBinding.btnMore.setOnClickListener { v ->
-            val pos = viewHolder.adapterPosition
+            val pos = viewHolder.bindingAdapterPosition
 
             if (pos != RecyclerView.NO_POSITION) {
                 onPopupClickListener?.let { it(v, diaryList[pos]) }

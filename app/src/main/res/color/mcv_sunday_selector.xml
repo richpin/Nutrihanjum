@@ -10,7 +10,7 @@
         android:color="@android:color/white" />
 
     <item android:state_enabled="false"
-        android:color="@color/light_grey" />
+        android:color="@color/light_gray" />
 
     <item android:color="@color/sunday_color"/>
 </selector>
