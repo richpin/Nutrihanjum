@@ -25,7 +25,7 @@ object Repository {
     private val store get() = FirebaseFirestore.getInstance()
     private val storage get() = FirebaseStorage.getInstance()
 
-    private val uid get() = auth.currentUser?.uid
+    val uid get() = auth.currentUser?.uid
 
     val userEmail get() = auth.currentUser?.email
     val userID get() = auth.currentUser?.displayName
@@ -49,38 +49,29 @@ object Repository {
         awaitClose()
     }
 
-    fun eventContents() = callbackFlow {
-        val registration =
-            store.collection("posts")
-                .orderBy("timestamp")
-                .whereEqualTo("public", true)
-                .addSnapshotListener { value, error ->
-                    if (error != null) {
-                        Log.wtf("Repository", "listen:error", error)
-                        return@addSnapshotListener
+    fun loadContents() = callbackFlow {
+        store.collection("posts")
+            .orderBy("timestamp")
+            .whereEqualTo("public", true)
+            .get().continueWith {
+                if (it.isSuccessful) {
+                    it.result.documents.forEach {
+                        offer(it.toObject(ContentDTO::class.java))
                     }
-
-                    value?.documentChanges?.forEach {
-                        offer(it)
-                    }
+                } else {
+                    Log.wtf("Repository", it.exception?.message)
                 }
+                close()
+            }
 
-        awaitClose { registration.remove() }
+        awaitClose()
     }
 
-    fun isLiked(likes: List<String>): Boolean {
-        return likes.contains(uid)
-    }
-
-    fun isSaved(saved: List<String>): Boolean {
-        return saved.contains(uid)
-    }
-
-    fun eventLikes(contentDTO: ContentDTO) = callbackFlow {
+    fun eventLikes(contentDTO: ContentDTO, isLiked: Boolean) = callbackFlow {
         val registration = store.collection("posts").document(contentDTO.id)
 
         with(registration) {
-            if (isLiked(contentDTO.likes)) {
+            if (isLiked) {
                 this.update("likes", FieldValue.arrayRemove(uid))
             } else {
                 this.update("likes", FieldValue.arrayUnion(uid))
@@ -97,11 +88,11 @@ object Repository {
         awaitClose()
     }
 
-    fun eventSaved(contentDTO: ContentDTO) = callbackFlow {
+    fun eventSaved(contentDTO: ContentDTO, isSaved: Boolean) = callbackFlow {
         val postRegistration = store.collection("posts").document(contentDTO.id)
         val userRegistration = store.collection("users").document(uid!!)
 
-        if (isSaved(contentDTO.saved)) {
+        if (isSaved) {
             postRegistration.update("saved", FieldValue.arrayRemove(uid)).continueWithTask {
                 if (it.isSuccessful) {
                     userRegistration.update("saved", FieldValue.arrayRemove(contentDTO.id))
@@ -111,7 +102,7 @@ object Repository {
                     null
                 }
             }.continueWith {
-                if(it.isSuccessful) offer(true)
+                if (it.isSuccessful) offer(true)
                 else offer(false)
             }
         } else {
@@ -124,7 +115,7 @@ object Repository {
                     null
                 }
             }.continueWith {
-                if(it.isSuccessful) offer(true)
+                if (it.isSuccessful) offer(true)
                 else offer(false)
             }
         }

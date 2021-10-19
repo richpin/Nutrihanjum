@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class UserViewModel : ViewModel() {
+    val uid get() = Repository.uid
     val userEmail get() = Repository.userEmail
     val userID get() = Repository.userID
     val photoUrl get() = Repository.userPhoto

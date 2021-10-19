@@ -27,13 +27,20 @@ class CommunityRecyclerViewAdapter() :
         const val MONTH = 12
     }
 
-    lateinit var isLiked: ((List<String>) -> Boolean)
-    lateinit var isSaved: ((List<String>) -> Boolean)
-    lateinit var likeClickEvent: ((ContentDTO) -> Unit)
-    lateinit var savedClickEvent: ((ContentDTO) -> Unit)
+    lateinit var uid: String
+    lateinit var likeClickEvent: ((ContentDTO, Boolean) -> Unit)
+    lateinit var savedClickEvent: ((ContentDTO, Boolean) -> Unit)
 
-    fun updateList(data: ArrayList<ContentDTO>) {
+    fun updateContents(data: ArrayList<ContentDTO>) {
         contentDTOs = data
+    }
+
+    private fun isLiked(likes: List<String>): Boolean {
+        return likes.contains(uid)
+    }
+
+    private fun isSaved(saved: List<String>): Boolean {
+        return saved.contains(uid)
     }
 
     private fun formatTime(mContext: Context, regTime: Long): String {
@@ -95,10 +102,36 @@ class CommunityRecyclerViewAdapter() :
             press_saved_imageview = view.findViewById(R.id.press_saved_imageview)
 
             press_like_layout.setOnClickListener {
-                likeClickEvent(contentDTOs[adapterPosition])
+                likeClickEvent(
+                    contentDTOs[adapterPosition],
+                    isLiked(contentDTOs[adapterPosition].likes)
+                )
+
+                if (isLiked(contentDTOs[adapterPosition].likes)) {
+                    contentDTOs[adapterPosition].likes.remove(uid)
+                    communityitem_lccount_textview.text =
+                        formatCount(itemView.context, contentDTOs[adapterPosition].likes.size, 0)
+                    press_like_imageview.setImageResource(R.drawable.ic_favorite_border)
+                } else {
+                    contentDTOs[adapterPosition].likes.add(uid)
+                    communityitem_lccount_textview.text =
+                        formatCount(itemView.context, contentDTOs[adapterPosition].likes.size, 0)
+                    press_like_imageview.setImageResource(R.drawable.ic_favorite)
+                }
             }
             press_saved_imageview.setOnClickListener {
-                savedClickEvent(contentDTOs[adapterPosition])
+                savedClickEvent(
+                    contentDTOs[adapterPosition],
+                    isSaved(contentDTOs[adapterPosition].saved)
+                )
+
+                if (isSaved(contentDTOs[adapterPosition].saved)){
+                    contentDTOs[adapterPosition].saved.remove(uid)
+                    press_saved_imageview.setImageResource(R.drawable.ic_bookmark_border)
+                } else {
+                    contentDTOs[adapterPosition].saved.add(uid)
+                    press_saved_imageview.setImageResource(R.drawable.ic_bookmark)
+                }
             }
         }
     }
@@ -127,7 +160,7 @@ class CommunityRecyclerViewAdapter() :
             }
         }
         with(viewHolder.press_saved_imageview) {
-            if(isSaved(contentDTOs[position].saved)){
+            if (isSaved(contentDTOs[position].saved)) {
                 setImageResource(R.drawable.ic_bookmark)
             } else {
                 setImageResource(R.drawable.ic_bookmark_border)

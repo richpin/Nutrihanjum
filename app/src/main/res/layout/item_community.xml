@@ -52,14 +52,14 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="25dp">
+
         <TextView
             android:id="@+id/communityitem_lccount_textview"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"
-            android:textColor="@color/gray"
             android:fontFamily="@font/font_regular"
-            android:text="좋아요 8개 댓글 3개"/>
+            android:textColor="@color/gray" />
 
         <TextView
             android:id="@+id/communityitem_timeago_textview"

@@ -2,6 +2,7 @@ package com.example.nutrihanjum.fragment
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -32,6 +33,7 @@ class CommunityFragment private constructor() : Fragment() {
     }
 
     private lateinit var communityViewModel: CommunityViewModel
+    private lateinit var userViewModel: UserViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,23 +42,29 @@ class CommunityFragment private constructor() : Fragment() {
         _binding = CommunityFragmentBinding.inflate(inflater, container, false)
 
         communityViewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
+        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
 
         val linearLayoutManager = LinearLayoutManager(activity)
         linearLayoutManager.reverseLayout = true
         linearLayoutManager.stackFromEnd = true
         binding.communityfragmentRecylerview.layoutManager = linearLayoutManager
-
         binding.communityfragmentRecylerview.setHasFixedSize(true)
 
+        binding.communityfragmentSwiperefreshlayout.setOnRefreshListener {
+            communityViewModel.loadContents()
+            binding.communityfragmentSwiperefreshlayout.isRefreshing = false
+        }
+
         val recyclerViewAdapter = CommunityRecyclerViewAdapter()
-        recyclerViewAdapter.isLiked = { communityViewModel.isLiked(it) }
-        recyclerViewAdapter.isSaved = { communityViewModel.isSaved(it) }
-        recyclerViewAdapter.likeClickEvent = { communityViewModel.eventLikes(it) }
-        recyclerViewAdapter.savedClickEvent = { communityViewModel.eventSaved(it)}
+        recyclerViewAdapter.uid = userViewModel.uid!!
+        recyclerViewAdapter.likeClickEvent = { first, second -> communityViewModel.eventLikes(first, second) }
+        recyclerViewAdapter.savedClickEvent = { first, second -> communityViewModel.eventSaved(first, second)}
         binding.communityfragmentRecylerview.adapter = recyclerViewAdapter
 
-        communityViewModel.eventContents()
+        communityViewModel.loadContents()
         communityViewModel.contents.observe(viewLifecycleOwner, Observer {
+            recyclerViewAdapter.updateContents(it)
+            recyclerViewAdapter.notifyDataSetChanged()
         })
 
         return binding.root

@@ -9,8 +9,8 @@ data class ContentDTO(
     var uid: String = "",
     var timestamp: Long = 0,
     var date: String = "",
-    var likes: List<String> = listOf(),
-    var saved: List<String> = listOf(),
+    var likes: MutableList<String> = mutableListOf(),
+    var saved: MutableList<String> = mutableListOf(),
     var mealTime: String = "",
     var isPublic: Boolean = true
     ): Serializable{
