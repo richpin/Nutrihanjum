@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.fragment
+package com.example.nutrihanjum.chatbot
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -6,16 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.nutrihanjum.R
-import com.example.nutrihanjum.RecyclerViewAdapter.ChatbotRecyclerViewAdapter
 import com.example.nutrihanjum.databinding.ChatbotFragmentBinding
 import com.example.nutrihanjum.model.ChatbotDTO
-import com.example.nutrihanjum.viewmodel.ChatbotViewModel
 
 class ChatbotFragment : Fragment() {
     private var _binding: ChatbotFragmentBinding? = null

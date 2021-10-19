@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.RecyclerViewAdapter
+package com.example.nutrihanjum.chatbot
 
 import android.view.LayoutInflater
 import android.view.View

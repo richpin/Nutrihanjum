@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.viewmodel
+package com.example.nutrihanjum.community
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.repository.Repository
-import com.google.firebase.firestore.DocumentChange
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 

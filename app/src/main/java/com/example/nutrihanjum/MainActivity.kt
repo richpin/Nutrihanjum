@@ -4,11 +4,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.nutrihanjum.chatbot.ChatbotFragment
+import com.example.nutrihanjum.community.CommunityFragment
 import com.example.nutrihanjum.databinding.ActivityMainBinding
-import com.example.nutrihanjum.diaryPage.DiaryFragment
-import com.example.nutrihanjum.fragment.*
-import com.example.nutrihanjum.userPage.UserFragment
-import com.example.nutrihanjum.userPage.UserViewModel
+import com.example.nutrihanjum.diary.DiaryFragment
+import com.example.nutrihanjum.news.NewsFragment
+import com.example.nutrihanjum.user.UserFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

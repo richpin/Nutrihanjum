@@ -1,21 +1,15 @@
-package com.example.nutrihanjum.fragment
+package com.example.nutrihanjum.community
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.nutrihanjum.RecyclerViewAdapter.CommunityRecyclerViewAdapter
-import com.example.nutrihanjum.viewmodel.CommunityViewModel
 import com.example.nutrihanjum.databinding.CommunityFragmentBinding
-import com.example.nutrihanjum.model.ContentDTO
-import com.example.nutrihanjum.viewmodel.UserViewModel
-import com.google.firebase.firestore.auth.User
+import com.example.nutrihanjum.UserViewModel
 
 class CommunityFragment : Fragment() {
     private var _binding: CommunityFragmentBinding? = null

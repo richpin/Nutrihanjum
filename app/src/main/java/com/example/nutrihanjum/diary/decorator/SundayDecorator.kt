@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.diaryPage.decorator
+package com.example.nutrihanjum.diary.decorator
 
 import android.content.Context
 import android.text.style.TextAppearanceSpan

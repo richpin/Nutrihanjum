@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.userPage
+package com.example.nutrihanjum.user
 
 import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity

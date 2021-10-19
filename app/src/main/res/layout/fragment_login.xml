@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:padding="15dp"
     android:layout_centerVertical="true"
-    tools:context=".userPage.LoginFragment">
+    tools:context=".user.LoginFragment">
 
     <ImageView
         android:id="@+id/imageview_app_logo"

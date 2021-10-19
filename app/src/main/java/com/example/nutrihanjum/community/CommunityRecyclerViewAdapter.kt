@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.RecyclerViewAdapter
+package com.example.nutrihanjum.community
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,13 +7,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.Resource
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.model.ContentDTO
-import com.google.api.Distribution
 
 class CommunityRecyclerViewAdapter() :
     RecyclerView.Adapter<CommunityRecyclerViewAdapter.ViewHolder>() {
@@ -103,33 +100,33 @@ class CommunityRecyclerViewAdapter() :
 
             press_like_layout.setOnClickListener {
                 likeClickEvent(
-                    contentDTOs[adapterPosition],
-                    isLiked(contentDTOs[adapterPosition].likes)
+                    contentDTOs[bindingAdapterPosition],
+                    isLiked(contentDTOs[bindingAdapterPosition].likes)
                 )
 
-                if (isLiked(contentDTOs[adapterPosition].likes)) {
-                    contentDTOs[adapterPosition].likes.remove(uid)
+                if (isLiked(contentDTOs[bindingAdapterPosition].likes)) {
+                    contentDTOs[bindingAdapterPosition].likes.remove(uid)
                     communityitem_lccount_textview.text =
-                        formatCount(itemView.context, contentDTOs[adapterPosition].likes.size, 0)
+                        formatCount(itemView.context, contentDTOs[bindingAdapterPosition].likes.size, 0)
                     press_like_imageview.setImageResource(R.drawable.ic_favorite_border)
                 } else {
-                    contentDTOs[adapterPosition].likes.add(uid)
+                    contentDTOs[bindingAdapterPosition].likes.add(uid)
                     communityitem_lccount_textview.text =
-                        formatCount(itemView.context, contentDTOs[adapterPosition].likes.size, 0)
+                        formatCount(itemView.context, contentDTOs[bindingAdapterPosition].likes.size, 0)
                     press_like_imageview.setImageResource(R.drawable.ic_favorite)
                 }
             }
             press_saved_imageview.setOnClickListener {
                 savedClickEvent(
-                    contentDTOs[adapterPosition],
-                    isSaved(contentDTOs[adapterPosition].saved)
+                    contentDTOs[bindingAdapterPosition],
+                    isSaved(contentDTOs[bindingAdapterPosition].saved)
                 )
 
-                if (isSaved(contentDTOs[adapterPosition].saved)){
-                    contentDTOs[adapterPosition].saved.remove(uid)
+                if (isSaved(contentDTOs[bindingAdapterPosition].saved)){
+                    contentDTOs[bindingAdapterPosition].saved.remove(uid)
                     press_saved_imageview.setImageResource(R.drawable.ic_bookmark_border)
                 } else {
-                    contentDTOs[adapterPosition].saved.add(uid)
+                    contentDTOs[bindingAdapterPosition].saved.add(uid)
                     press_saved_imageview.setImageResource(R.drawable.ic_bookmark)
                 }
             }

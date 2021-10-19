@@ -4,7 +4,7 @@
     android:id="@+id/communityfragment_swiperefreshlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.CommunityFragment">
+    tools:context=".community.CommunityFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/communityfragment_recylerview"

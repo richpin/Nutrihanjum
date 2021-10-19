@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.diaryPage
+package com.example.nutrihanjum.diary
 
 import android.app.Activity
 import android.content.Intent
@@ -15,10 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.DiaryFragmentBinding
-import com.example.nutrihanjum.diaryPage.decorator.SaturdayDecorator
-import com.example.nutrihanjum.diaryPage.decorator.SundayDecorator
 import com.example.nutrihanjum.model.ContentDTO
-import com.example.nutrihanjum.userPage.UserViewModel
+import com.example.nutrihanjum.UserViewModel
+import com.example.nutrihanjum.diary.decorator.SaturdayDecorator
+import com.example.nutrihanjum.diary.decorator.SundayDecorator
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.CalendarMode
 

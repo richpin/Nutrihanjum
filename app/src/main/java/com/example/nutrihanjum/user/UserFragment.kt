@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.userPage
+package com.example.nutrihanjum.user
 
 import android.app.Activity
 import android.content.Intent
@@ -12,6 +12,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.R
+import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.databinding.UserFragmentBinding
 
 class UserFragment: Fragment() {

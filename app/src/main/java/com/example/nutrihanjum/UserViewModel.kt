@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.userPage
+package com.example.nutrihanjum
 
 import android.content.Context
 import android.net.Uri
@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class UserViewModel : ViewModel() {
+    val uid get() = UserRepository.uid
     val userEmail get() = UserRepository.userEmail
     val userName get() = UserRepository.userName
     val photoUrl get() = UserRepository.userPhoto

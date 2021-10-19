@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.fragment
+package com.example.nutrihanjum.news
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.nutrihanjum.R
-import com.example.nutrihanjum.viewmodel.NewsViewModel
 
 class NewsFragment : Fragment() {
 

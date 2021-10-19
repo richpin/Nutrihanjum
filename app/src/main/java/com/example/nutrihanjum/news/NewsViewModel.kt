@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.viewmodel
+package com.example.nutrihanjum.news
 
 import androidx.lifecycle.ViewModel
 

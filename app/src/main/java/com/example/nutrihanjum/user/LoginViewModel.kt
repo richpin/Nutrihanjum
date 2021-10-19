@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.userPage
+package com.example.nutrihanjum.user
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

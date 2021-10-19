@@ -24,7 +24,7 @@ object Repository {
     private val store get() = FirebaseFirestore.getInstance()
     private val storage get() = FirebaseStorage.getInstance()
 
-    val uid get() = auth.currentUser?.uid
+    private val uid get() = auth.currentUser?.uid
 
     val userEmail get() = auth.currentUser?.email
     val userID get() = auth.currentUser?.displayName

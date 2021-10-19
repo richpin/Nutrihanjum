@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.userPage
+package com.example.nutrihanjum.user
 
 import android.content.Intent
 import android.os.Bundle

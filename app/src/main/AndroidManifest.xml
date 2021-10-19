@@ -31,10 +31,10 @@
             android:name="com.canhub.cropper.CropImageActivity"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
-            android:name=".diaryPage.AddDiaryActivity"
+            android:name=".diary.AddDiaryActivity"
             android:exported="true" />
         <activity
-            android:name=".userPage.LoginActivity"
+            android:name=".user.LoginActivity"
             android:exported="true" />
         <activity
             android:name=".MainActivity"

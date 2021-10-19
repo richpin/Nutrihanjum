@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.viewmodel
+package com.example.nutrihanjum.chatbot
 
 import androidx.lifecycle.ViewModel
 
