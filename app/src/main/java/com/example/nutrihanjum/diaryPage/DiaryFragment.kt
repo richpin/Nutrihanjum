@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.fragment
+package com.example.nutrihanjum.diaryPage
 
 import android.app.Activity
 import android.content.Intent
@@ -13,15 +13,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.nutrihanjum.AddDiaryActivity
 import com.example.nutrihanjum.R
-import com.example.nutrihanjum.RecyclerViewAdapter.DiaryRecyclerViewAdapter
 import com.example.nutrihanjum.databinding.DiaryFragmentBinding
-import com.example.nutrihanjum.decorator.SaturdayDecorator
-import com.example.nutrihanjum.decorator.SundayDecorator
+import com.example.nutrihanjum.diaryPage.decorator.SaturdayDecorator
+import com.example.nutrihanjum.diaryPage.decorator.SundayDecorator
 import com.example.nutrihanjum.model.ContentDTO
-import com.example.nutrihanjum.viewmodel.DiaryViewModel
-import com.example.nutrihanjum.viewmodel.UserViewModel
+import com.example.nutrihanjum.userPage.UserViewModel
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.CalendarMode
 

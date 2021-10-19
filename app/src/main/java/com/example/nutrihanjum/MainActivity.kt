@@ -1,17 +1,14 @@
 package com.example.nutrihanjum
 
-import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.Log
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.nutrihanjum.databinding.ActivityMainBinding
+import com.example.nutrihanjum.diaryPage.DiaryFragment
 import com.example.nutrihanjum.fragment.*
-import com.example.nutrihanjum.viewmodel.UserViewModel
+import com.example.nutrihanjum.userPage.UserFragment
+import com.example.nutrihanjum.userPage.UserViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

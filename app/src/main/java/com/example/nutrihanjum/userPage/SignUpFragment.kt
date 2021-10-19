@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.fragment
+package com.example.nutrihanjum.userPage
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

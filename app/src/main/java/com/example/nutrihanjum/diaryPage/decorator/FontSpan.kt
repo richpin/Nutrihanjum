@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.decorator
+package com.example.nutrihanjum.diaryPage.decorator
 
 import android.graphics.Typeface
 import android.text.TextPaint

@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.viewmodel
+package com.example.nutrihanjum.userPage
 
 import android.content.Context
 import android.net.Uri
@@ -6,14 +6,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.nutrihanjum.repository.Repository
+import com.example.nutrihanjum.repository.UserRepository
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class UserViewModel : ViewModel() {
-    val userEmail get() = Repository.userEmail
-    val userName get() = Repository.userName
-    val photoUrl get() = Repository.userPhoto
+    val userEmail get() = UserRepository.userEmail
+    val userName get() = UserRepository.userName
+    val photoUrl get() = UserRepository.userPhoto
 
     private val _signed = MutableLiveData<Boolean>()
     val signed : LiveData<Boolean> get() = _signed
@@ -21,10 +21,10 @@ class UserViewModel : ViewModel() {
     private val _userProfileChanged = MutableLiveData<Boolean>()
     val userProfileChanged: LiveData<Boolean> get() = _userProfileChanged
 
-    fun isSigned() = Repository.isSigned()
+    fun isSigned() = UserRepository.isSigned()
 
     fun signOut(context: Context) {
-        Repository.signOut(context)
+        UserRepository.signOut(context)
     }
 
     fun notifyUserSigned() {
@@ -37,7 +37,7 @@ class UserViewModel : ViewModel() {
 
     fun updateUserName(name: String) {
         viewModelScope.launch {
-            Repository.updateUserProfileName(name).collect {
+            UserRepository.updateUserProfileName(name).collect {
                 _userProfileChanged.postValue(it)
             }
         }
@@ -45,7 +45,7 @@ class UserViewModel : ViewModel() {
 
     fun updateUserPhoto(photo: Uri) {
         viewModelScope.launch {
-            Repository.updateUserProfilePhoto(photo).collect {
+            UserRepository.updateUserProfilePhoto(photo).collect {
                 _userProfileChanged.postValue(it)
             }
         }

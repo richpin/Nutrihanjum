@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.fragment
+package com.example.nutrihanjum.userPage
 
 import android.app.Activity
 import android.content.Intent
@@ -8,17 +8,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
-import com.example.nutrihanjum.LoginActivity
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.UserFragmentBinding
-import com.example.nutrihanjum.util.OnSwipeTouchListener
-import com.example.nutrihanjum.viewmodel.UserViewModel
 
 class UserFragment: Fragment() {
     companion object {
