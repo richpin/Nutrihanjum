@@ -70,10 +70,12 @@ class UserFragment: Fragment() {
         userViewModel.userProfileChanged.observe(viewLifecycleOwner) {
             if (it) {
                 binding.textviewUserId.text = userViewModel.userName
-                Glide.with(this)
-                    .load(userViewModel.photoUrl)
-                    .circleCrop()
-                    .into(binding.imageviewUserPhoto)
+                userViewModel.photoUrl?.let {
+                    Glide.with(this)
+                        .load(userViewModel.photoUrl)
+                        .circleCrop()
+                        .into(binding.imageviewUserPhoto)
+                }
             }
         }
     }
@@ -81,10 +83,12 @@ class UserFragment: Fragment() {
     private fun updateForSignIn() {
         binding.textviewUserId.text = userViewModel.userName
 
-        Glide.with(this)
-            .load(userViewModel.photoUrl)
-            .circleCrop()
-            .into(binding.imageviewUserPhoto)
+        userViewModel.photoUrl?.let {
+            Glide.with(this)
+                .load(userViewModel.photoUrl)
+                .circleCrop()
+                .into(binding.imageviewUserPhoto)
+        }
 
         binding.layoutProfileSigned.visibility = View.VISIBLE
         binding.layoutProfileSignedOut.visibility = View.GONE

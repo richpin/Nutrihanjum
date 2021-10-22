@@ -46,14 +46,16 @@
                 android:text="@string/login_email"/>
 
             <EditText
+                android:id="@+id/edittext_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="5dp"
-                android:paddingVertical="5dp"
-                android:paddingHorizontal="10dp"
                 android:inputType="textEmailAddress"
-                android:background="@drawable/box_rounded_boarder"/>
+                android:background="@drawable/edittext_underline"
+                android:paddingHorizontal="3dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="5dp"/>
 
         </LinearLayout>
 
@@ -76,14 +78,16 @@
                 android:text="@string/login_password"/>
 
             <EditText
+                android:id="@+id/edittext_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="5dp"
-                android:paddingVertical="5dp"
-                android:paddingHorizontal="10dp"
                 android:inputType="textPassword"
-                android:background="@drawable/box_rounded_boarder"/>
+                android:background="@drawable/edittext_underline"
+                android:paddingHorizontal="3dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="5dp"/>
 
         </LinearLayout>
 
@@ -96,6 +100,7 @@
             app:cardCornerRadius="14dp">
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_email_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/yellow_200"

@@ -51,8 +51,4 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="DiaryPopup" parent="@style/Widget.AppCompat.PopupMenu.Overflow">
-        <item name="android:dropDownHorizontalOffset">-8dp</item>
-        <item name="android:dropDownVerticalOffset">8dp</item>
-    </style>
 </resources>

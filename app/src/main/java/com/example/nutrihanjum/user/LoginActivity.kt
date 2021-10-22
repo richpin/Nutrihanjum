@@ -21,7 +21,7 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
         loginViewModel.loginResult.observe(this) {
-            if (it.first) {
+            if (it) {
                 setResult(Activity.RESULT_OK)
                 finish()
             }

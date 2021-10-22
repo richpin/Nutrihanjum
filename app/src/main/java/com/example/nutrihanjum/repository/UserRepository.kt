@@ -96,34 +96,126 @@ object UserRepository {
     }
 
 
+    fun checkEmailValid(email: String) = callbackFlow {
+        val registration = store.collection("users")
+            .whereEqualTo("email", email)
+            .addSnapshotListener { snapshot, err ->
+                if (err != null || snapshot == null) return@addSnapshotListener
+
+                if (snapshot.documents.isEmpty()) {
+                    trySend(true)
+                } else {
+                    trySend(false)
+                }
+            }
+
+        awaitClose { registration.remove() }
+    }
+
+
+    fun checkUserNameValid(name: String) = callbackFlow {
+        val registration = store.collection("users")
+            .whereEqualTo("name", name)
+            .addSnapshotListener { snapshot, err ->
+                if (err != null || snapshot == null) return@addSnapshotListener
+
+                if (snapshot.documents.isEmpty()) {
+                    trySend(true)
+                } else {
+                    trySend(false)
+                }
+            }
+
+        awaitClose { registration.remove() }
+    }
+
+
+    fun createUserWithEmail(email: String, password: String, name: String) = callbackFlow {
+        var userID: String = ""
+
+        auth.createUserWithEmailAndPassword(email, password).continueWithTask { task ->
+            if (task.isSuccessful) {
+                userID = task.result.user!!.uid
+
+                task.result.user!!.updateProfile(userProfileChangeRequest {
+                    displayName = name
+                })
+            }
+            else {
+                trySend(false)
+                close()
+                null
+            }
+        }.continueWithTask { task ->
+            if (task.isSuccessful) {
+                val user = UserDTO()
+                user.name = name
+                user.email = email
+                user.userID = userID
+
+                store.collection("users").document(userID).set(user)
+            }
+            else {
+                trySend(false)
+                close()
+                null
+            }
+        }.continueWith {
+            if (it.isSuccessful) {
+                trySend(true)
+                auth.signOut()
+            } else {
+                trySend(false)
+            }
+            close()
+        }
+
+        awaitClose()
+    }
+
+
+    fun signInWithEmail(email: String, password: String) = callbackFlow {
+        auth.signInWithEmailAndPassword(email, password).continueWith {
+            if (it.isSuccessful) {
+                trySend(true)
+            } else {
+                trySend(false)
+            }
+        }
+
+        awaitClose()
+    }
+
+
     fun authWithCredential(credential: AuthCredential) = callbackFlow {
         auth.signInWithCredential(credential).continueWithTask { task ->
             if (task.isSuccessful) {
-                Log.wtf("Repository", "${task.result.additionalUserInfo!!.isNewUser}")
                 if (task.result.additionalUserInfo!!.isNewUser) {
                     val user = UserDTO()
                     with(task.result.user!!) {
                         user.name = this.displayName ?: ""
+                        user.email = this.email ?: ""
                         user.userID = this.uid
                         user.profileUrl = this.photoUrl.toString()
                     }
                     store.collection("users").document(task.result.user!!.uid).set(user)
                 } else {
-                    trySend(Pair(true, ""))
+                    trySend(true)
                     close()
                     null
                 }
             } else {
-                trySend(Pair(false, task.exception?.message))
+                trySend(false)
                 close()
                 null
             }
         }.continueWith { task ->
             if (task.isSuccessful) {
-                trySend(Pair(true, ""))
+                trySend(true)
             } else {
-                trySend(Pair(false, task.exception?.message))
+                trySend(false)
             }
+            close()
         }
 
         awaitClose()
@@ -145,6 +237,7 @@ object UserRepository {
                 }
             }
         }
+
     }
 
 

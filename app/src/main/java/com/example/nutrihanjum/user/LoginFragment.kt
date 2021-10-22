@@ -67,6 +67,13 @@ class LoginFragment : Fragment() {
             googleLogin()
         }
 
+        binding.btnEmailLogin.setOnClickListener {
+            val email = binding.edittextEmail.text.toString()
+            val password = binding.edittextPassword.text.toString()
+
+            viewModel.signInWithEmail(email, password)
+        }
+
         binding.btnSignUp.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction().apply {
                 hide(this@LoginFragment)

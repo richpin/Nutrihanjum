@@ -20,7 +20,7 @@
 
 
     <string name="google_login">구글로 로그인</string>
-    <string name="login_failed">로그인에 실패했습니다. 잠시 후 다시 시도해주세요.</string>
+    <string name="login_failed">이메일 혹은 비밀번호가 틀렸습니다.</string>
     <string name="logout_failed">로그아웃에 실패했습니다. 잠시 후 다시 시도해주세요.</string>
     <string name="login_btn">로그인</string>
     <string name="logout_btn">로그아웃</string>
@@ -62,6 +62,9 @@
     <string name="time_month_before">달 전</string>
     <string name="time_year_before">년 전</string>
     <string name="msg_sign_up">이메일로 회원가입</string>
+
     <string name="nick_name">이름 / 닉네임</string>
     <string name="request_sign_up">가입하기</string>
+    <string name="signup_not_filled">아직 입력이 완료되지 않았어요</string>
+    <string name="signup_failed">가입에 실패했어요. 잠시 후에 다시 시도해주세요</string>
 </resources>
