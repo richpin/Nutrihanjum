@@ -47,7 +47,12 @@ object UserRepository {
 
         Tasks.whenAllComplete(tasks).onSuccessTask {
             trySend(true)
-            updateUserDB(userEmail!!, userName!!, if (userPhoto == null) "" else userPhoto.toString())
+            updateUserDB(
+                userEmail!!,
+                userName!!,
+                if (userPhoto == null) "" else userPhoto.toString()
+            )
+
         }.continueWith {
             close()
         }
@@ -96,13 +101,15 @@ object UserRepository {
 
             posts.forEach {
                 val postDoc = store.collection("posts").document(it.toString())
-                transaction.update(postDoc,
+                transaction.update(
+                    postDoc,
                     "profileName", name,
                     "profileUrl", photo
                 )
             }
 
-            transaction.update(doc,
+            transaction.update(
+                doc,
                 "email", email,
                 "name", name,
                 "profileUrl", photo

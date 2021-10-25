@@ -98,11 +98,14 @@ object DiaryRepository {
     fun deleteDiary(documentId: String, imageUrl: String) = callbackFlow {
         storage.getReferenceFromUrl(imageUrl).delete().onSuccessTask {
             store.collection("posts").document(documentId).delete()
-        }.onSuccessTask {
-            store.collection("users").document(uid!!).update(
-                "posts",
-                FieldValue.arrayRemove(documentId)
-            )
+            store.runTransaction { transaction ->
+                transaction.delete(store.collection("posts").document(documentId))
+                transaction.update(
+                    store.collection("users").document(uid!!),
+                    "posts",
+                    FieldValue.arrayRemove(documentId)
+                )
+            }
         }.continueWith {
             if (it.isSuccessful) {
                 trySend(true)
@@ -130,15 +133,16 @@ object DiaryRepository {
                 content.profileName = userName!!
                 content.profileUrl = userPhoto.toString()
 
-                store.collection("posts").document(content.id).set(content)
-            }
-            .onSuccessTask {
-                store.collection("users").document(uid!!).update(
-                    "posts",
-                    FieldValue.arrayUnion(content.id)
-                )
-            }
-            .continueWith {
+                store.runTransaction { transaction ->
+                    transaction.set(store.collection("posts").document(content.id), content)
+                    transaction.update(
+                        store.collection("users").document(uid!!),
+                        "posts",
+                        FieldValue.arrayUnion(content.id)
+                    )
+                }
+
+            }.continueWith {
                 if (it.isSuccessful) {
                     trySend(true)
                 } else {
