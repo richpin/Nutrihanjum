@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.databinding.UserFragmentBinding
+import com.example.nutrihanjum.user.login.LoginActivity
 
 class UserFragment: Fragment() {
     companion object {
@@ -27,8 +28,11 @@ class UserFragment: Fragment() {
     }
     private var _binding : UserFragmentBinding? = null
     private val binding get() = _binding!!
+
     private lateinit var userViewModel : UserViewModel
+
     private lateinit var loginLauncher: ActivityResultLauncher<Intent>
+    private lateinit var profileLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,12 +41,36 @@ class UserFragment: Fragment() {
         _binding = UserFragmentBinding.inflate(layoutInflater)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
 
+        makeActivityLauncher()
+        addViewListener()
+        addLiveDataObserver()
+
+        return binding.root
+    }
+
+
+    private fun makeActivityLauncher() {
         loginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 userViewModel.notifyUserSigned()
             }
         }
 
+        profileLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                userViewModel.photoUrl?.let {
+                    Glide.with(this)
+                        .load(it)
+                        .circleCrop()
+                        .into(binding.imageviewUserPhoto)
+                }
+                binding.textviewUserId.text = userViewModel.userName
+            }
+        }
+    }
+
+
+    private fun addViewListener() {
         binding.btnLogout.setOnClickListener {
             userViewModel.signOut(requireContext())
             userViewModel.notifyUserSignedOut()
@@ -52,12 +80,13 @@ class UserFragment: Fragment() {
             loginLauncher.launch(Intent(activity, LoginActivity::class.java))
         }
 
-        return binding.root
+        binding.btnUpdateProfile.setOnClickListener {
+            profileLauncher.launch(Intent(activity, UpdateProfileActivity::class.java))
+        }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
+    private fun addLiveDataObserver() {
         userViewModel.signed.observe(viewLifecycleOwner) { signed ->
             if (signed) {
                 updateForSignIn()
@@ -66,19 +95,10 @@ class UserFragment: Fragment() {
                 updateForSignOut()
             }
         }
-
-        userViewModel.userProfileChanged.observe(viewLifecycleOwner) {
-            if (it) {
-                binding.textviewUserId.text = userViewModel.userName
-                userViewModel.photoUrl?.let {
-                    Glide.with(this)
-                        .load(userViewModel.photoUrl)
-                        .circleCrop()
-                        .into(binding.imageviewUserPhoto)
-                }
-            }
-        }
     }
+
+
+
 
     private fun updateForSignIn() {
         binding.textviewUserId.text = userViewModel.userName
@@ -92,16 +112,18 @@ class UserFragment: Fragment() {
 
         binding.layoutProfileSigned.visibility = View.VISIBLE
         binding.layoutProfileSignedOut.visibility = View.GONE
-        binding.btnLogout.visibility = View.VISIBLE
+        binding.layoutSetting.visibility = View.VISIBLE
     }
+
 
     private fun updateForSignOut() {
         binding.textviewUserId.text = getString(R.string.request_login)
 
         binding.layoutProfileSigned.visibility = View.GONE
         binding.layoutProfileSignedOut.visibility = View.VISIBLE
-        binding.btnLogout.visibility = View.GONE
+        binding.layoutSetting.visibility = View.GONE
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

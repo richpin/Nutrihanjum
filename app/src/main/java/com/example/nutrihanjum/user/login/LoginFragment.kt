@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.user
+package com.example.nutrihanjum.user.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -82,5 +82,11 @@ class LoginFragment : Fragment() {
                 commit()
             }
         }
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

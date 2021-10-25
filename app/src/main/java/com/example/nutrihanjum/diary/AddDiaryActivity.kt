@@ -41,6 +41,7 @@ class AddDiaryActivity : AppCompatActivity() {
         }
     }
 
+
     private fun initForAddDiary() {
         val date = intent.getStringExtra("date")!!
 
@@ -72,6 +73,7 @@ class AddDiaryActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun initForModifyDiary() {
         val content = intent.getSerializableExtra("content") as ContentDTO
@@ -108,6 +110,7 @@ class AddDiaryActivity : AppCompatActivity() {
         }
     }
 
+
     private fun initCommonView() {
         binding.imageviewPreview.setOnClickListener {
             getPhoto()
@@ -134,6 +137,7 @@ class AddDiaryActivity : AppCompatActivity() {
         }
     }
 
+
     private fun getPhoto() {
         cropImageLauncher.launch(
             options {
@@ -143,6 +147,7 @@ class AddDiaryActivity : AppCompatActivity() {
             }
         )
     }
+
 
     private fun mapMealTimeIdToString(mealtime: Int) = when (mealtime) {
         R.id.radio_btn_breakfast -> getString(R.string.meal_time_breakfast)

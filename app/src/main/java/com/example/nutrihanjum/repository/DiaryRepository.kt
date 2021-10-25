@@ -69,30 +69,18 @@ object DiaryRepository {
 
         storage.getReferenceFromUrl(content.imageUrl)
             .putFile(Uri.parse(imageUri))
-            .continueWithTask {
-                if (it.isSuccessful) {
-                    it.result.storage.downloadUrl
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
+            .onSuccessTask {
+                it.storage.downloadUrl
             }
-            .continueWithTask {
-                if (it.isSuccessful) {
-                    content.imageUrl = it.result.toString()
+            .onSuccessTask {
+                content.imageUrl = it.toString()
 
-                    store.collection("posts").document(content.id).update(
-                        "content", content.content,
-                        "mealTime", content.mealTime,
-                        "public", content.isPublic,
-                        "imageUrl", content.imageUrl
-                    )
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
+                store.collection("posts").document(content.id).update(
+                    "content", content.content,
+                    "mealTime", content.mealTime,
+                    "public", content.isPublic,
+                    "imageUrl", content.imageUrl
+                )
             }
             .continueWith { result ->
                 if (result.isSuccessful) {
@@ -108,36 +96,21 @@ object DiaryRepository {
 
 
     fun deleteDiary(documentId: String, imageUrl: String) = callbackFlow {
-        storage.getReferenceFromUrl(imageUrl).delete()
-            .continueWithTask {
-                if (it.isSuccessful) {
-                    store.collection("posts").document(documentId).delete()
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
+        storage.getReferenceFromUrl(imageUrl).delete().onSuccessTask {
+            store.collection("posts").document(documentId).delete()
+        }.onSuccessTask {
+            store.collection("users").document(uid!!).update(
+                "posts",
+                FieldValue.arrayRemove(documentId)
+            )
+        }.continueWith {
+            if (it.isSuccessful) {
+                trySend(true)
+            } else {
+                trySend(false)
             }
-            .continueWithTask {
-                if (it.isSuccessful) {
-                    store.collection("users").document(uid!!).update(
-                        "posts",
-                        FieldValue.arrayRemove(documentId)
-                    )
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
-            }
-            .continueWith {
-                if (it.isSuccessful) {
-                    trySend(true)
-                } else {
-                    trySend(false)
-                }
-                close()
-            }
+            close()
+        }
 
         awaitClose()
     }
@@ -147,39 +120,23 @@ object DiaryRepository {
         val filename = "IMG_${SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())}.png"
         storage.reference.child("images").child(filename)
             .putFile(Uri.parse(imageUri))
-            .continueWithTask {
-                if (it.isSuccessful) {
-                    it.result.storage.downloadUrl
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
+            .onSuccessTask {
+                it.storage.downloadUrl
             }
-            .continueWithTask {
-                if (it.isSuccessful) {
-                    content.imageUrl = it.result.toString()
-                    content.uid = uid!!
-                    content.id = uid + content.timestamp
+            .onSuccessTask {
+                content.imageUrl = it.toString()
+                content.uid = uid!!
+                content.id = uid + content.timestamp
+                content.profileName = userName!!
+                content.profileUrl = userPhoto.toString()
 
-                    store.collection("posts").document(content.id).set(content)
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
+                store.collection("posts").document(content.id).set(content)
             }
-            .continueWithTask { result ->
-                if (result.isSuccessful) {
-                    store.collection("users").document(uid!!).update(
-                        "posts",
-                        FieldValue.arrayUnion(content.id)
-                    )
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
+            .onSuccessTask {
+                store.collection("users").document(uid!!).update(
+                    "posts",
+                    FieldValue.arrayUnion(content.id)
+                )
             }
             .continueWith {
                 if (it.isSuccessful) {

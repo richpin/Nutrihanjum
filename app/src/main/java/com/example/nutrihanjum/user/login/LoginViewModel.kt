@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.user
+package com.example.nutrihanjum.user.login
 
 import android.util.Patterns
 import androidx.lifecycle.LiveData

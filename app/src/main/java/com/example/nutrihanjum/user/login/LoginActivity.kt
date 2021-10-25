@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.user
+package com.example.nutrihanjum.user.login
 
 import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
@@ -30,12 +30,14 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        initView()
+        if (savedInstanceState == null) {
+            initView()
+        }
     }
 
     private fun initView() {
         supportFragmentManager.beginTransaction()
-            .replace(binding.root.id, LoginFragment())
+            .replace(binding.layoutFragmentContainer.id, LoginFragment())
             .commit()
     }
 

@@ -67,4 +67,5 @@
     <string name="request_sign_up">가입하기</string>
     <string name="signup_not_filled">아직 입력이 완료되지 않았어요</string>
     <string name="signup_failed">가입에 실패했어요. 잠시 후에 다시 시도해주세요</string>
+    <string name="update_profile">프로필 수정</string>
 </resources>

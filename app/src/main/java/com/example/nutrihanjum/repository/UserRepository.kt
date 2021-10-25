@@ -6,6 +6,9 @@ import android.util.Log
 import com.example.nutrihanjum.model.UserDTO
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.TaskCompletionSource
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthProvider
@@ -13,6 +16,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 
@@ -27,23 +31,24 @@ object UserRepository {
     val userName get() = auth.currentUser?.displayName
     val userPhoto get() = auth.currentUser?.photoUrl
 
-    fun updateUserProfileName(name: String) = callbackFlow {
-        auth.currentUser!!.updateProfile(userProfileChangeRequest {
-            displayName = name
-        }).continueWithTask {
-            if (it.isSuccessful) {
-                store.collection("users").document(uid!!).update("name", name)
-            } else {
-                trySend(false)
-                close()
-                null
-            }
+
+    fun updateUserProfile(email: String, name: String, photo: Uri?) = callbackFlow {
+        val tasks = ArrayList<Task<Void>>()
+
+        if (email != userEmail) {
+            tasks.add(updateEmail(email))
+        }
+        if (name != userName) {
+            tasks.add(updateName(name))
+        }
+        if (photo != null) {
+            tasks.add(updateProfileImage(photo))
+        }
+
+        Tasks.whenAllComplete(tasks).onSuccessTask {
+            trySend(true)
+            updateUserDB(userEmail!!, userName!!, if (userPhoto == null) "" else userPhoto.toString())
         }.continueWith {
-            if (it.isSuccessful) {
-                trySend(true)
-            } else {
-                trySend(false)
-            }
             close()
         }
 
@@ -51,58 +56,72 @@ object UserRepository {
     }
 
 
-    fun updateUserProfilePhoto(photo: Uri) = callbackFlow {
-        storage.reference.child("profileImages").child(uid!!)
+    private fun updateProfileImage(photo: Uri): Task<Void> {
+        return storage.reference.child("profileImages")
+            .child(uid!!)
             .putFile(photo)
+            .onSuccessTask {
+                it.storage.downloadUrl
+            }
             .continueWithTask {
-                if (it.isSuccessful) {
-                    it.result.storage.downloadUrl
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
-            }.continueWithTask {
                 if (it.isSuccessful) {
                     auth.currentUser!!.updateProfile(userProfileChangeRequest {
                         photoUri = it.result
                     })
                 } else {
-                    trySend(false)
-                    close()
-                    null
+                    throw Exception(it.exception)
                 }
             }
-            .continueWithTask {
-                if (it.isSuccessful) {
-                    store.collection("users").document(uid!!).update("profileUrl",
-                        Repository.userPhoto
-                    )
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
-            }.continueWith {
-                if (it.isSuccessful) {
-                    trySend(true)
-                } else {
-                    trySend(false)
-                }
-                close()
-            }
-
-        awaitClose()
     }
 
 
-    fun checkEmailValid(email: String) = callbackFlow {
+    private fun updateEmail(email: String): Task<Void> {
+        return auth.currentUser!!.updateEmail(email)
+    }
+
+
+    private fun updateName(name: String): Task<Void> {
+        return auth.currentUser!!.updateProfile(userProfileChangeRequest {
+            displayName = name
+        })
+    }
+
+
+    private fun updateUserDB(email: String, name: String, photo: String): Task<Void> {
+        val doc = store.collection("users").document(uid!!)
+
+        return store.runTransaction { transaction ->
+            val snapshot = transaction.get(doc)
+            val posts = snapshot.get("posts") as List<*>
+
+            posts.forEach {
+                val postDoc = store.collection("posts").document(it.toString())
+                transaction.update(postDoc,
+                    "profileName", name,
+                    "profileUrl", photo
+                )
+            }
+
+            transaction.update(doc,
+                "email", email,
+                "name", name,
+                "profileUrl", photo
+            )
+
+            null
+        }
+    }
+
+
+    fun checkEmailUnique(email: String) = callbackFlow {
         val registration = store.collection("users")
             .whereEqualTo("email", email)
             .addSnapshotListener { snapshot, err ->
                 if (err != null || snapshot == null) return@addSnapshotListener
 
                 if (snapshot.documents.isEmpty()) {
+                    trySend(true)
+                } else if (snapshot.documents.size == 1 && snapshot.documents[0]["userID"] == uid) {
                     trySend(true)
                 } else {
                     trySend(false)
@@ -113,13 +132,15 @@ object UserRepository {
     }
 
 
-    fun checkUserNameValid(name: String) = callbackFlow {
+    fun checkUserNameUnique(name: String) = callbackFlow {
         val registration = store.collection("users")
             .whereEqualTo("name", name)
             .addSnapshotListener { snapshot, err ->
                 if (err != null || snapshot == null) return@addSnapshotListener
 
                 if (snapshot.documents.isEmpty()) {
+                    trySend(true)
+                } else if (snapshot.documents.size == 1 && snapshot.documents[0]["userID"] == uid) {
                     trySend(true)
                 } else {
                     trySend(false)
@@ -133,40 +154,28 @@ object UserRepository {
     fun createUserWithEmail(email: String, password: String, name: String) = callbackFlow {
         var userID: String = ""
 
-        auth.createUserWithEmailAndPassword(email, password).continueWithTask { task ->
-            if (task.isSuccessful) {
-                userID = task.result.user!!.uid
+        auth.createUserWithEmailAndPassword(email, password).onSuccessTask { result ->
+            userID = result.user!!.uid
 
-                task.result.user!!.updateProfile(userProfileChangeRequest {
-                    displayName = name
-                })
-            }
-            else {
-                trySend(false)
-                close()
-                null
-            }
-        }.continueWithTask { task ->
-            if (task.isSuccessful) {
-                val user = UserDTO()
-                user.name = name
-                user.email = email
-                user.userID = userID
+            result.user!!.updateProfile(userProfileChangeRequest {
+                displayName = name
+            })
 
-                store.collection("users").document(userID).set(user)
-            }
-            else {
-                trySend(false)
-                close()
-                null
-            }
+        }.onSuccessTask { result ->
+            val user = UserDTO()
+            user.name = name
+            user.email = email
+            user.userID = userID
+
+            store.collection("users").document(userID).set(user)
+
         }.continueWith {
             if (it.isSuccessful) {
                 trySend(true)
-                auth.signOut()
             } else {
                 trySend(false)
             }
+            auth.signOut()
             close()
         }
 
@@ -181,6 +190,7 @@ object UserRepository {
             } else {
                 trySend(false)
             }
+            close()
         }
 
         awaitClose()
@@ -188,29 +198,23 @@ object UserRepository {
 
 
     fun authWithCredential(credential: AuthCredential) = callbackFlow {
-        auth.signInWithCredential(credential).continueWithTask { task ->
-            if (task.isSuccessful) {
-                if (task.result.additionalUserInfo!!.isNewUser) {
-                    val user = UserDTO()
-                    with(task.result.user!!) {
-                        user.name = this.displayName ?: ""
-                        user.email = this.email ?: ""
-                        user.userID = this.uid
-                        user.profileUrl = this.photoUrl.toString()
-                    }
-                    store.collection("users").document(task.result.user!!.uid).set(user)
-                } else {
-                    trySend(true)
-                    close()
-                    null
+        auth.signInWithCredential(credential).onSuccessTask { result ->
+            if (result.additionalUserInfo!!.isNewUser) {
+                val user = UserDTO()
+                with(result.user!!) {
+                    user.name = this.displayName ?: ""
+                    user.email = this.email ?: ""
+                    user.userID = this.uid
+                    user.profileUrl = this.photoUrl.toString()
                 }
+                store.collection("users").document(result.user!!.uid).set(user)
             } else {
-                trySend(false)
-                close()
-                null
+                throw Exception("NOT NEW USER")
             }
         }.continueWith { task ->
             if (task.isSuccessful) {
+                trySend(true)
+            } else if ("NOT NEW USER".contentEquals(task.exception?.message)) {
                 trySend(true)
             } else {
                 trySend(false)

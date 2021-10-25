@@ -1,5 +1,6 @@
-package com.example.nutrihanjum.user
+package com.example.nutrihanjum.user.login
 
+import android.net.Uri
 import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,21 +14,22 @@ import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
 class SingUpViewModel: ViewModel() {
+
     private val _signUpResult = MutableLiveData<Boolean>()
     val signUpResult: LiveData<Boolean> get() = _signUpResult
 
     private var emailValidJob: Job? = null
-    private val _emailValid = MutableLiveData<Boolean>(false)
+    private val _emailValid = MutableLiveData(false)
     val emailValid: LiveData<Boolean> get() = _emailValid
 
     private var userNameValidJob: Job? = null
-    private val _userNameValid = MutableLiveData<Boolean>(false)
+    private val _userNameValid = MutableLiveData(false)
     val userNameValid: LiveData<Boolean> get() = _userNameValid
 
-    private val _passwordValid = MutableLiveData<Boolean>(false)
+    private val _passwordValid = MutableLiveData(false)
     val passwordValid: LiveData<Boolean> get() = _passwordValid
 
-    private val _passwordCheck = MutableLiveData<Boolean>(false)
+    private val _passwordCheck = MutableLiveData(false)
     val passwordCheck: LiveData<Boolean> get() = _passwordCheck
 
 
@@ -49,7 +51,7 @@ class SingUpViewModel: ViewModel() {
         }
 
         userNameValidJob = viewModelScope.launch {
-            UserRepository.checkUserNameValid(name).collectLatest {
+            UserRepository.checkUserNameUnique(name).collectLatest {
                 _userNameValid.postValue(it)
             }
         }
@@ -67,7 +69,7 @@ class SingUpViewModel: ViewModel() {
         }
 
         emailValidJob = viewModelScope.launch {
-            UserRepository.checkEmailValid(email).collectLatest {
+            UserRepository.checkEmailUnique(email).collectLatest {
                 _emailValid.postValue(it)
             }
         }
@@ -85,7 +87,6 @@ class SingUpViewModel: ViewModel() {
     fun checkPasswordSame(password: String, check: String) {
         _passwordCheck.value = password == check && passwordValid.value == true
     }
-
 
 
     fun createUserWithEmail(email: String, password: String, name: String) = viewModelScope.launch {

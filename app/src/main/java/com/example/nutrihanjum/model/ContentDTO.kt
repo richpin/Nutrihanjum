@@ -12,7 +12,9 @@ data class ContentDTO(
     var likes: MutableList<String> = mutableListOf(),
     var saved: MutableList<String> = mutableListOf(),
     var mealTime: String = "",
-    var isPublic: Boolean = true
+    var isPublic: Boolean = true,
+    var profileName: String = "",
+    var profileUrl: String = ""
     ): Serializable{
     data class Comment(var uid : String = "",
                        var comment : String = "",
