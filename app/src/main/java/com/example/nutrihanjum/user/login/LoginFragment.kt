@@ -1,7 +1,8 @@
-package com.example.nutrihanjum.user
+package com.example.nutrihanjum.user.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -59,12 +60,23 @@ class LoginFragment : Fragment() {
                 viewModel.authWithCredential(credential)
             }
             catch(e: Exception) {
-                Toast.makeText(activity, e.message, Toast.LENGTH_LONG).show()
+                Log.wtf(activity?.localClassName, e.message)
             }
         }
 
         binding.btnGoogleLogin.setOnClickListener {
             googleLogin()
+        }
+
+        binding.btnEmailLogin.setOnClickListener {
+            val email = binding.edittextEmail.text.toString()
+            val password = binding.edittextPassword.text.toString()
+
+            if (email.isNotEmpty() && password.isNotEmpty()) {
+                viewModel.signInWithEmail(email, password)
+            } else {
+                Toast.makeText(activity, getString(R.string.login_not_filled), Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.btnSignUp.setOnClickListener {
@@ -75,5 +87,11 @@ class LoginFragment : Fragment() {
                 commit()
             }
         }
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

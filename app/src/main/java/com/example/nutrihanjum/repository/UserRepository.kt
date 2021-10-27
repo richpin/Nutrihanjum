@@ -6,6 +6,9 @@ import android.util.Log
 import com.example.nutrihanjum.model.UserDTO
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.TaskCompletionSource
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthProvider
@@ -13,6 +16,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 
@@ -27,152 +31,189 @@ object UserRepository {
     val userName get() = auth.currentUser?.displayName
     val userPhoto get() = auth.currentUser?.photoUrl
 
-    fun updateUserProfileName(name: String) = callbackFlow {
-        auth.currentUser!!.updateProfile(userProfileChangeRequest {
-            displayName = name
-        }).continueWithTask {
-            if (it.isSuccessful) {
-                store.collection("users").document(uid!!).update("name", name)
-            } else {
-                trySend(false)
-                close()
-                null
-            }
-        }.continueWithTask {
-            if (it.isSuccessful) {
-                store.collection("users").document(uid!!).get()
-            } else {
-                trySend(false)
-                close()
-                null
-            }
-        }.continueWithTask {
-            if (it.isSuccessful) {
-                val posts = it.result["posts"] as List<String>
-                store.runBatch { batch ->
-                    posts.forEach {
-                        val ref = store.collection("posts").document(it)
-                        batch.update(ref, "profileName", name)
-                    }
-                }
-            } else {
-                trySend(false)
-                close()
-                null
-            }
+
+    fun updateUserProfile(email: String, name: String, photo: Uri?) = callbackFlow {
+        val tasks = ArrayList<Task<Void>>()
+
+        if (email != userEmail) {
+            tasks.add(updateEmail(email))
+        }
+        if (name != userName) {
+            tasks.add(updateName(name))
+        }
+        if (photo != null) {
+            tasks.add(updateProfileImage(photo))
+        }
+
+        Tasks.whenAllComplete(tasks).onSuccessTask {
+            trySend(true)
+            updateUserDB(
+                userEmail!!,
+                userName!!,
+                if (userPhoto == null) "" else userPhoto.toString()
+            )
+
         }.continueWith {
-            if (it.isSuccessful) {
-                trySend(true)
-                close()
-            } else {
-                trySend(false)
-                close()
-                null
-            }
+            close()
         }
 
         awaitClose()
     }
 
 
-    fun updateUserProfilePhoto(photo: Uri) = callbackFlow {
-        storage.reference.child("profileImages").child(uid!!)
+    private fun updateProfileImage(photo: Uri): Task<Void> {
+        return storage.reference.child("profileImages")
+            .child(uid!!)
             .putFile(photo)
+            .onSuccessTask {
+                it.storage.downloadUrl
+            }
             .continueWithTask {
-                if (it.isSuccessful) {
-                    it.result.storage.downloadUrl
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
-            }.continueWithTask {
                 if (it.isSuccessful) {
                     auth.currentUser!!.updateProfile(userProfileChangeRequest {
                         photoUri = it.result
                     })
                 } else {
-                    trySend(false)
-                    close()
-                    null
+                    throw Exception(it.exception)
                 }
             }
-            .continueWithTask {
-                if (it.isSuccessful) {
-                    store.collection("users").document(uid!!).update(
-                        "profileUrl",
-                        userPhoto
-                    )
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
-            }.continueWithTask {
-                if (it.isSuccessful) {
-                    store.collection("users").document(uid!!).get()
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
-            }.continueWithTask {
-                if (it.isSuccessful) {
-                    val posts = it.result["posts"] as List<String>
-                    store.runBatch { batch ->
-                        posts.forEach {
-                            val ref = store.collection("posts").document(it)
-                            batch.update(ref, "profileUrl", userPhoto)
-                        }
-                    }
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
-            }.continueWith {
-                if (it.isSuccessful) {
-                    trySend(true)
-                    close()
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
+    }
+
+
+    private fun updateEmail(email: String): Task<Void> {
+        return auth.currentUser!!.updateEmail(email)
+    }
+
+
+    private fun updateName(name: String): Task<Void> {
+        return auth.currentUser!!.updateProfile(userProfileChangeRequest {
+            displayName = name
+        })
+    }
+
+
+    private fun updateUserDB(email: String, name: String, photo: String): Task<Void> {
+        val doc = store.collection("users").document(uid!!)
+
+        return store.runTransaction { transaction ->
+            val snapshot = transaction.get(doc)
+            val posts = snapshot.get("posts") as List<*>
+
+            posts.forEach { postId ->
+                transaction.update(
+                    store.collection("posts").document(postId.toString()),
+                    "profileName", name,
+                    "profileUrl", photo
+                )
             }
+
+            transaction.update(
+                doc,
+                "email", email,
+                "name", name,
+                "profileUrl", photo
+            )
+
+            null
+        }
+    }
+
+
+    fun checkEmailUnique(email: String) = callbackFlow {
+        val registration = store.collection("users")
+            .whereEqualTo("email", email)
+            .addSnapshotListener { snapshot, err ->
+                if (err != null || snapshot == null) return@addSnapshotListener
+
+                trySend(snapshot.documents.isNullOrEmpty())
+            }
+
+        awaitClose { registration.remove() }
+    }
+
+
+    fun checkUserNameUnique(name: String) = callbackFlow {
+        val registration = store.collection("users")
+            .whereEqualTo("name", name)
+            .addSnapshotListener { snapshot, err ->
+                if (err != null || snapshot == null) return@addSnapshotListener
+
+                trySend(snapshot.documents.isNullOrEmpty())
+            }
+
+        awaitClose { registration.remove() }
+    }
+
+
+    fun createUserWithEmail(email: String, password: String, name: String) = callbackFlow {
+        var userID: String = ""
+
+        auth.createUserWithEmailAndPassword(email, password).onSuccessTask { result ->
+            userID = result.user!!.uid
+
+            result.user!!.updateProfile(userProfileChangeRequest {
+                displayName = name
+            })
+
+        }.onSuccessTask { result ->
+            val user = UserDTO()
+            user.name = name
+            user.email = email
+            user.userID = userID
+
+            store.collection("users").document(userID).set(user)
+
+        }.continueWith {
+            if (it.isSuccessful) {
+                trySend(true)
+            } else {
+                trySend(false)
+            }
+            auth.signOut()
+            close()
+        }
+
+        awaitClose()
+    }
+
+
+    fun signInWithEmail(email: String, password: String) = callbackFlow {
+        auth.signInWithEmailAndPassword(email, password).continueWith {
+            if (it.isSuccessful) {
+                trySend(true)
+            } else {
+                trySend(false)
+            }
+            close()
+        }
 
         awaitClose()
     }
 
 
     fun authWithCredential(credential: AuthCredential) = callbackFlow {
-        auth.signInWithCredential(credential).continueWithTask { task ->
-            if (task.isSuccessful) {
-                Log.wtf("Repository", "${task.result.additionalUserInfo!!.isNewUser}")
-                if (task.result.additionalUserInfo!!.isNewUser) {
-                    val user = UserDTO()
-                    with(task.result.user!!) {
-                        user.name = this.displayName ?: ""
-                        user.userID = this.uid
-                        user.profileUrl = this.photoUrl.toString()
-                    }
-                    store.collection("users").document(task.result.user!!.uid).set(user)
-                } else {
-                    trySend(Pair(true, ""))
-                    close()
-                    null
+        auth.signInWithCredential(credential).onSuccessTask { result ->
+            if (result.additionalUserInfo!!.isNewUser) {
+                val user = UserDTO()
+                with(result.user!!) {
+                    user.name = this.displayName ?: ""
+                    user.email = this.email ?: ""
+                    user.userID = this.uid
+                    user.profileUrl = this.photoUrl.toString()
                 }
+                store.collection("users").document(result.user!!.uid).set(user)
             } else {
-                trySend(Pair(false, task.exception?.message))
-                close()
-                null
+                throw Exception("NOT NEW USER")
             }
         }.continueWith { task ->
             if (task.isSuccessful) {
-                trySend(Pair(true, ""))
+                trySend(true)
+            } else if ("NOT NEW USER".contentEquals(task.exception?.message)) {
+                trySend(true)
             } else {
-                trySend(Pair(false, task.exception?.message))
+                trySend(false)
             }
+            close()
         }
 
         awaitClose()
@@ -194,6 +235,7 @@ object UserRepository {
                 }
             }
         }
+
     }
 
 

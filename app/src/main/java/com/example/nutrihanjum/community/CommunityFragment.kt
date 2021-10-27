@@ -65,11 +65,12 @@ class CommunityFragment : Fragment() {
                         if (this != -1) {
                             countChange?.let {
                                 recyclerViewAdapter.contentDTOs[this].commentCount += it
-                                recyclerViewAdapter.notifyItemChanged(this)
+                                recyclerViewAdapter.notifyItemChanged(this, null)
                             }
                         }
                     }
                 }
+            }
 
         binding.communityfragmentRecylerview.adapter = recyclerViewAdapter
 

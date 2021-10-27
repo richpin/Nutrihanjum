@@ -21,6 +21,10 @@
             android:name=".community.CommentActivity"
             android:exported="true" />
 
+        <activity
+            android:name=".user.UpdateProfileActivity"
+            android:exported="true" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.nutrihanjum.fileprovider"
@@ -38,7 +42,7 @@
             android:name=".diary.AddDiaryActivity"
             android:exported="true" />
         <activity
-            android:name=".user.LoginActivity"
+            android:name=".user.login.LoginActivity"
             android:exported="true" />
         <activity
             android:name=".MainActivity"

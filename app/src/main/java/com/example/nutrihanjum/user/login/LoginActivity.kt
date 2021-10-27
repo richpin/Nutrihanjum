@@ -1,4 +1,4 @@
-package com.example.nutrihanjum.user
+package com.example.nutrihanjum.user.login
 
 import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
@@ -21,7 +21,7 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
         loginViewModel.loginResult.observe(this) {
-            if (it.first) {
+            if (it) {
                 setResult(Activity.RESULT_OK)
                 finish()
             }
@@ -30,12 +30,14 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        initView()
+        if (savedInstanceState == null) {
+            initView()
+        }
     }
 
     private fun initView() {
         supportFragmentManager.beginTransaction()
-            .replace(binding.root.id, LoginFragment())
+            .replace(binding.layoutFragmentContainer.id, LoginFragment())
             .commit()
     }
 

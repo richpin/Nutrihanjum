@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
 
         initFragments()
+        setBottomNavItemListener()
 
         if (savedInstanceState?.containsKey("curFragment") == true) {
             val id = savedInstanceState.getInt("curFragment")
@@ -38,7 +39,6 @@ class MainActivity : AppCompatActivity() {
             binding.bottomNavigation.selectedItemId = R.id.action_home
         }
 
-
         if (userViewModel.isSigned()) {
             userViewModel.notifyUserSigned()
         } else {
@@ -46,23 +46,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initFragments() {
-        val transaction = supportFragmentManager.beginTransaction()
 
-        supportFragmentManager.fragments.forEach {
-            transaction.remove(it)
-        }
-
-        transaction.commitNow()
-
-        supportFragmentManager.beginTransaction()
-            .add(R.id.main_content, ChatbotFragment.getInstance()).hide(ChatbotFragment.getInstance())
-            .add(R.id.main_content, CommunityFragment.getInstance()).hide(CommunityFragment.getInstance())
-            .add(R.id.main_content, DiaryFragment.getInstance()).hide(DiaryFragment.getInstance())
-            .add(R.id.main_content, NewsFragment.getInstance()).hide(NewsFragment.getInstance())
-            .add(R.id.main_content, UserFragment.getInstance()).hide(UserFragment.getInstance())
-            .commitNow()
-
+    private fun setBottomNavItemListener() {
         binding.bottomNavigation.setOnItemSelectedListener {
             val transaction = supportFragmentManager.beginTransaction()
                 .hide(curFragment)
@@ -102,6 +87,25 @@ class MainActivity : AppCompatActivity() {
 
             false
         }
+    }
+
+
+    private fun initFragments() {
+        val transaction = supportFragmentManager.beginTransaction()
+
+        supportFragmentManager.fragments.forEach {
+            transaction.remove(it)
+        }
+
+        transaction.commitNow()
+
+        supportFragmentManager.beginTransaction()
+            .add(R.id.main_content, ChatbotFragment.getInstance()).hide(ChatbotFragment.getInstance())
+            .add(R.id.main_content, CommunityFragment.getInstance()).hide(CommunityFragment.getInstance())
+            .add(R.id.main_content, DiaryFragment.getInstance()).hide(DiaryFragment.getInstance())
+            .add(R.id.main_content, NewsFragment.getInstance()).hide(NewsFragment.getInstance())
+            .add(R.id.main_content, UserFragment.getInstance()).hide(UserFragment.getInstance())
+            .commitNow()
     }
 
     private fun getFragmentFromResId(id: Int) = when(id) {

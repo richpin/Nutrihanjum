@@ -19,9 +19,6 @@ class UserViewModel : ViewModel() {
     private val _signed = MutableLiveData<Boolean>()
     val signed : LiveData<Boolean> get() = _signed
 
-    private val _userProfileChanged = MutableLiveData<Boolean>()
-    val userProfileChanged: LiveData<Boolean> get() = _userProfileChanged
-
     fun isSigned() = UserRepository.isSigned()
 
     fun signOut(context: Context) {
@@ -34,21 +31,5 @@ class UserViewModel : ViewModel() {
 
     fun notifyUserSignedOut() {
         _signed.value = false
-    }
-
-    fun updateUserName(name: String) {
-        viewModelScope.launch {
-            UserRepository.updateUserProfileName(name).collect {
-                _userProfileChanged.postValue(it)
-            }
-        }
-    }
-
-    fun updateUserPhoto(photo: Uri) {
-        viewModelScope.launch {
-            UserRepository.updateUserProfilePhoto(photo).collect {
-                _userProfileChanged.postValue(it)
-            }
-        }
     }
 }

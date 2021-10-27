@@ -32,6 +32,7 @@
         <entry key="app/src/main/res/layout/item_community.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_diary.xml" value="0.18697916666666667" />
         <entry key="app/src/main/res/layout/item_news.xml" value="0.3385416666666667" />
+        <entry key="app/src/main/res/layout/user_fragment.xml" value="0.1859375" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.24479166666666666" />
         <entry key="app/src/main/res/menu/comment_popup.xml" value="0.18697916666666667" />
         <entry key="app/src/main/res/menu/diary_popup.xml" value="0.18697916666666667" />

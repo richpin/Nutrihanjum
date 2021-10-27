@@ -11,11 +11,11 @@ import java.util.ArrayList
 
 class DiaryRecyclerViewAdapter(
     var diaryList: ArrayList<ContentDTO>
-): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+): RecyclerView.Adapter<DiaryRecyclerViewAdapter.ViewHolder>() {
 
     var onPopupClickListener: ((view: View, item: ContentDTO) -> Unit)? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemBinding =
             ItemDiaryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
@@ -32,13 +32,13 @@ class DiaryRecyclerViewAdapter(
         return viewHolder
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ViewHolder).bind(position)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(position)
     }
 
     override fun getItemCount() = diaryList.size
 
-    inner class ViewHolder(val itemBinding: ItemDiaryBinding): RecyclerView.ViewHolder(itemBinding.root) {
+    inner class ViewHolder(private val itemBinding: ItemDiaryBinding): RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(position: Int) {
             with(itemBinding) {
                 Glide.with(imageviewPostImage.context)
