@@ -26,18 +26,18 @@ object DiaryRepository {
 
     fun loadAllDiaryAtDate(date: String) = callbackFlow {
         store.collection("posts")
-            .whereEqualTo("date", date)
-            .whereEqualTo("uid", uid)
-            .get().continueWith {
-                if (it.isSuccessful) {
-                    it.result.documents.forEach { item ->
-                        trySend(item.toObject(ContentDTO::class.java)!!)
+                .whereEqualTo("date", date)
+                .whereEqualTo("uid", uid)
+                .get().continueWith {
+                    if (it.isSuccessful) {
+                        it.result.documents.forEach { item ->
+                            trySend(item.toObject(ContentDTO::class.java)!!)
+                        }
+                    } else {
+                        Log.wtf("Repository", "${it.exception?.message}")
                     }
-                } else {
-                    Log.wtf("Repository", "${it.exception?.message}")
+                    close()
                 }
-                close()
-            }
 
         awaitClose()
     }
@@ -45,20 +45,20 @@ object DiaryRepository {
 
     fun modifyDiaryWithoutPhoto(content: ContentDTO) = callbackFlow {
         store.collection("posts")
-            .document(content.id)
-            .update(
-                "content", content.content,
-                "mealTime", content.mealTime,
-                "public", content.isPublic
-            )
-            .continueWith {
-                if (it.isSuccessful) {
-                    trySend(true)
-                } else {
-                    trySend(false)
+                .document(content.id)
+                .update(
+                        "content", content.content,
+                        "mealTime", content.mealTime,
+                        "public", content.isPublic
+                )
+                .continueWith {
+                    if (it.isSuccessful) {
+                        trySend(true)
+                    } else {
+                        trySend(false)
+                    }
+                    close()
                 }
-                close()
-            }
 
 
         awaitClose()
@@ -68,40 +68,40 @@ object DiaryRepository {
     fun modifyDiaryWithPhoto(content: ContentDTO, imageUri: String) = callbackFlow {
 
         storage.getReferenceFromUrl(content.imageUrl)
-            .putFile(Uri.parse(imageUri))
-            .continueWithTask {
-                if (it.isSuccessful) {
-                    it.result.storage.downloadUrl
-                } else {
-                    trySend(false)
-                    close()
-                    null
+                .putFile(Uri.parse(imageUri))
+                .continueWithTask {
+                    if (it.isSuccessful) {
+                        it.result.storage.downloadUrl
+                    } else {
+                        trySend(false)
+                        close()
+                        null
+                    }
                 }
-            }
-            .continueWithTask {
-                if (it.isSuccessful) {
-                    content.imageUrl = it.result.toString()
+                .continueWithTask {
+                    if (it.isSuccessful) {
+                        content.imageUrl = it.result.toString()
 
-                    store.collection("posts").document(content.id).update(
-                        "content", content.content,
-                        "mealTime", content.mealTime,
-                        "public", content.isPublic,
-                        "imageUrl", content.imageUrl
-                    )
-                } else {
-                    trySend(false)
+                        store.collection("posts").document(content.id).update(
+                                "content", content.content,
+                                "mealTime", content.mealTime,
+                                "public", content.isPublic,
+                                "imageUrl", content.imageUrl
+                        )
+                    } else {
+                        trySend(false)
+                        close()
+                        null
+                    }
+                }
+                .continueWith { result ->
+                    if (result.isSuccessful) {
+                        trySend(true)
+                    } else {
+                        trySend(false)
+                    }
                     close()
-                    null
                 }
-            }
-            .continueWith { result ->
-                if (result.isSuccessful) {
-                    trySend(true)
-                } else {
-                    trySend(false)
-                }
-                close()
-            }
 
         awaitClose()
     }
@@ -109,35 +109,35 @@ object DiaryRepository {
 
     fun deleteDiary(documentId: String, imageUrl: String) = callbackFlow {
         storage.getReferenceFromUrl(imageUrl).delete()
-            .continueWithTask {
-                if (it.isSuccessful) {
-                    store.collection("posts").document(documentId).delete()
-                } else {
-                    trySend(false)
+                .continueWithTask {
+                    if (it.isSuccessful) {
+                        store.collection("posts").document(documentId).delete()
+                    } else {
+                        trySend(false)
+                        close()
+                        null
+                    }
+                }
+                .continueWithTask {
+                    if (it.isSuccessful) {
+                        store.collection("users").document(uid!!).update(
+                                "posts",
+                                FieldValue.arrayRemove(documentId)
+                        )
+                    } else {
+                        trySend(false)
+                        close()
+                        null
+                    }
+                }
+                .continueWith {
+                    if (it.isSuccessful) {
+                        trySend(true)
+                    } else {
+                        trySend(false)
+                    }
                     close()
-                    null
                 }
-            }
-            .continueWithTask {
-                if (it.isSuccessful) {
-                    store.collection("users").document(uid!!).update(
-                        "posts",
-                        FieldValue.arrayRemove(documentId)
-                    )
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
-            }
-            .continueWith {
-                if (it.isSuccessful) {
-                    trySend(true)
-                } else {
-                    trySend(false)
-                }
-                close()
-            }
 
         awaitClose()
     }
@@ -146,50 +146,60 @@ object DiaryRepository {
     fun addDiary(content: ContentDTO, imageUri: String) = callbackFlow {
         val filename = "IMG_${SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())}.png"
         storage.reference.child("images").child(filename)
-            .putFile(Uri.parse(imageUri))
-            .continueWithTask {
-                if (it.isSuccessful) {
-                    it.result.storage.downloadUrl
-                } else {
-                    trySend(false)
-                    close()
-                    null
+                .putFile(Uri.parse(imageUri))
+                .continueWithTask {
+                    if (it.isSuccessful) {
+                        it.result.storage.downloadUrl
+                    } else {
+                        trySend(false)
+                        close()
+                        null
+                    }
                 }
-            }
-            .continueWithTask {
-                if (it.isSuccessful) {
-                    content.imageUrl = it.result.toString()
-                    content.uid = uid!!
-                    content.id = uid + content.timestamp
+                .continueWithTask {
+                    if (it.isSuccessful) {
+                        content.imageUrl = it.result.toString()
+                        store.collection("users").document(uid!!).get()
+                    } else {
+                        trySend(false)
+                        close()
+                        null
+                    }
+                }.continueWithTask {
+                    if(it.isSuccessful) {
+                        content.profileName = it.result["name"].toString()
+                        content.profileUrl = it.result["profileUrl"].toString()
+                        content.uid = uid!!
+                        content.id = uid + content.timestamp
 
-                    store.collection("posts").document(content.id).set(content)
-                } else {
-                    trySend(false)
-                    close()
-                    null
+                        store.collection("posts").document(content.id).set(content)
+                    } else {
+                        trySend(false)
+                        close()
+                        null
+                    }
                 }
-            }
-            .continueWithTask { result ->
-                if (result.isSuccessful) {
-                    store.collection("users").document(uid!!).update(
-                        "posts",
-                        FieldValue.arrayUnion(content.id)
-                    )
-                } else {
-                    trySend(false)
-                    close()
-                    null
+                .continueWithTask { result ->
+                    if (result.isSuccessful) {
+                        store.collection("users").document(uid!!).update(
+                                "posts",
+                                FieldValue.arrayUnion(content.id)
+                        )
+                    } else {
+                        trySend(false)
+                        close()
+                        null
+                    }
                 }
-            }
-            .continueWith {
-                if (it.isSuccessful) {
-                    trySend(true)
-                } else {
-                    trySend(false)
-                }
+                .continueWith {
+                    if (it.isSuccessful) {
+                        trySend(true)
+                    } else {
+                        trySend(false)
+                    }
 
-                close()
-            }
+                    close()
+                }
 
         awaitClose()
     }

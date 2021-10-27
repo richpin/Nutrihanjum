@@ -6,7 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nutrihanjum.model.ContentDTO
-import com.example.nutrihanjum.repository.Repository
+import com.example.nutrihanjum.repository.CommunityRepository
+import com.example.nutrihanjum.repository.UserRepository
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -14,23 +15,47 @@ class CommunityViewModel : ViewModel() {
     private val _contents = MutableLiveData<ArrayList<ContentDTO>>()
     val contents: LiveData<ArrayList<ContentDTO>> get() = _contents
 
+    private val _comments = MutableLiveData<ArrayList<ContentDTO.CommentDTO>>()
+    val comments: LiveData<ArrayList<ContentDTO.CommentDTO>> get() = _comments
+
     fun loadContents() = viewModelScope.launch {
         val list: ArrayList<ContentDTO> = arrayListOf()
 
-        Repository.loadContents().collect { item ->
+        CommunityRepository.loadContents().collect { item ->
             list.add(item!!)
         }
         _contents.postValue(list)
     }
 
+    fun loadComments(contentId : String) = viewModelScope.launch {
+        val list: ArrayList<ContentDTO.CommentDTO> = arrayListOf()
+
+        CommunityRepository.loadComments(contentId).collect { item ->
+            list.add(item!!)
+        }
+        _comments.postValue((list))
+    }
+
+    fun addComment(contentId: String, commentDTO: ContentDTO.CommentDTO) = viewModelScope.launch {
+        CommunityRepository.addComment(contentId, commentDTO).collect {
+            if(!it) Log.wtf("AddComment", it.toString())
+        }
+    }
+
+    fun deleteComment(contentId: String, commentId: String) = viewModelScope.launch {
+        CommunityRepository.deleteComment(contentId, commentId).collect {
+            if(!it) Log.wtf("DeleteComment", it.toString())
+        }
+    }
+
     fun eventLikes(contentDTO: ContentDTO, isLiked: Boolean) = viewModelScope.launch {
-        Repository.eventLikes(contentDTO, isLiked).collect {
+        CommunityRepository.eventLikes(contentDTO, isLiked).collect {
             if(!it) Log.wtf("Likes", it.toString())
         }
     }
 
     fun eventSaved(contentDTO: ContentDTO, isSaved: Boolean) = viewModelScope.launch {
-        Repository.eventSaved(contentDTO, isSaved).collect {
+        CommunityRepository.eventSaved(contentDTO, isSaved).collect {
             if(!it) Log.wtf("Saved", it.toString())
         }
     }

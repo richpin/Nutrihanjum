@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/comment_action_delete"
+        android:enabled="true"
+        android:title="@string/diary_popup_delete" />
+
+    <item
+        android:id="@+id/comment_action_modify"
+        android:enabled="true"
+        android:title="@string/diary_popup_modify" />
+</menu>

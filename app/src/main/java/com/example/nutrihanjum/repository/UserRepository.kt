@@ -38,13 +38,37 @@ object UserRepository {
                 close()
                 null
             }
+        }.continueWithTask {
+            if (it.isSuccessful) {
+                store.collection("users").document(uid!!).get()
+            } else {
+                trySend(false)
+                close()
+                null
+            }
+        }.continueWithTask {
+            if (it.isSuccessful) {
+                val posts = it.result["posts"] as List<String>
+                store.runBatch { batch ->
+                    posts.forEach {
+                        val ref = store.collection("posts").document(it)
+                        batch.update(ref, "profileName", name)
+                    }
+                }
+            } else {
+                trySend(false)
+                close()
+                null
+            }
         }.continueWith {
             if (it.isSuccessful) {
                 trySend(true)
+                close()
             } else {
                 trySend(false)
+                close()
+                null
             }
-            close()
         }
 
         awaitClose()
@@ -75,9 +99,32 @@ object UserRepository {
             }
             .continueWithTask {
                 if (it.isSuccessful) {
-                    store.collection("users").document(uid!!).update("profileUrl",
-                        Repository.userPhoto
+                    store.collection("users").document(uid!!).update(
+                        "profileUrl",
+                        userPhoto
                     )
+                } else {
+                    trySend(false)
+                    close()
+                    null
+                }
+            }.continueWithTask {
+                if (it.isSuccessful) {
+                    store.collection("users").document(uid!!).get()
+                } else {
+                    trySend(false)
+                    close()
+                    null
+                }
+            }.continueWithTask {
+                if (it.isSuccessful) {
+                    val posts = it.result["posts"] as List<String>
+                    store.runBatch { batch ->
+                        posts.forEach {
+                            val ref = store.collection("posts").document(it)
+                            batch.update(ref, "profileUrl", userPhoto)
+                        }
+                    }
                 } else {
                     trySend(false)
                     close()
@@ -86,10 +133,12 @@ object UserRepository {
             }.continueWith {
                 if (it.isSuccessful) {
                     trySend(true)
+                    close()
                 } else {
                     trySend(false)
+                    close()
+                    null
                 }
-                close()
             }
 
         awaitClose()

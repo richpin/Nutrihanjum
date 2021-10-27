@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/comment_profile_imageview"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp" />
+
+    <TextView
+        android:id="@+id/comment_profile_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:layout_toEndOf="@+id/comment_profile_imageview"
+        android:fontFamily="@font/font_bold"
+        android:textColor="@color/black"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/comment_timeago_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/comment_profile_textview"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/font_regular"
+        android:textSize="12dp"/>
+
+    <TextView
+        android:id="@+id/comment_content_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/comment_profile_textview"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginBottom="15dp"
+        android:layout_toEndOf="@id/comment_profile_imageview"
+        android:fontFamily="@font/font_regular"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/comment_action_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="15dp"
+        android:text="@string/diary_popup_delete"
+        android:textSize="13dp"
+        android:fontFamily="@font/font_regular"
+        android:textColor="@color/saturday_color"/>
+
+</RelativeLayout>

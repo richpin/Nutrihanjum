@@ -7,14 +7,22 @@ data class ContentDTO(
     var content: String = "",
     var imageUrl: String = "",
     var uid: String = "",
+    var profileName: String = "",
+    var profileUrl: String = "",
     var timestamp: Long = 0,
     var date: String = "",
     var likes: MutableList<String> = mutableListOf(),
+    var commentCount: Int = 0,
     var saved: MutableList<String> = mutableListOf(),
     var mealTime: String = "",
-    var isPublic: Boolean = true
+    var isPublic: Boolean = true,
     ): Serializable{
-    data class Comment(var uid : String = "",
-                       var comment : String = "",
-                       var timeStamp: Long = 0)
+    data class CommentDTO(
+        var id: String = "",
+        var uid: String = "",
+        var profileName: String = "",
+        var profileUrl: String = "",
+        var comment: String = "",
+        var timeStamp: Long = 0
+    )
 }
