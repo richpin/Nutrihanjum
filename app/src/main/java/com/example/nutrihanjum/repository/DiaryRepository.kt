@@ -98,9 +98,9 @@ object DiaryRepository {
     fun deleteDiary(documentId: String, imageUrl: String) = callbackFlow {
         storage.getReferenceFromUrl(imageUrl).delete().onSuccessTask {
             store.collection("posts").document(documentId).delete()
-            store.runTransaction { transaction ->
-                transaction.delete(store.collection("posts").document(documentId))
-                transaction.update(
+            store.runBatch { batch ->
+                batch.delete(store.collection("posts").document(documentId))
+                batch.update(
                     store.collection("users").document(uid!!),
                     "posts",
                     FieldValue.arrayRemove(documentId)
@@ -133,9 +133,9 @@ object DiaryRepository {
                 content.profileName = userName!!
                 content.profileUrl = userPhoto.toString()
 
-                store.runTransaction { transaction ->
-                    transaction.set(store.collection("posts").document(content.id), content)
-                    transaction.update(
+                store.runBatch { batch ->
+                    batch.set(store.collection("posts").document(content.id), content)
+                    batch.update(
                         store.collection("users").document(uid!!),
                         "posts",
                         FieldValue.arrayUnion(content.id)

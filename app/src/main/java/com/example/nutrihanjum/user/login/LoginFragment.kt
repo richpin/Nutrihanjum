@@ -72,7 +72,11 @@ class LoginFragment : Fragment() {
             val email = binding.edittextEmail.text.toString()
             val password = binding.edittextPassword.text.toString()
 
-            viewModel.signInWithEmail(email, password)
+            if (email.isNotEmpty() && password.isNotEmpty()) {
+                viewModel.signInWithEmail(email, password)
+            } else {
+                Toast.makeText(activity, getString(R.string.login_not_filled), Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.btnSignUp.setOnClickListener {

@@ -1,12 +1,14 @@
 package com.example.nutrihanjum.user.login
 
 import android.net.Uri
+import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nutrihanjum.repository.UserRepository
+import com.example.nutrihanjum.user.UserDataPattern
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -39,15 +41,14 @@ class SingUpViewModel: ViewModel() {
             && passwordCheck.value == true
 
 
-    private val userNamePattern = Pattern.compile("^[가-힣a-zA-Z0-9_]+$")
     private val userNameLock = Any()
 
     fun checkUserNameValid(name: String) = synchronized(userNameLock) {
         userNameValidJob?.cancel()
 
-        if (!userNamePattern.matcher(name).matches()) {
+        if (!UserDataPattern.USER_NAME.matcher(name).matches()) {
             _userNameValid.value = false
-            return
+            return@synchronized
         }
 
         userNameValidJob = viewModelScope.launch {
@@ -63,9 +64,9 @@ class SingUpViewModel: ViewModel() {
         emailValidJob?.cancel()
         emailValidJob = null
 
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (!UserDataPattern.EMAIL.matcher(email).matches()) {
             _emailValid.value = false
-            return
+            return@synchronized
         }
 
         emailValidJob = viewModelScope.launch {
@@ -76,11 +77,9 @@ class SingUpViewModel: ViewModel() {
     }
 
 
-    private val passwordPattern = Pattern.compile("^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*;])[a-zA-Z0-9!@#$%^&*;]{8,16}$")
-
     fun checkPasswordValid(password: String) {
         _passwordValid.value =
-            passwordPattern.matcher(password).matches()
+            UserDataPattern.PASSWORD.matcher(password).matches()
     }
 
 

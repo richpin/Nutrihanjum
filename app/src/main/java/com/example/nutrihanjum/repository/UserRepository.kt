@@ -99,10 +99,9 @@ object UserRepository {
             val snapshot = transaction.get(doc)
             val posts = snapshot.get("posts") as List<*>
 
-            posts.forEach {
-                val postDoc = store.collection("posts").document(it.toString())
+            posts.forEach { postId ->
                 transaction.update(
-                    postDoc,
+                    store.collection("posts").document(postId.toString()),
                     "profileName", name,
                     "profileUrl", photo
                 )
@@ -126,13 +125,7 @@ object UserRepository {
             .addSnapshotListener { snapshot, err ->
                 if (err != null || snapshot == null) return@addSnapshotListener
 
-                if (snapshot.documents.isEmpty()) {
-                    trySend(true)
-                } else if (snapshot.documents.size == 1 && snapshot.documents[0]["userID"] == uid) {
-                    trySend(true)
-                } else {
-                    trySend(false)
-                }
+                trySend(snapshot.documents.isNullOrEmpty())
             }
 
         awaitClose { registration.remove() }
@@ -145,13 +138,7 @@ object UserRepository {
             .addSnapshotListener { snapshot, err ->
                 if (err != null || snapshot == null) return@addSnapshotListener
 
-                if (snapshot.documents.isEmpty()) {
-                    trySend(true)
-                } else if (snapshot.documents.size == 1 && snapshot.documents[0]["userID"] == uid) {
-                    trySend(true)
-                } else {
-                    trySend(false)
-                }
+                trySend(snapshot.documents.isNullOrEmpty())
             }
 
         awaitClose { registration.remove() }

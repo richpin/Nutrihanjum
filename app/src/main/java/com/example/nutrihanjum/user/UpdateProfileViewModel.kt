@@ -35,15 +35,19 @@ class UpdateProfileViewModel: ViewModel() {
     val updateValid = emailValid.combineWith(userNameValid) { p0, p1 -> p0 == true && p1 == true }
 
 
-    private val userNamePattern = Pattern.compile("^[가-힣a-zA-Z0-9_]+$")
     private val userNameLock = Any()
 
     fun checkUserNameValid(name: String) = synchronized(userNameLock) {
         userNameValidJob?.cancel()
 
-        if (!userNamePattern.matcher(name).matches()) {
+        if (!UserDataPattern.USER_NAME.matcher(name).matches()) {
             _userNameValid.value = false
-            return
+            return@synchronized
+        }
+
+        if (name == userName) {
+            _userNameValid.value = true
+            return@synchronized
         }
 
         userNameValidJob = viewModelScope.launch {
@@ -60,9 +64,14 @@ class UpdateProfileViewModel: ViewModel() {
         emailValidJob?.cancel()
         emailValidJob = null
 
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (!UserDataPattern.EMAIL.matcher(email).matches()) {
             _emailValid.value = false
-            return
+            return@synchronized
+        }
+
+        if (email == userEmail) {
+            _emailValid.value = true
+            return@synchronized
         }
 
         emailValidJob = viewModelScope.launch {
