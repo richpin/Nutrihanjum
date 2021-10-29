@@ -25,7 +25,6 @@ class CommunityViewModel : ViewModel() {
             list.add(item!!)
         }
         _contents.postValue(list)
-        Log.wtf("gang", "start")
     }
 
     fun loadContentsMore() = viewModelScope.launch {
@@ -35,7 +34,6 @@ class CommunityViewModel : ViewModel() {
             list.add(item!!)
         }
         _contents.postValue(list)
-        Log.wtf("gang", "end")
     }
 
     fun loadComments(contentId : String) = viewModelScope.launch {

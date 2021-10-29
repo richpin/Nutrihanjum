@@ -75,9 +75,6 @@ class CommunityFragment : Fragment() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
-                //val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
-                //val itemTotalCount = recyclerView.adapter!!.itemCount-1
-
                 if (!binding.communityfragmentRecylerview.canScrollVertically(1) && newState==RecyclerView.SCROLL_STATE_IDLE) {
                     page++
                     communityViewModel.loadContentsMore()
