@@ -13,12 +13,15 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.nutrihanjum.databinding.CommunityFragmentBinding
 import com.example.nutrihanjum.UserViewModel
+import com.example.nutrihanjum.repository.CommunityRepository.boardLimit
 
 class CommunityFragment : Fragment() {
     private var _binding: CommunityFragmentBinding? = null
     private val binding get() = _binding!!
+    private var page = 1
 
     companion object {
         @Volatile
@@ -44,16 +47,8 @@ class CommunityFragment : Fragment() {
         communityViewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
 
-        val linearLayoutManager = LinearLayoutManager(activity)
-        linearLayoutManager.reverseLayout = true
-        linearLayoutManager.stackFromEnd = true
-        binding.communityfragmentRecylerview.layoutManager = linearLayoutManager
+        binding.communityfragmentRecylerview.layoutManager = LinearLayoutManager(activity)
         binding.communityfragmentRecylerview.setHasFixedSize(true)
-
-        binding.communityfragmentSwiperefreshlayout.setOnRefreshListener {
-            communityViewModel.loadContents()
-            binding.communityfragmentSwiperefreshlayout.isRefreshing = false
-        }
 
         val recyclerViewAdapter = CommunityRecyclerViewAdapter()
         recyclerViewAdapter.commentLauncher =
@@ -65,22 +60,40 @@ class CommunityFragment : Fragment() {
                         if (this != -1) {
                             countChange?.let {
                                 recyclerViewAdapter.contentDTOs[this].commentCount += it
-                                recyclerViewAdapter.notifyItemChanged(this, null)
+                                recyclerViewAdapter.notifyItemChanged(this, "comment")
                             }
                         }
                     }
+                    recyclerViewAdapter.contentPosition = -1
                 }
             }
 
         binding.communityfragmentRecylerview.adapter = recyclerViewAdapter
 
-        communityViewModel.loadContents()
+        binding.communityfragmentRecylerview.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                //val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
+                //val itemTotalCount = recyclerView.adapter!!.itemCount-1
+
+                if (!binding.communityfragmentRecylerview.canScrollVertically(1) && newState==RecyclerView.SCROLL_STATE_IDLE) {
+                    page++
+                    communityViewModel.loadContentsMore()
+                }
+            }
+        })
+
+        communityViewModel.loadContentsInit()
         communityViewModel.contents.observe(viewLifecycleOwner, Observer
         {
             recyclerViewAdapter.updateContents(it)
-            recyclerViewAdapter.notifyDataSetChanged()
+            recyclerViewAdapter.notifyItemRangeInserted(
+                ((page - 1) * boardLimit).toInt(),
+                boardLimit.toInt()
+            )
         })
-
 
         userViewModel.signed.observe(viewLifecycleOwner)
         {
@@ -93,6 +106,13 @@ class CommunityFragment : Fragment() {
                 recyclerViewAdapter.likeClickEvent = null
                 recyclerViewAdapter.savedClickEvent = null
             }
+        }
+
+        binding.communityfragmentSwiperefreshlayout.setOnRefreshListener {
+            page = 1
+            recyclerViewAdapter.initContents()
+            communityViewModel.loadContentsInit()
+            binding.communityfragmentSwiperefreshlayout.isRefreshing = false
         }
 
         return binding.root

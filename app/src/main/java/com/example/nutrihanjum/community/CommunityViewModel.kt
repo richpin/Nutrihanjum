@@ -18,13 +18,24 @@ class CommunityViewModel : ViewModel() {
     private val _comments = MutableLiveData<ArrayList<ContentDTO.CommentDTO>>()
     val comments: LiveData<ArrayList<ContentDTO.CommentDTO>> get() = _comments
 
-    fun loadContents() = viewModelScope.launch {
+    fun loadContentsInit() = viewModelScope.launch {
         val list: ArrayList<ContentDTO> = arrayListOf()
 
-        CommunityRepository.loadContents().collect { item ->
+        CommunityRepository.loadContentsInit().collect { item ->
             list.add(item!!)
         }
         _contents.postValue(list)
+        Log.wtf("gang", "start")
+    }
+
+    fun loadContentsMore() = viewModelScope.launch {
+        val list: ArrayList<ContentDTO> = arrayListOf()
+
+        CommunityRepository.loadContentsMore().collect { item ->
+            list.add(item!!)
+        }
+        _contents.postValue(list)
+        Log.wtf("gang", "end")
     }
 
     fun loadComments(contentId : String) = viewModelScope.launch {

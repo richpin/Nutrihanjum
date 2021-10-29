@@ -2,6 +2,7 @@ package com.example.nutrihanjum.community
 
 import android.content.Context
 import android.content.Intent
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +29,7 @@ class CommunityRecyclerViewAdapter() :
         const val MONTH = 12
     }
 
-    companion object{
+    companion object {
         fun formatTime(mContext: Context, regTime: Long): String {
             val currentTime = System.currentTimeMillis()
             val diffSEC = (currentTime - regTime) / 1000
@@ -57,7 +58,11 @@ class CommunityRecyclerViewAdapter() :
     lateinit var commentLauncher: ActivityResultLauncher<Intent>
 
     fun updateContents(data: ArrayList<ContentDTO>) {
-        contentDTOs = data
+        contentDTOs.addAll(data)
+    }
+
+    fun initContents() {
+        contentDTOs.clear()
     }
 
     private fun isLiked(likes: List<String>): Boolean {
@@ -195,7 +200,34 @@ class CommunityRecyclerViewAdapter() :
         }
     }
 
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isEmpty()) {
+            super.onBindViewHolder(holder, position, payloads)
+        } else {
+            for(payload in payloads) {
+                if(payload is String) {
+                    if(TextUtils.equals(payload,"comment")) {
+                        holder.communityitem_lccount_textview.text =
+                            formatCount(
+                                holder.itemView.context,
+                                contentDTOs[position].likes.size,
+                                contentDTOs[position].commentCount
+                            )
+                    }
+                }
+            }
+        }
+    }
+
     override fun getItemCount(): Int {
         return contentDTOs.size
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
     }
 }
