@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.nutrihanjum.chatbot.ChatbotFragment
+import com.example.nutrihanjum.chatbot.ChatBotFragment
 import com.example.nutrihanjum.community.CommunityFragment
 import com.example.nutrihanjum.databinding.ActivityMainBinding
 import com.example.nutrihanjum.diary.DiaryFragment
@@ -60,8 +60,8 @@ class MainActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 R.id.action_chatbot -> {
-                    transaction.show(ChatbotFragment.getInstance()).commit()
-                    curFragment = ChatbotFragment.getInstance()
+                    transaction.show(ChatBotFragment.getInstance()).commit()
+                    curFragment = ChatBotFragment.getInstance()
                     binding.topBarTextview.text= getString(R.string.chatbot_category)
                     return@setOnItemSelectedListener true
                 }
@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
         transaction.commitNow()
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.main_content, ChatbotFragment.getInstance()).hide(ChatbotFragment.getInstance())
+            .add(R.id.main_content, ChatBotFragment.getInstance()).hide(ChatBotFragment.getInstance())
             .add(R.id.main_content, CommunityFragment.getInstance()).hide(CommunityFragment.getInstance())
             .add(R.id.main_content, DiaryFragment.getInstance()).hide(DiaryFragment.getInstance())
             .add(R.id.main_content, NewsFragment.getInstance()).hide(NewsFragment.getInstance())
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
     private fun getFragmentFromResId(id: Int) = when(id) {
         R.id.action_home -> CommunityFragment.getInstance()
         R.id.action_diary -> DiaryFragment.getInstance()
-        R.id.action_chatbot -> ChatbotFragment.getInstance()
+        R.id.action_chatbot -> ChatBotFragment.getInstance()
         R.id.action_news -> NewsFragment.getInstance()
         R.id.action_user -> UserFragment.getInstance()
         else -> CommunityFragment.getInstance()
@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity() {
     private fun getResIdFromFragment(fragment: Fragment) = when (fragment) {
         is CommunityFragment -> R.id.action_home
         is DiaryFragment -> R.id.action_diary
-        is ChatbotFragment -> R.id.action_chatbot
+        is ChatBotFragment -> R.id.action_chatbot
         is NewsFragment -> R.id.action_news
         is UserFragment -> R.id.action_user
         else -> R.id.action_home

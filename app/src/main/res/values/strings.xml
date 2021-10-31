@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Nutrihanjum</string>
+    <string name="app_name">영양한줌</string>
     <string name="home">영양한줌</string>
     <string name="diary">식단일지</string>
     <string name="chatbot">챗봇상담</string>
@@ -72,4 +72,7 @@
     <string name="signup_not_filled">아직 입력이 완료되지 않았어요</string>
     <string name="signup_failed">가입에 실패했어요. 잠시 후에 다시 시도해주세요</string>
     <string name="update_profile">프로필 수정</string>
+
+    <string name="chat_bot_hint">키워드를 입력해보세요</string>
+    <string name="chat_empty_input">내용을 입력해주세요</string>
 </resources>

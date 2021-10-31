@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp">
+
+    <ImageView
+        android:id="@+id/imageview_bot_profile"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:src="@mipmap/ic_launcher"/>
+    <TextView
+        android:id="@+id/textview_bot_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/imageview_bot_profile"
+        android:layout_marginStart="10dp"
+        android:fontFamily="@font/font_bold"
+        android:textSize="17dp"
+        android:text="챗봇"/>
+
+    <TextView
+        android:id="@+id/textview_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="62dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/textview_bot_name"
+        android:layout_marginTop="7dp"
+        android:layout_marginStart="38dp"
+        android:layout_marginEnd="20dp"
+        android:paddingVertical="10dp"
+        android:paddingStart="35dp"
+        android:paddingEnd="19dp"
+        android:background="@drawable/chat_bubble_bot"
+        android:textSize="15sp"
+        android:textColor="@color/black"/>
+
+</RelativeLayout>
