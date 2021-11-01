@@ -54,7 +54,6 @@ class CommunityRecyclerViewAdapter() :
 
     var likeClickEvent: ((ContentDTO, Boolean) -> Unit)? = null
     var savedClickEvent: ((ContentDTO, Boolean) -> Unit)? = null
-
     lateinit var commentLauncher: ActivityResultLauncher<Intent>
 
     fun updateContents(data: ArrayList<ContentDTO>) {
@@ -110,6 +109,10 @@ class CommunityRecyclerViewAdapter() :
             press_like_imageview = view.findViewById(R.id.press_like_imageview)
             press_saved_imageview = view.findViewById(R.id.press_saved_imageview)
 
+            addListener()
+        }
+
+        private fun addListener(){
             press_like_layout.setOnClickListener {
                 likeClickEvent?.let {
                     it(

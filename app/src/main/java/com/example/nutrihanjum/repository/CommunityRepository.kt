@@ -2,6 +2,7 @@ package com.example.nutrihanjum.repository
 
 
 import android.util.Log
+import androidx.core.content.contentValuesOf
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.repository.UserRepository.uid
 import com.google.firebase.firestore.DocumentSnapshot
@@ -82,14 +83,8 @@ object CommunityRepository {
 
         ref.collection("comments")
             .document(commentDTO.id)
-            .set(commentDTO).continueWithTask {
-                if (it.isSuccessful) {
-                    ref.update("commentCount", FieldValue.increment(1))
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
+            .set(commentDTO).onSuccessTask {
+                ref.update("commentCount", FieldValue.increment(1))
             }.continueWith {
                 if (it.isSuccessful) {
                     trySend(true)
@@ -107,14 +102,8 @@ object CommunityRepository {
 
         ref.collection("comments")
             .document(commentId)
-            .delete().continueWithTask {
-                if (it.isSuccessful) {
-                    ref.update("commentCount", FieldValue.increment(-1))
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
+            .delete().onSuccessTask {
+                ref.update("commentCount", FieldValue.increment(-1))
             }.continueWith {
                 if (it.isSuccessful) {
                     trySend(true)
@@ -179,6 +168,27 @@ object CommunityRepository {
                 if (it.isSuccessful) trySend(true)
                 else trySend(false)
             }
+        }
+
+        awaitClose()
+    }
+
+    fun loadSavedContents() = callbackFlow {
+        val ref = store.collection("users").document(uid!!)
+
+        store.runTransaction { transaction ->
+            val snapshot = transaction.get(ref)
+            val savedId = snapshot.get("saved") as List<*>
+
+            savedId.forEach {
+                val post = transaction.get(store.collection("posts").document(it.toString()))
+                trySend(post.toObject(ContentDTO::class.java))
+            }
+        }.continueWith {
+            if (it.isSuccessful)
+                close()
+            else
+                Log.wtf("Repository", it.exception?.message)
         }
 
         awaitClose()

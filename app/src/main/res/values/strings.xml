@@ -21,7 +21,7 @@
 
     <string name="profile_edit">프로필 수정</string>
     <string name="saved_post">저장한 글</string>
-    <string name="written_post">내가 쓴 글</string>
+    <string name="written_post">내 게시글</string>
 
     <string name="google_login">구글로 로그인</string>
     <string name="login_not_filled">이메일과 비밀번호를 입력해주세요</string>

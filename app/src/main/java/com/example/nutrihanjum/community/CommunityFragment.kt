@@ -38,6 +38,8 @@ class CommunityFragment : Fragment() {
     private lateinit var communityViewModel: CommunityViewModel
     private lateinit var userViewModel: UserViewModel
 
+    private val recyclerViewAdapter = CommunityRecyclerViewAdapter()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,42 +49,40 @@ class CommunityFragment : Fragment() {
         communityViewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
 
+        makeCommentLauncher(recyclerViewAdapter)
+        addLiveDataObserver()
+        addViewListener()
+
         binding.communityfragmentRecylerview.layoutManager = LinearLayoutManager(activity)
         binding.communityfragmentRecylerview.setHasFixedSize(true)
 
-        val recyclerViewAdapter = CommunityRecyclerViewAdapter()
-        recyclerViewAdapter.commentLauncher =
+        binding.communityfragmentRecylerview.adapter = recyclerViewAdapter
+
+        communityViewModel.loadContentsInit()
+
+        return binding.root
+    }
+
+    private fun makeCommentLauncher(adapter: CommunityRecyclerViewAdapter) {
+        adapter.commentLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
                     val countChange = result.data?.getIntExtra("countChange", 0)
 
-                    with(recyclerViewAdapter.contentPosition) {
+                    with(adapter.contentPosition) {
                         if (this != -1) {
                             countChange?.let {
-                                recyclerViewAdapter.contentDTOs[this].commentCount += it
-                                recyclerViewAdapter.notifyItemChanged(this, "comment")
+                                adapter.contentDTOs[this].commentCount += it
+                                adapter.notifyItemChanged(this, "comment")
                             }
                         }
                     }
-                    recyclerViewAdapter.contentPosition = -1
+                    adapter.contentPosition = -1
                 }
             }
+    }
 
-        binding.communityfragmentRecylerview.adapter = recyclerViewAdapter
-
-        binding.communityfragmentRecylerview.addOnScrollListener(object :
-            RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-
-                if (!binding.communityfragmentRecylerview.canScrollVertically(1) && newState==RecyclerView.SCROLL_STATE_IDLE) {
-                    page++
-                    communityViewModel.loadContentsMore()
-                }
-            }
-        })
-
-        communityViewModel.loadContentsInit()
+    private fun addLiveDataObserver() {
         communityViewModel.contents.observe(viewLifecycleOwner, Observer
         {
             recyclerViewAdapter.updateContents(it)
@@ -104,6 +104,20 @@ class CommunityFragment : Fragment() {
                 recyclerViewAdapter.savedClickEvent = null
             }
         }
+    }
+
+    private fun addViewListener() {
+        binding.communityfragmentRecylerview.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if (!binding.communityfragmentRecylerview.canScrollVertically(1) && newState==RecyclerView.SCROLL_STATE_IDLE) {
+                    page++
+                    communityViewModel.loadContentsMore()
+                }
+            }
+        })
 
         binding.communityfragmentSwiperefreshlayout.setOnRefreshListener {
             page = 1
@@ -111,7 +125,5 @@ class CommunityFragment : Fragment() {
             communityViewModel.loadContentsInit()
             binding.communityfragmentSwiperefreshlayout.isRefreshing = false
         }
-
-        return binding.root
     }
 }

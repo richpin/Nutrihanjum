@@ -27,6 +27,8 @@
         <entry key="app/src/main/res/drawable/public_option_thumb.xml" value="0.3546875" />
         <entry key="app/src/main/res/layout/activity_comment.xml" value="0.18802083333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.45" />
+        <entry key="app/src/main/res/layout/activity_post.xml" value="0.240625" />
+        <entry key="app/src/main/res/layout/activity_saved_post.xml" value="0.12135416666666667" />
         <entry key="app/src/main/res/layout/activity_update_profile.xml" value="0.13802083333333334" />
         <entry key="app/src/main/res/layout/chatbot_fragment.xml" value="0.2617753623188406" />
         <entry key="app/src/main/res/layout/community_fragment.xml" value="0.2617753623188406" />

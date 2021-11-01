@@ -83,6 +83,10 @@ class UserFragment: Fragment() {
         binding.profileEditLayout.setOnClickListener {
             profileLauncher.launch(Intent(activity, UpdateProfileActivity::class.java))
         }
+
+        binding.savedPostLayout.setOnClickListener {
+            startActivity(Intent(activity, SavedPostActivity::class.java))
+        }
     }
 
 

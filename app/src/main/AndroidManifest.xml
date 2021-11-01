@@ -18,9 +18,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Nutrihanjum">
         <activity
+            android:name=".user.SavedPostActivity"
+            android:exported="true" />
+        <activity
+            android:name=".user.PostActivity"
+            android:exported="true" />
+        <activity
             android:name=".community.CommentActivity"
             android:exported="true" />
-
         <activity
             android:name=".user.UpdateProfileActivity"
             android:exported="true" />
