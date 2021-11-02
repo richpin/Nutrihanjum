@@ -15,4 +15,6 @@
     <color name="sunday_color">#E46B60</color>
     <color name="saturday_color">#539BF5</color>
 
+    <color name="loading_background">#72686557</color>
+
 </resources>

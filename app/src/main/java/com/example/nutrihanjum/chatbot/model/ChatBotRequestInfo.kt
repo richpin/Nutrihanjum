@@ -7,5 +7,6 @@ data class ChatBotRequestInfo(
     var method: String? = null,
     var credentialUrl: String? = null,
     var scope: List<String>? = null,
+    var welcome: ChatBotResponseDTO? = null,
     var credential: GoogleCredentials? = null,
 )

@@ -29,7 +29,7 @@ object ChatBotRepository {
 
 
     fun loadAllChatBots() = callbackFlow {
-        store.collection("chatbot").get().continueWith { task ->
+        store.collection("chat_bot").get().continueWith { task ->
             if (task.isSuccessful) {
                 trySend(task.result.toObjects(ChatBotProfileDTO::class.java))
             }
@@ -43,7 +43,7 @@ object ChatBotRepository {
     fun initChatBot(id: String, scope: CoroutineScope) = callbackFlow {
         var info = ChatBotRequestInfo()
 
-        store.collection("chatbotCredentials").document(id).get().onSuccessTask {
+        store.collection("chat_bot_credentials").document(id).get().onSuccessTask {
             info = it.toObject(ChatBotRequestInfo::class.java)!!
             storage.getReferenceFromUrl(info.credentialUrl!!).stream
 

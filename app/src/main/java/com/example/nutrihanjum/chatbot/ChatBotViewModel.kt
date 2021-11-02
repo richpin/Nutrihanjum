@@ -1,16 +1,13 @@
 package com.example.nutrihanjum.chatbot
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nutrihanjum.chatbot.model.*
 import com.example.nutrihanjum.repository.ChatBotRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ChatBotViewModel : ViewModel() {
 
@@ -38,6 +35,9 @@ class ChatBotViewModel : ViewModel() {
     private val _chatList = MutableLiveData<ArrayList<ChatData>>(arrayListOf())
     val chatList: LiveData<ArrayList<ChatData>> get() = _chatList
 
+    private val _initialized = MutableLiveData<Boolean>()
+    val initialized: LiveData<Boolean> get() = _initialized
+
     fun initChatBot(chatBot: ChatBotProfileDTO) {
         this.chatBot = chatBot
 
@@ -45,12 +45,21 @@ class ChatBotViewModel : ViewModel() {
             ChatBotRepository.initChatBot(chatBot.id, viewModelScope).collect {
                 if (it != null) {
                     info = it
-                    requestToBot("안녕")
                 } else {
                     _chatList.value!!.add(REPLY_FAILED)
                     _chatList.postValue(_chatList.value)
                 }
+
+                _initialized.postValue(true)
             }
+        }
+    }
+
+
+    fun welcomeMessage() {
+        info?.welcome?.let {
+            _chatList.value!!.add(makeBotData(it))
+            _chatList.value = _chatList.value
         }
     }
 
@@ -85,7 +94,10 @@ class ChatBotViewModel : ViewModel() {
 
         data.name = chatBot.profileName
         data.profileUrl = chatBot.profileUrl
-        data.message = response.getReplyMessage()
+        data.message = response.getMessage()
+        data.quickReplies = ArrayList(response.getQuickReplies().map {
+            QuickReplyOption(text = it.text, action = it.action)
+        })
 
         return data
     }

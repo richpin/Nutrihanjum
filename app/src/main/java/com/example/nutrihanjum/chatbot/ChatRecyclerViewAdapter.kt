@@ -1,20 +1,29 @@
 package com.example.nutrihanjum.chatbot
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Toast
+import androidx.core.view.children
+import androidx.core.view.size
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
+import com.example.nutrihanjum.R
 import com.example.nutrihanjum.chatbot.model.BotData
 import com.example.nutrihanjum.chatbot.model.ChatBotResponseDTO
 import com.example.nutrihanjum.chatbot.model.ChatData
 import com.example.nutrihanjum.chatbot.model.UserData
 import com.example.nutrihanjum.databinding.ItemChatBotBinding
 import com.example.nutrihanjum.databinding.ItemChatUserBinding
+import com.example.nutrihanjum.databinding.ItemQuickReplyBinding
 
 class ChatRecyclerViewAdapter(private val chatList: ArrayList<ChatData>)
     : RecyclerView.Adapter<ChatRecyclerViewAdapter.ViewHolder>() {
+
+    var quickReplyListener: ((String) -> Unit)? = null
 
     private lateinit var recyclerView: RecyclerView
 
@@ -32,9 +41,10 @@ class ChatRecyclerViewAdapter(private val chatList: ArrayList<ChatData>)
     }
 
 
-    class BotViewHolder(private val binding: ItemChatBotBinding): ViewHolder(binding) {
+   inner class BotViewHolder(private val binding: ItemChatBotBinding): ViewHolder(binding) {
         override fun bind(item: ChatData) {
             val data = item as BotData
+            val pos = bindingAdapterPosition
 
             Glide.with(binding.root.context)
                 .load(data.profileUrl)
@@ -43,11 +53,39 @@ class ChatRecyclerViewAdapter(private val chatList: ArrayList<ChatData>)
 
             binding.textviewBotName.text = data.name
             binding.textviewChat.text = data.message
+
+            binding.layoutQuickReplies.removeAllViews()
+
+            data.quickReplies.forEachIndexed { index, quickReply ->
+                val quickReplyBinding = ItemQuickReplyBinding.inflate(
+                    LayoutInflater.from(binding.root.context),
+                    binding.root,
+                    false
+                )
+
+                quickReplyBinding.btnAction.text = quickReply.text
+
+                if (pos == itemCount - 1) {
+                    quickReplyBinding.btnAction.setOnClickListener { btn ->
+                        btn.isSelected = true
+                        data.quickReplies[index].isSelected = true
+
+                        binding.layoutQuickReplies.children.forEach { view ->
+                            view.findViewById<View>(R.id.btn_action).isEnabled = false
+                        }
+                        quickReplyListener?.invoke(quickReply.action)
+                    }
+                } else {
+                    quickReplyBinding.btnAction.isEnabled = false
+                    quickReplyBinding.btnAction.isChecked = quickReply.isSelected
+                }
+                binding.layoutQuickReplies.addView(quickReplyBinding.root)
+            }
         }
     }
 
 
-    class UserViewHolder(private val binding: ItemChatUserBinding): ViewHolder(binding) {
+    inner class UserViewHolder(private val binding: ItemChatUserBinding): ViewHolder(binding) {
         override fun bind(item: ChatData) {
             val data = item as UserData
 
@@ -63,8 +101,10 @@ class ChatRecyclerViewAdapter(private val chatList: ArrayList<ChatData>)
 
 
     fun notifyDataAdded() {
-        notifyItemInserted(chatList.size - 1)
-        recyclerView.scrollToPosition(itemCount - 1)
+        if (chatList.size > 0) {
+            notifyItemInserted(chatList.size - 1)
+            recyclerView.scrollToPosition(itemCount - 1)
+        }
     }
 
 
@@ -77,12 +117,12 @@ class ChatRecyclerViewAdapter(private val chatList: ArrayList<ChatData>)
         holder.bind(chatList[position])
     }
 
-    override fun getItemCount(): Int {
-        return chatList.size
-    }
-
     override fun getItemViewType(position: Int): Int {
         return chatList[position].type
+    }
+
+    override fun getItemCount(): Int {
+        return chatList.size
     }
 
     open class ViewHolder(binding: ViewBinding): RecyclerView.ViewHolder(binding.root) {

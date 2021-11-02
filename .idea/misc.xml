@@ -3,10 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/box_rounded_boarder.xml" value="0.37538461538461537" />
+        <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/box_rounded_chatbot.xml" value="0.37538461538461537" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/chat_bubble_bot.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/chat_bubble_user.xml" value="0.37538461538461537" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/ic_arrow_back.xml" value="0.37538461538461537" />
-        <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/activity_add_diary.xml" value="0.1388888888888889" />
+        <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/selector_meal_time_radio_button.xml" value="0.37538461538461537" />
+        <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/selector_meal_time_radio_text.xml" value="0.37538461538461537" />
+        <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/selector_quick_reply_.xml" value="0.37538461538461537" />
+        <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/selector_quick_reply_background.xml" value="0.37538461538461537" />
+        <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/selector_quick_reply_text.xml" value="0.37538461538461537" />
+        <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/activity_add_diary.xml" value="0.3594871794871795" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/activity_chat.xml" value="0.3594871794871795" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/activity_chat_bot.xml" value="0.3594871794871795" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/activity_comment.xml" value="0.3594871794871795" />
@@ -25,6 +32,7 @@
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/item_chatbot.xml" value="0.3594871794871795" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/item_community.xml" value="0.3388888888888889" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/item_diary.xml" value="0.3388888888888889" />
+        <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/item_quick_reply.xml" value="0.3592592592592593" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/user_fragment.xml" value="0.3388888888888889" />
         <entry key="app/src/main/res/drawable-mdpi/box_rounded.xml" value="0.3546875" />
         <entry key="app/src/main/res/drawable/box_rounded.xml" value="0.3546875" />

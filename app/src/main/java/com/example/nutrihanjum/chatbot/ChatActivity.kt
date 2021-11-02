@@ -2,6 +2,9 @@ package com.example.nutrihanjum.chatbot
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.KeyEvent
+import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +34,15 @@ class ChatActivity : AppCompatActivity() {
         val chatBot = intent.getSerializableExtra("chatBot") as ChatBotProfileDTO
 
         viewModel.initChatBot(chatBot)
+        binding.layoutLoading.visibility = View.VISIBLE
+
+        viewModel.initialized.observe(this) {
+            binding.layoutLoading.visibility = View.GONE
+
+            if (it) {
+                viewModel.welcomeMessage()
+            }
+        }
     }
 
 
@@ -44,27 +56,36 @@ class ChatActivity : AppCompatActivity() {
 
         viewModel.chatList.observe(this) {
             adapter.notifyDataAdded()
+            binding.btnSendChat.isEnabled = true
         }
+
+        adapter.quickReplyListener = { viewModel.sendMessage(it) }
 
         addViewListener()
     }
 
 
     private fun addViewListener() {
+        binding.btnBack.setOnClickListener { onBackPressed() }
 
-        viewModel.chatList.observe(this) {
-            binding.btnBack.setOnClickListener { onBackPressed() }
+        binding.btnSendChat.setOnClickListener {
+            val msg = binding.edittextChatInput.text.toString()
 
-            binding.btnSendChat.setOnClickListener {
-                val msg = binding.edittextChatInput.text.toString()
-
-                if (msg.isEmpty()) {
-                    Toast.makeText(this@ChatActivity, getString(R.string.chat_empty_input), Toast.LENGTH_SHORT).show()
-                } else {
-                    viewModel.sendMessage(msg)
-                    it.isClickable = false
-                }
+            if (msg.isEmpty()) {
+                Toast.makeText(this@ChatActivity, getString(R.string.chat_empty_input), Toast.LENGTH_SHORT).show()
+            } else {
+                viewModel.sendMessage(msg)
+                binding.edittextChatInput.setText("")
+                it.isEnabled = false
             }
+        }
+
+        binding.edittextChatInput.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                binding.btnSendChat.performClick()
+            }
+
+            return@setOnEditorActionListener true
         }
     }
 

@@ -12,10 +12,17 @@ data class BotData(
     var message: String = "",
     override val type: Int = ChatData.BOT,
     var name: String = "",
-    var profileUrl: String = ""
+    var profileUrl: String = "",
+    var quickReplies: ArrayList<QuickReplyOption> = arrayListOf()
 ): ChatData {
 
 }
+
+data class QuickReplyOption(
+    var text: String = "",
+    var action: String = "",
+    var isSelected: Boolean = false,
+)
 
 
 data class UserData(
