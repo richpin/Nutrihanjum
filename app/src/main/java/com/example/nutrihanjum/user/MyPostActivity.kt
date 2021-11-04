@@ -10,6 +10,7 @@ import com.example.nutrihanjum.community.CommunityRecyclerViewAdapter
 import com.example.nutrihanjum.community.CommunityViewModel
 import com.example.nutrihanjum.community.PostViewModel
 import com.example.nutrihanjum.databinding.ActivityMyPostBinding
+import com.example.nutrihanjum.model.ContentDTO
 
 class MyPostActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMyPostBinding
@@ -31,17 +32,18 @@ class MyPostActivity : AppCompatActivity() {
 
         binding.MyPostActivityRecyclerview.adapter = recyclerViewAdapter
 
-        makeCommentLauncher(recyclerViewAdapter)
         addLiveDataObserver()
         addViewListener()
         modifyLayoutManager()
+        makeLauncher(recyclerViewAdapter)
+        recyclerViewAdapter.initDialog(this)
 
         postViewModel.loadMyContents()
 
         setContentView(binding.root)
     }
 
-    private fun makeCommentLauncher(adapter: CommunityRecyclerViewAdapter) {
+    private fun makeLauncher(adapter: CommunityRecyclerViewAdapter) {
         adapter.commentLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
@@ -53,6 +55,19 @@ class MyPostActivity : AppCompatActivity() {
                                 adapter.contentDTOs[this].commentCount += it
                                 adapter.notifyItemChanged(this, "comment")
                             }
+                        }
+                    }
+                    adapter.contentPosition = -1
+                }
+            }
+
+        adapter.addDiaryLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    with(adapter.contentPosition) {
+                        if (this != -1) {
+                            adapter.contentDTOs[this] = result.data?.getSerializableExtra("modifiedContent") as ContentDTO
+                            adapter.notifyItemChanged(this)
                         }
                     }
                     adapter.contentPosition = -1

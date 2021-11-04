@@ -11,6 +11,7 @@ import com.example.nutrihanjum.community.CommunityRecyclerViewAdapter
 import com.example.nutrihanjum.community.CommunityViewModel
 import com.example.nutrihanjum.community.PostViewModel
 import com.example.nutrihanjum.databinding.ActivitySavedPostBinding
+import com.example.nutrihanjum.model.ContentDTO
 
 class SavedPostActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySavedPostBinding
@@ -30,7 +31,8 @@ class SavedPostActivity : AppCompatActivity() {
         addLiveDataObserver()
         addViewListener()
         modifyLayoutManager()
-        makeCommentLauncher(recyclerViewAdapter)
+        makeLauncher(recyclerViewAdapter)
+        recyclerViewAdapter.initDialog(this)
 
         binding.savedPostActivityRecyclerview.layoutManager = layoutManager
         binding.savedPostActivityRecyclerview.setHasFixedSize(true)
@@ -42,7 +44,7 @@ class SavedPostActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-    private fun makeCommentLauncher(adapter: CommunityRecyclerViewAdapter) {
+    private fun makeLauncher(adapter: CommunityRecyclerViewAdapter) {
         adapter.commentLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
@@ -54,6 +56,19 @@ class SavedPostActivity : AppCompatActivity() {
                                 adapter.contentDTOs[this].commentCount += it
                                 adapter.notifyItemChanged(this, "comment")
                             }
+                        }
+                    }
+                    adapter.contentPosition = -1
+                }
+            }
+
+        adapter.addDiaryLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    with(adapter.contentPosition) {
+                        if (this != -1) {
+                            adapter.contentDTOs[this] = result.data?.getSerializableExtra("modifiedContent") as ContentDTO
+                            adapter.notifyItemChanged(this)
                         }
                     }
                     adapter.contentPosition = -1

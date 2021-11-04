@@ -57,6 +57,7 @@ object ChatBotRepository {
                     trySend(info)
                 }
                 catch (e: Exception) {
+                    Log.wtf(TAG, e.stackTraceToString())
                     trySend(null)
                 }
                 finally {
