@@ -1,6 +1,7 @@
 package com.example.nutrihanjum.diary
 
 import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -24,6 +25,7 @@ class AddDiaryActivity : AppCompatActivity() {
     private var isPhotoExist = false
 
     private val viewModel: DiaryViewModel by viewModels()
+    private lateinit var content: ContentDTO
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +78,7 @@ class AddDiaryActivity : AppCompatActivity() {
 
 
     private fun initForModifyDiary() {
-        val content = intent.getSerializableExtra("content") as ContentDTO
+        content = intent.getSerializableExtra("content") as ContentDTO
 
         with(binding) {
             btnRegisterDiary.text = getString(R.string.modify_diary)
@@ -100,7 +102,7 @@ class AddDiaryActivity : AppCompatActivity() {
                     timestamp = System.currentTimeMillis()
 
                     viewModel.modifyDiary(
-                        content,
+                        this,
                         if (isPhotoExist) photoURI.toString() else null
                     )
                 }
@@ -126,7 +128,9 @@ class AddDiaryActivity : AppCompatActivity() {
 
         viewModel.diaryChanged.observe(this) {
             if (it) {
-                setResult(Activity.RESULT_OK)
+                val intent = Intent()
+                intent.putExtra("modifiedContent", content)
+                setResult(Activity.RESULT_OK, intent)
                 finish()
             }
             else {

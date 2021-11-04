@@ -2,25 +2,53 @@ package com.example.nutrihanjum.repository
 
 
 import android.util.Log
+import androidx.core.content.contentValuesOf
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.repository.UserRepository.uid
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.callbackFlow as callbackFlow
 
 object CommunityRepository {
     private val store get() = FirebaseFirestore.getInstance()
+    private lateinit var lastVisible: DocumentSnapshot
+    val boardLimit: Long = 3
 
-    fun loadContents() = callbackFlow {
+    fun loadContentsInit() = callbackFlow {
         store.collection("posts")
-            .orderBy("timestamp")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .whereEqualTo("public", true)
+            .limit(boardLimit)
             .get().continueWith {
                 if (it.isSuccessful) {
                     it.result.documents.forEach { snapshot ->
                         trySend(snapshot.toObject(ContentDTO::class.java))
                     }
+                    lastVisible = it.result.documents[it.result.size() - 1]
+                } else {
+                    Log.wtf("Repository", it.exception?.message)
+                }
+                close()
+            }
+
+        awaitClose()
+    }
+
+    fun loadContentsMore() = callbackFlow {
+        store.collection("posts")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .whereEqualTo("public", true)
+            .startAfter(lastVisible)
+            .limit(boardLimit)
+            .get().continueWith {
+                if (it.isSuccessful) {
+                    it.result.documents.forEach { snapshot ->
+                        trySend(snapshot.toObject(ContentDTO::class.java))
+                    }
+                    lastVisible = it.result.documents[it.result.size() - 1]
                 } else {
                     Log.wtf("Repository", it.exception?.message)
                 }
@@ -55,14 +83,8 @@ object CommunityRepository {
 
         ref.collection("comments")
             .document(commentDTO.id)
-            .set(commentDTO).continueWithTask {
-                if (it.isSuccessful) {
-                    ref.update("commentCount", FieldValue.increment(1))
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
+            .set(commentDTO).onSuccessTask {
+                ref.update("commentCount", FieldValue.increment(1))
             }.continueWith {
                 if (it.isSuccessful) {
                     trySend(true)
@@ -80,14 +102,8 @@ object CommunityRepository {
 
         ref.collection("comments")
             .document(commentId)
-            .delete().continueWithTask {
-                if (it.isSuccessful) {
-                    ref.update("commentCount", FieldValue.increment(-1))
-                } else {
-                    trySend(false)
-                    close()
-                    null
-                }
+            .delete().onSuccessTask {
+                ref.update("commentCount", FieldValue.increment(-1))
             }.continueWith {
                 if (it.isSuccessful) {
                     trySend(true)
@@ -152,6 +168,48 @@ object CommunityRepository {
                 if (it.isSuccessful) trySend(true)
                 else trySend(false)
             }
+        }
+
+        awaitClose()
+    }
+
+    fun loadSavedContents() = callbackFlow {
+        val ref = store.collection("users").document(uid!!)
+
+        store.runTransaction { transaction ->
+            val snapshot = transaction.get(ref)
+            val savedId = snapshot.get("saved") as List<*>
+
+            savedId.forEach {
+                val post = transaction.get(store.collection("posts").document(it.toString()))
+                trySend(post.toObject(ContentDTO::class.java))
+            }
+        }.continueWith {
+            if (it.isSuccessful)
+                close()
+            else
+                Log.wtf("Repository", it.exception?.message)
+        }
+
+        awaitClose()
+    }
+
+    fun loadMyContents() = callbackFlow {
+        val ref = store.collection("users").document(uid!!)
+
+        store.runTransaction { transaction ->
+            val snapshot = transaction.get(ref)
+            val savedId = snapshot.get("posts") as List<*>
+
+            savedId.forEach {
+                val post = transaction.get(store.collection("posts").document(it.toString()))
+                trySend(post.toObject(ContentDTO::class.java))
+            }
+        }.continueWith {
+            if (it.isSuccessful)
+                close()
+            else
+                Log.wtf("Repository", it.exception?.message)
         }
 
         awaitClose()

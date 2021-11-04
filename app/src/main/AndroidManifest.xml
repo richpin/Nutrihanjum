@@ -21,6 +21,12 @@
             android:name=".chatbot.ChatActivity"
             android:exported="true" />
         <activity
+            android:name=".user.MyPostActivity"
+            android:exported="true" />
+        <activity
+            android:name=".user.SavedPostActivity"
+            android:exported="true" />
+        <activity
             android:name=".community.CommentActivity"
             android:exported="true" />
         <activity

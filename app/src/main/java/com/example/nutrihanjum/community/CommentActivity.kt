@@ -29,12 +29,14 @@ class CommentActivity : AppCompatActivity() {
 
     private val recyclerViewAdapter = CommentRecyclerViewAdapter()
 
+    private lateinit var contentId: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCommentBinding.inflate(layoutInflater)
         communityViewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
 
-        val contentId = intent.getStringExtra("contentId")
+        contentId = intent.getStringExtra("contentId")!!
         communityViewModel.loadComments(contentId!!)
 
         binding.commentActivityRecyclerview.layoutManager = LinearLayoutManager(this)
@@ -44,15 +46,25 @@ class CommentActivity : AppCompatActivity() {
             { it -> communityViewModel.deleteComment(contentId, it) }
         binding.commentActivityRecyclerview.adapter = recyclerViewAdapter
 
+        addLiveDataObserver()
+        addViewListener()
+
+        Glide.with(this).load(userPhoto).circleCrop()
+            .into(binding.commentActivityProfileImageview)
+
+
+        setContentView(binding.root)
+    }
+
+    private fun addLiveDataObserver() {
         communityViewModel.comments.observe(this, {
             recyclerViewAdapter.updateComments(it)
             recyclerViewAdapter.notifyDataSetChanged()
         })
+    }
 
+    private fun addViewListener() {
         binding.commentActivityBackButton.setOnClickListener { onBackPressed() }
-
-        Glide.with(this).load(userPhoto).circleCrop()
-            .into(binding.commentActivityProfileImageview)
 
         binding.commentActivityCommentButton.setOnClickListener {
             val content = binding.commentActivityCommentEdittext.text.toString()
@@ -79,12 +91,10 @@ class CommentActivity : AppCompatActivity() {
                 recyclerViewAdapter.countChange += 1
             }
         }
-
-        setContentView(binding.root)
     }
 
     override fun onBackPressed() {
-        val intent = Intent(this, CommunityFragment::class.java)
+        val intent = Intent()
         intent.putExtra("countChange", recyclerViewAdapter.countChange)
         setResult(Activity.RESULT_OK, intent)
         super.onBackPressed()

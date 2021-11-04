@@ -7,7 +7,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="45dp">
+        android:layout_height="45dp"
+        android:layout_marginTop="10dp">
 
         <ImageView
             android:id="@+id/communityitem_profile_imageview"
@@ -27,13 +28,13 @@
             android:textSize="15dp"/>
 
         <ImageView
-            android:id="@+id/press_saved_imageview"
+            android:id="@+id/press_etc_imageview"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="13dp"
             android:layout_marginEnd="10dp"
-            android:src="@drawable/ic_bookmark_border" />
+            android:src="@drawable/ic_baseline_more_horiz" />
     </RelativeLayout>
 
     <androidx.cardview.widget.CardView
@@ -155,19 +156,20 @@
             android:layout_marginVertical="5dp">
         </LinearLayout>
         <LinearLayout
-            android:id="@+id/press_report_layout"
+            android:id="@+id/press_save_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center">
             <ImageView
+                android:id="@+id/press_save_imageview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_report"/>
+                android:src="@drawable/ic_bookmark_border"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/report"
+                android:text="@string/save"
                 android:fontFamily="@font/font_bold"
                 android:textColor="@color/black"
                 android:layout_marginLeft="5dp"/>
