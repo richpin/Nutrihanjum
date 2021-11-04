@@ -39,6 +39,8 @@ class ChatBotViewModel : ViewModel() {
     val initialized: LiveData<Boolean> get() = _initialized
 
     fun initChatBot(chatBot: ChatBotProfileDTO) {
+        if (info != null) return
+
         this.chatBot = chatBot
 
         viewModelScope.launch {
@@ -57,6 +59,8 @@ class ChatBotViewModel : ViewModel() {
 
 
     fun welcomeMessage() {
+        if (chatList.value?.isNotEmpty() == true) return
+
         info?.welcome?.let {
             _chatList.value!!.add(makeBotData(it))
             _chatList.value = _chatList.value

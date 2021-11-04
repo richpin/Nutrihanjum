@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.core.view.children
 import androidx.core.view.size
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.R
@@ -101,16 +102,19 @@ class ChatRecyclerViewAdapter(private val chatList: ArrayList<ChatData>)
 
 
     fun notifyDataAdded() {
-        if (chatList.size > 0) {
-            notifyItemInserted(chatList.size - 1)
-            recyclerView.scrollToPosition(itemCount - 1)
-        }
+        if (itemCount > 1) notifyItemChanged(itemCount - 2)
+        notifyItemInserted(itemCount - 1)
+        recyclerView.scrollToPosition(itemCount - 1)
     }
 
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         this.recyclerView = recyclerView
+
+        if (recyclerView.itemAnimator is SimpleItemAnimator) {
+            (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -120,6 +124,7 @@ class ChatRecyclerViewAdapter(private val chatList: ArrayList<ChatData>)
     override fun getItemViewType(position: Int): Int {
         return chatList[position].type
     }
+
 
     override fun getItemCount(): Int {
         return chatList.size

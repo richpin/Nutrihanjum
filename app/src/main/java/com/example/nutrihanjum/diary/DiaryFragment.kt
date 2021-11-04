@@ -65,15 +65,18 @@ class DiaryFragment: Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addLiveDataObserver()
     }
 
+
     override fun onResume() {
         super.onResume()
         binding.calendarView.currentDate = binding.calendarView.selectedDate
     }
+
 
     private fun updateForSignIn() {
         binding.calendarView.setOnDateChangedListener { widget, date, _ ->
@@ -93,6 +96,7 @@ class DiaryFragment: Fragment() {
         }
     }
 
+
     private fun updateForSignOut() {
         binding.calendarView.setOnDateChangedListener { widget, date, _ ->
             collapseCalendar()
@@ -101,6 +105,7 @@ class DiaryFragment: Fragment() {
         binding.btnAddDiary.isClickable = false
         binding.recyclerviewDiary.visibility = View.GONE
     }
+
 
     private fun initCalendar() {
         with (binding.calendarView) {

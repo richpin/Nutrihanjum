@@ -55,7 +55,7 @@ class ChatActivity : AppCompatActivity() {
         binding.recyclerviewChat.layoutManager = LinearLayoutManager(this)
 
         viewModel.chatList.observe(this) {
-            adapter.notifyDataAdded()
+            if (it.isNotEmpty()) adapter.notifyDataAdded()
             binding.btnSendChat.isEnabled = true
         }
 
