@@ -87,6 +87,10 @@ class UserFragment: Fragment() {
         binding.savedPostLayout.setOnClickListener {
             startActivity(Intent(activity, SavedPostActivity::class.java))
         }
+
+        binding.myPostLayout.setOnClickListener {
+            startActivity(Intent(activity, MyPostActivity::class.java))
+        }
     }
 
 

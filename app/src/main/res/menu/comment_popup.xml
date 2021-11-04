@@ -3,10 +3,10 @@
     <item
         android:id="@+id/comment_action_delete"
         android:enabled="true"
-        android:title="@string/diary_popup_delete" />
+        android:title="@string/popup_delete" />
 
     <item
         android:id="@+id/comment_action_modify"
         android:enabled="true"
-        android:title="@string/diary_popup_modify" />
+        android:title="@string/popup_modify" />
 </menu>

@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nutrihanjum.databinding.CommunityFragmentBinding
 import com.example.nutrihanjum.UserViewModel
+import com.example.nutrihanjum.diary.DiaryViewModel
+import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.repository.CommunityRepository.boardLimit
 
 class CommunityFragment : Fragment() {
@@ -37,6 +39,7 @@ class CommunityFragment : Fragment() {
 
     private lateinit var communityViewModel: CommunityViewModel
     private lateinit var userViewModel: UserViewModel
+    private lateinit var diaryViewModel: DiaryViewModel
 
     private val recyclerViewAdapter = CommunityRecyclerViewAdapter()
 
@@ -48,8 +51,10 @@ class CommunityFragment : Fragment() {
 
         communityViewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
+        diaryViewModel = ViewModelProvider(requireActivity()).get(DiaryViewModel::class.java)
 
-        makeCommentLauncher(recyclerViewAdapter)
+        makeLauncher(recyclerViewAdapter)
+        recyclerViewAdapter.initDialog(requireActivity())
         addLiveDataObserver()
         addViewListener()
 
@@ -63,7 +68,7 @@ class CommunityFragment : Fragment() {
         return binding.root
     }
 
-    private fun makeCommentLauncher(adapter: CommunityRecyclerViewAdapter) {
+    private fun makeLauncher(adapter: CommunityRecyclerViewAdapter) {
         adapter.commentLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
@@ -75,6 +80,19 @@ class CommunityFragment : Fragment() {
                                 adapter.contentDTOs[this].commentCount += it
                                 adapter.notifyItemChanged(this, "comment")
                             }
+                        }
+                    }
+                    adapter.contentPosition = -1
+                }
+            }
+
+        adapter.addDiaryLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    with(adapter.contentPosition) {
+                        if (this != -1) {
+                            adapter.contentDTOs[this] = result.data?.getSerializableExtra("modifiedContent") as ContentDTO
+                            adapter.notifyItemChanged(this)
                         }
                     }
                     adapter.contentPosition = -1
@@ -99,9 +117,12 @@ class CommunityFragment : Fragment() {
                     { first, second -> communityViewModel.eventLikes(first, second) }
                 recyclerViewAdapter.savedClickEvent =
                     { first, second -> communityViewModel.eventSaved(first, second) }
+                recyclerViewAdapter.deleteClickEvent =
+                    { first, second -> diaryViewModel.deleteDiary(first, second) }
             } else {
                 recyclerViewAdapter.likeClickEvent = null
                 recyclerViewAdapter.savedClickEvent = null
+                recyclerViewAdapter.deleteClickEvent = null
             }
         }
     }

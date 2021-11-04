@@ -1,11 +1,13 @@
 package com.example.nutrihanjum.community
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.text.TextUtils
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -13,6 +15,11 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.R
+import com.example.nutrihanjum.databinding.LayoutPopupMyBinding
+import com.example.nutrihanjum.databinding.LayoutPopupOtherBinding
+import com.example.nutrihanjum.databinding.LayoutPopupDeleteBinding
+import com.example.nutrihanjum.databinding.LayoutPopupDeleteBinding.*
+import com.example.nutrihanjum.diary.AddDiaryActivity
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.repository.UserRepository.uid
 
@@ -20,6 +27,13 @@ class CommunityRecyclerViewAdapter() :
     RecyclerView.Adapter<CommunityRecyclerViewAdapter.ViewHolder>() {
     var contentDTOs = arrayListOf<ContentDTO>()
     var contentPosition = -1
+
+    private lateinit var popupMyDialog: Dialog
+    private lateinit var popupOtherDialog: Dialog
+    private lateinit var popupDeleteDialog: Dialog
+    private lateinit var popupMyBinding: LayoutPopupMyBinding
+    private lateinit var popupOtherBinding: LayoutPopupOtherBinding
+    private lateinit var popupDeleteBinding: LayoutPopupDeleteBinding
 
     private object TIME_MAXIMUM {
         const val SEC = 60
@@ -54,7 +68,62 @@ class CommunityRecyclerViewAdapter() :
 
     var likeClickEvent: ((ContentDTO, Boolean) -> Unit)? = null
     var savedClickEvent: ((ContentDTO, Boolean) -> Unit)? = null
+    var deleteClickEvent: ((String, String) -> Unit)? = null
     lateinit var commentLauncher: ActivityResultLauncher<Intent>
+    lateinit var addDiaryLauncher: ActivityResultLauncher<Intent>
+
+    fun initDialog(mContext: Context) {
+        popupMyDialog = Dialog(mContext)
+        popupOtherDialog = Dialog(mContext)
+        popupDeleteDialog = Dialog(mContext)
+
+        popupMyBinding = LayoutPopupMyBinding.inflate(LayoutInflater.from(mContext))
+        popupOtherBinding = LayoutPopupOtherBinding.inflate(LayoutInflater.from(mContext))
+        popupDeleteBinding = inflate(LayoutInflater.from(mContext))
+        popupMyDialog.setContentView(popupMyBinding.root)
+        popupOtherDialog.setContentView(popupOtherBinding.root)
+        popupDeleteDialog.setContentView(popupDeleteBinding.root)
+
+        popupMyDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupOtherDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupDeleteDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        addPopupListener(mContext)
+    }
+
+    private fun addPopupListener(mContext: Context) {
+        popupMyBinding.btnPopupModify.setOnClickListener {
+            popupMyDialog.dismiss()
+            val intent = Intent(mContext, AddDiaryActivity::class.java)
+            intent.putExtra("content", contentDTOs[contentPosition])
+            addDiaryLauncher.launch(intent)
+        }
+
+        popupMyBinding.btnPopupDelete.setOnClickListener {
+            popupMyDialog.dismiss()
+            popupDeleteDialog.show()
+        }
+
+        popupDeleteBinding.btnDeleteCheckNo.setOnClickListener {
+            popupDeleteDialog.dismiss()
+            contentPosition = -1
+        }
+
+        popupDeleteBinding.btnDeleteCheckYes.setOnClickListener {
+            popupDeleteDialog.dismiss()
+            if (contentPosition != -1) {
+                deleteClickEvent?.let {
+                    it(
+                        contentDTOs[contentPosition].id,
+                        contentDTOs[contentPosition].imageUrl
+                    )
+                }
+                contentDTOs.removeAt(contentPosition)
+                notifyItemRemoved(contentPosition)
+            }
+            contentPosition = -1
+        }
+    }
 
     fun updateContents(data: ArrayList<ContentDTO>) {
         contentDTOs.addAll(data)
@@ -90,9 +159,10 @@ class CommunityRecyclerViewAdapter() :
         val communityitem_timeago_textview: TextView
         val press_like_layout: LinearLayout
         val press_comment_layout: LinearLayout
-        val press_report_layout: LinearLayout
+        val press_save_layout: LinearLayout
+        val press_save_imageview: ImageView
         val press_like_imageview: ImageView
-        val press_saved_imageview: ImageView
+        val press_etc_imageview: ImageView
 
         init {
             communityitem_profile_imageview =
@@ -105,14 +175,24 @@ class CommunityRecyclerViewAdapter() :
             communityitem_timeago_textview = view.findViewById(R.id.communityitem_timeago_textview)
             press_like_layout = view.findViewById(R.id.press_like_layout)
             press_comment_layout = view.findViewById(R.id.press_comment_layout)
-            press_report_layout = view.findViewById(R.id.press_report_layout)
+            press_save_layout = view.findViewById(R.id.press_save_layout)
+            press_save_imageview = view.findViewById(R.id.press_save_imageview)
             press_like_imageview = view.findViewById(R.id.press_like_imageview)
-            press_saved_imageview = view.findViewById(R.id.press_saved_imageview)
+            press_etc_imageview = view.findViewById(R.id.press_etc_imageview)
 
             addListener()
         }
 
-        private fun addListener(){
+        private fun addListener() {
+            press_etc_imageview.setOnClickListener {
+                if (contentDTOs[bindingAdapterPosition].uid == uid)
+                    popupMyDialog.show()
+                else
+                    popupOtherDialog.show()
+
+                contentPosition = bindingAdapterPosition
+            }
+
             press_like_layout.setOnClickListener {
                 likeClickEvent?.let {
                     it(
@@ -140,7 +220,7 @@ class CommunityRecyclerViewAdapter() :
                     }
                 }
             }
-            press_saved_imageview.setOnClickListener {
+            press_save_layout.setOnClickListener {
                 savedClickEvent?.let {
                     it(
                         contentDTOs[bindingAdapterPosition],
@@ -148,10 +228,10 @@ class CommunityRecyclerViewAdapter() :
                     )
                     if (isSaved(contentDTOs[bindingAdapterPosition].saved)) {
                         contentDTOs[bindingAdapterPosition].saved.remove(uid)
-                        press_saved_imageview.setImageResource(R.drawable.ic_bookmark_border)
+                        press_save_imageview.setImageResource(R.drawable.ic_bookmark_border)
                     } else {
                         contentDTOs[bindingAdapterPosition].saved.add(uid!!)
-                        press_saved_imageview.setImageResource(R.drawable.ic_bookmark)
+                        press_save_imageview.setImageResource(R.drawable.ic_bookmark)
                     }
                 }
             }
@@ -194,7 +274,7 @@ class CommunityRecyclerViewAdapter() :
                 setImageResource(R.drawable.ic_favorite_border)
             }
         }
-        with(holder.press_saved_imageview) {
+        with(holder.press_save_imageview) {
             if (isSaved(contentDTOs[position].saved)) {
                 setImageResource(R.drawable.ic_bookmark)
             } else {
@@ -207,9 +287,9 @@ class CommunityRecyclerViewAdapter() :
         if (payloads.isEmpty()) {
             super.onBindViewHolder(holder, position, payloads)
         } else {
-            for(payload in payloads) {
-                if(payload is String) {
-                    if(TextUtils.equals(payload,"comment")) {
+            for (payload in payloads) {
+                if (payload is String) {
+                    if (TextUtils.equals(payload, "comment")) {
                         holder.communityitem_lccount_textview.text =
                             formatCount(
                                 holder.itemView.context,

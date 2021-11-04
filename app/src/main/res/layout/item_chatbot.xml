@@ -35,7 +35,7 @@
         android:layout_marginStart="15dp"
         android:layout_marginTop="30dp"
         android:layout_toEndOf="@+id/chatbot_profile_textview"
-        android:background="@drawable/box_rounded"
+        android:background="@drawable/box_rounded_yellow"
         android:fontFamily="@font/font_bold"
         android:gravity="center"
         android:textAlignment="center"

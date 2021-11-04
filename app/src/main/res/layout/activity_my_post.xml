@@ -5,15 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".user.SavedPostActivity">
+    tools:context=".user.MyPostActivity">
 
     <RelativeLayout
-        android:id="@+id/savedPostActivity_toolbar"
+        android:id="@+id/MyPostActivity_toolbar"
         android:layout_width="match_parent"
         android:layout_height="60dp">
 
         <ImageView
-            android:id="@+id/savedPostActivity_back_button"
+            android:id="@+id/MyPostActivity_back_button"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_centerVertical="true"
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:fontFamily="@font/font_bold"
-            android:text="@string/saved_post"
+            android:text="@string/my_post"
             android:textColor="@color/black"
             android:textSize="20dp" />
 
@@ -40,7 +40,7 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/savedPostActivity_recyclerview"
+        android:id="@+id/MyPostActivity_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

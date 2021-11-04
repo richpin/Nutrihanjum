@@ -193,4 +193,25 @@ object CommunityRepository {
 
         awaitClose()
     }
+
+    fun loadMyContents() = callbackFlow {
+        val ref = store.collection("users").document(uid!!)
+
+        store.runTransaction { transaction ->
+            val snapshot = transaction.get(ref)
+            val savedId = snapshot.get("posts") as List<*>
+
+            savedId.forEach {
+                val post = transaction.get(store.collection("posts").document(it.toString()))
+                trySend(post.toObject(ContentDTO::class.java))
+            }
+        }.continueWith {
+            if (it.isSuccessful)
+                close()
+            else
+                Log.wtf("Repository", it.exception?.message)
+        }
+
+        awaitClose()
+    }
 }

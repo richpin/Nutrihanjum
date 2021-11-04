@@ -20,13 +20,17 @@
         <entry key="app/src/main/res/drawable/box_rounded.xml" value="0.3546875" />
         <entry key="app/src/main/res/drawable/box_rounded_boarder.xml" value="0.3546875" />
         <entry key="app/src/main/res/drawable/box_rounded_chatbot.xml" value="0.3546875" />
+        <entry key="app/src/main/res/drawable/box_rounded_white.xml" value="0.35052083333333334" />
         <entry key="app/src/main/res/drawable/comment_box_rounded.xml" value="0.3546875" />
         <entry key="app/src/main/res/drawable/ic_account_circle.xml" value="0.15416666666666667" />
         <entry key="app/src/main/res/drawable/ic_baseline_add.xml" value="0.3546875" />
         <entry key="app/src/main/res/drawable/ic_check_circle.xml" value="0.15416666666666667" />
+        <entry key="app/src/main/res/drawable/ic_comment.xml" value="0.13958333333333334" />
         <entry key="app/src/main/res/drawable/public_option_thumb.xml" value="0.3546875" />
         <entry key="app/src/main/res/layout/activity_comment.xml" value="0.18802083333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.45" />
+        <entry key="app/src/main/res/layout/activity_my_post.xml" value="0.334375" />
+        <entry key="app/src/main/res/layout/activity_pop_up.xml" value="0.334375" />
         <entry key="app/src/main/res/layout/activity_post.xml" value="0.240625" />
         <entry key="app/src/main/res/layout/activity_saved_post.xml" value="0.12135416666666667" />
         <entry key="app/src/main/res/layout/activity_update_profile.xml" value="0.13802083333333334" />
@@ -37,6 +41,11 @@
         <entry key="app/src/main/res/layout/item_community.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_diary.xml" value="0.18697916666666667" />
         <entry key="app/src/main/res/layout/item_news.xml" value="0.3385416666666667" />
+        <entry key="app/src/main/res/layout/layout_pop_up.xml" value="0.240625" />
+        <entry key="app/src/main/res/layout/layout_pop_up_delete.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/layout_pop_up_other.xml" value="0.1234375" />
+        <entry key="app/src/main/res/layout/layout_popup_delete.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/layout_popup_my.xml" value="0.7576219512195121" />
         <entry key="app/src/main/res/layout/user_fragment.xml" value="0.23135058156024405" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.24479166666666666" />
         <entry key="app/src/main/res/menu/comment_popup.xml" value="0.18697916666666667" />

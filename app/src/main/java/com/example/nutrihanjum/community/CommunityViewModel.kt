@@ -22,7 +22,7 @@ class CommunityViewModel : ViewModel() {
         val list: ArrayList<ContentDTO> = arrayListOf()
 
         CommunityRepository.loadContentsInit().collect { item ->
-            list.add(item!!)
+            item?.let { list.add(item) }
         }
         _contents.postValue(list)
     }
@@ -31,7 +31,7 @@ class CommunityViewModel : ViewModel() {
         val list: ArrayList<ContentDTO> = arrayListOf()
 
         CommunityRepository.loadContentsMore().collect { item ->
-            list.add(item!!)
+            item?.let { list.add(item) }
         }
         _contents.postValue(list)
     }
@@ -40,7 +40,7 @@ class CommunityViewModel : ViewModel() {
         val list: ArrayList<ContentDTO.CommentDTO> = arrayListOf()
 
         CommunityRepository.loadComments(contentId).collect { item ->
-            list.add(item!!)
+            item?.let { list.add(item) }
         }
         _comments.postValue((list))
     }
