@@ -95,7 +95,7 @@
             android:textStyle="bold"
             app:readMoreMaxLine="2"
             app:readMoreColor="@color/gray"
-            app:readMoreText="@string/read_more"/>
+            app:readMoreText="@string/read_more_word"/>
     </LinearLayout>
 
     <LinearLayout

@@ -18,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Nutrihanjum">
         <activity
+            android:name=".news.NewsDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".chatbot.ChatActivity"
             android:exported="true" />
         <activity

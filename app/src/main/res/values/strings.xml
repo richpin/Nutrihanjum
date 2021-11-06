@@ -16,7 +16,9 @@
     <string name="comment">댓글</string>
     <string name="save">저장</string>
     <string name="popup_report">신고</string>
-    <string name="read_more">...더보기</string>
+    <string name="read_more_word">...더보기</string>
+    <string name="read_more">...</string>
+    <string name="recommend">추천</string>
     <string name="count">개</string>
     <string name="you">님</string>
 

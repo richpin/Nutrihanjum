@@ -1,7 +1,6 @@
 package com.example.nutrihanjum.community
 
 import android.app.Activity
-import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
@@ -9,7 +8,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,7 +35,7 @@ class CommunityFragment : Fragment() {
         }
     }
 
-    private lateinit var communityViewModel: CommunityViewModel
+    private lateinit var viewModel: CommunityViewModel
     private lateinit var userViewModel: UserViewModel
     private lateinit var diaryViewModel: DiaryViewModel
 
@@ -49,13 +47,12 @@ class CommunityFragment : Fragment() {
     ): View? {
         _binding = CommunityFragmentBinding.inflate(inflater, container, false)
 
-        communityViewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         diaryViewModel = ViewModelProvider(requireActivity()).get(DiaryViewModel::class.java)
 
         makeLauncher(recyclerViewAdapter)
         recyclerViewAdapter.initDialog(requireActivity())
-        addLiveDataObserver()
         addViewListener()
 
         binding.communityfragmentRecylerview.layoutManager = LinearLayoutManager(activity)
@@ -63,9 +60,14 @@ class CommunityFragment : Fragment() {
 
         binding.communityfragmentRecylerview.adapter = recyclerViewAdapter
 
-        communityViewModel.loadContentsInit()
+        viewModel.loadContentsInit()
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        addLiveDataObserver()
     }
 
     private fun makeLauncher(adapter: CommunityRecyclerViewAdapter) {
@@ -101,8 +103,7 @@ class CommunityFragment : Fragment() {
     }
 
     private fun addLiveDataObserver() {
-        communityViewModel.contents.observe(viewLifecycleOwner, Observer
-        {
+        viewModel.contents.observe(viewLifecycleOwner, Observer {
             recyclerViewAdapter.updateContents(it)
             recyclerViewAdapter.notifyItemRangeInserted(
                 ((page - 1) * boardLimit).toInt(),
@@ -110,13 +111,12 @@ class CommunityFragment : Fragment() {
             )
         })
 
-        userViewModel.signed.observe(viewLifecycleOwner)
-        {
+        userViewModel.signed.observe(viewLifecycleOwner) {
             if (it) {
                 recyclerViewAdapter.likeClickEvent =
-                    { first, second -> communityViewModel.eventLikes(first, second) }
+                    { first, second -> viewModel.eventLikes(first, second) }
                 recyclerViewAdapter.savedClickEvent =
-                    { first, second -> communityViewModel.eventSaved(first, second) }
+                    { first, second -> viewModel.eventSaved(first, second) }
                 recyclerViewAdapter.deleteClickEvent =
                     { first, second -> diaryViewModel.deleteDiary(first, second) }
             } else {
@@ -135,7 +135,7 @@ class CommunityFragment : Fragment() {
 
                 if (!binding.communityfragmentRecylerview.canScrollVertically(1) && newState==RecyclerView.SCROLL_STATE_IDLE) {
                     page++
-                    communityViewModel.loadContentsMore()
+                    viewModel.loadContentsMore()
                 }
             }
         })
@@ -143,7 +143,7 @@ class CommunityFragment : Fragment() {
         binding.communityfragmentSwiperefreshlayout.setOnRefreshListener {
             page = 1
             recyclerViewAdapter.initContents()
-            communityViewModel.loadContentsInit()
+            viewModel.loadContentsInit()
             binding.communityfragmentSwiperefreshlayout.isRefreshing = false
         }
     }
