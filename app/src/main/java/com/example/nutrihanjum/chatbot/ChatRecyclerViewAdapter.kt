@@ -59,8 +59,8 @@ class ChatRecyclerViewAdapter(private val chatList: ArrayList<ChatData>)
 
             data.quickReplies.forEachIndexed { index, quickReply ->
                 val quickReplyBinding = ItemQuickReplyBinding.inflate(
-                    LayoutInflater.from(binding.root.context),
-                    binding.root,
+                    LayoutInflater.from(binding.layoutQuickReplies.context),
+                    binding.layoutQuickReplies,
                     false
                 )
 

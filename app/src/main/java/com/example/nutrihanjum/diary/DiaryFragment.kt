@@ -1,26 +1,41 @@
 package com.example.nutrihanjum.diary
 
+import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.os.Bundle
+import android.util.DisplayMetrics
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.animation.doOnEnd
+import androidx.core.animation.doOnStart
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.DiaryFragmentBinding
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.UserViewModel
-import com.example.nutrihanjum.diary.decorator.SaturdayDecorator
-import com.example.nutrihanjum.diary.decorator.SundayDecorator
-import com.prolificinteractive.materialcalendarview.CalendarDay
-import com.prolificinteractive.materialcalendarview.CalendarMode
+import com.example.nutrihanjum.diary.viewcontainer.CalendarDayBinder
+import com.example.nutrihanjum.diary.viewcontainer.CalendarHeaderBinder
+import com.example.nutrihanjum.util.OnSwipeTouchListener
+import com.kizitonwose.calendarview.CalendarView
+import com.kizitonwose.calendarview.model.InDateStyle
+import com.kizitonwose.calendarview.utils.yearMonth
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.YearMonth
 
 class DiaryFragment: Fragment() {
 
@@ -42,6 +57,9 @@ class DiaryFragment: Fragment() {
 
     private lateinit var addDiaryLauncher: ActivityResultLauncher<Intent>
 
+    private lateinit var dayBinder: CalendarDayBinder
+    private lateinit var headerBinder: CalendarHeaderBinder
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,88 +68,31 @@ class DiaryFragment: Fragment() {
         viewModel = ViewModelProvider(this).get(DiaryViewModel::class.java)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
 
-        addDiaryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                binding.calendarView.selectedDate?.let { date ->
-                    viewModel.loadAllDiaryAtDate(getFormattedDate(date.year, date.month, date.day))
-                }
-            }
-
-            binding.btnAddDiary.isClickable = true
-        }
-
         initView()
+        addLiveDataObserver()
 
         return binding.root
     }
 
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        addLiveDataObserver()
-    }
-
-
-    override fun onResume() {
-        super.onResume()
-        binding.calendarView.currentDate = binding.calendarView.selectedDate
-    }
-
 
     private fun updateForSignIn() {
-        binding.calendarView.setOnDateChangedListener { widget, date, _ ->
-            collapseCalendar()
-            widget.currentDate = date
-            binding.recyclerviewDiary.visibility = View.GONE
-            viewModel.loadAllDiaryAtDate(getFormattedDate(date.year, date.month, date.day))
-        }
-
         binding.btnAddDiary.isClickable = true
-
-        if (binding.calendarView.calendarMode == CalendarMode.WEEKS) {
-            binding.recyclerviewDiary.visibility = View.VISIBLE
-            binding.calendarView.selectedDate?.let {
-                viewModel.loadAllDiaryAtDate(getFormattedDate(it.year, it.month, it.day))
-            }
+        dayBinder.onDaySelectedListener = {
+            viewModel.loadAllDiaryAtDate(getFormattedDate(it.year, it.monthValue, it.dayOfMonth))
         }
+        binding.recyclerviewDiary.visibility = View.VISIBLE
     }
 
 
     private fun updateForSignOut() {
-        binding.calendarView.setOnDateChangedListener { widget, date, _ ->
-            collapseCalendar()
-            widget.currentDate = date
-        }
         binding.btnAddDiary.isClickable = false
         binding.recyclerviewDiary.visibility = View.GONE
+        (binding.calendarView.dayBinder as CalendarDayBinder).onDaySelectedListener = null
     }
 
 
-    private fun initCalendar() {
-        with (binding.calendarView) {
-            currentDate = CalendarDay.today()
-            selectedDate = CalendarDay.today()
-            state().edit()
-                .setMaximumDate(CalendarDay.today())
-                .commit()
-
-            collapseCalendar()
-
-            setOnTitleClickListener {
-                if (calendarMode == CalendarMode.WEEKS) {
-                    expandCalendar()
-                } else {
-                    collapseCalendar()
-                }
-            }
-
-            addDecorator(SundayDecorator(requireContext()))
-            addDecorator(SaturdayDecorator(requireContext()))
-        }
-    }
-
-
-    private fun makePopupClickListener() = { view: View, diary: ContentDTO ->
+    private val popupClickListener = { view: View, diary: ContentDTO ->
         val popup = PopupMenu(activity, view)
         popup.menuInflater.inflate(R.menu.diary_popup, popup.menu)
 
@@ -157,42 +118,125 @@ class DiaryFragment: Fragment() {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
         with(binding.recyclerviewDiary) {
             visibility = View.VISIBLE
             layoutManager = LinearLayoutManager(activity)
-            adapter = DiaryRecyclerViewAdapter(arrayListOf())
+            adapter = DiaryRecyclerViewAdapter(viewModel.diaryList.value!!)
             adapter!!.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-            (adapter as DiaryRecyclerViewAdapter).onPopupClickListener = makePopupClickListener()
+            (adapter as DiaryRecyclerViewAdapter).onPopupClickListener = popupClickListener
+        }
+
+        addDiaryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                dayBinder.selectedDate.let { date ->
+                    viewModel.loadAllDiaryAtDate(getFormattedDate(date.year, date.monthValue, date.dayOfMonth))
+                }
+            }
+
+            binding.btnAddDiary.isClickable = true
         }
 
         binding.btnAddDiary.setOnClickListener {
-            binding.calendarView.selectedDate?.let { date ->
-                it.isClickable = false
-                val mIntent = Intent(activity, AddDiaryActivity::class.java)
+            it.isClickable = false
+            val mIntent = Intent(activity, AddDiaryActivity::class.java)
 
-                mIntent.putExtra("date", getFormattedDate(date.year, date.month, date.day))
-                addDiaryLauncher.launch(mIntent)
+            dayBinder.selectedDate.let { date ->
+                mIntent.putExtra("date", getFormattedDate(date.year, date.monthValue, date.dayOfMonth))
             }
+
+            addDiaryLauncher.launch(mIntent)
         }
 
         initCalendar()
+
+        binding.barCalendar.setOnTouchListener(
+            object: OnSwipeTouchListener(requireContext()) {
+                override fun onSwipeBottom() {
+                    expandCalendar()
+                }
+
+                override fun onSwipeTop() {
+                    collapseCalendar()
+                }
+        })
     }
 
 
+    private fun initCalendar() {
+        dayBinder = CalendarDayBinder(binding.calendarView)
+        headerBinder = CalendarHeaderBinder()
+
+        binding.calendarView.dayBinder = dayBinder
+        binding.calendarView.monthHeaderBinder = headerBinder
+
+        val currentMonth = YearMonth.now()
+        val firstDayOfWeek = DayOfWeek.SUNDAY
+
+        binding.calendarView.daySize = CalendarView.sizeAutoWidth(dpToPx(35.toFloat(), context).toInt())
+        binding.calendarView.setup(
+            currentMonth.minusMonths(20),
+            currentMonth,
+            firstDayOfWeek
+        )
+
+        if (binding.calendarView.itemAnimator is SimpleItemAnimator) {
+            (binding.calendarView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        }
+
+        binding.calendarView.scrollToMonth(currentMonth)
+
+        @SuppressLint("SetTextI18n")
+        binding.calendarView.monthScrollListener = {
+            binding.calendarView.notifyDateChanged(dayBinder.selectedDate)
+
+            if (!binding.calendarView.isWeekMode()) {
+                binding.textviewCalendarMonth.text = "${it.month}월"
+            } else {
+                val firstDate = it.weekDays.first().first().date
+                val lastDate = it.weekDays.last().last().date
+
+                if (firstDate.yearMonth == lastDate.yearMonth) {
+                    binding.textviewCalendarMonth.text = "${firstDate.monthValue}월"
+                } else {
+                    binding.textviewCalendarMonth.text = "${firstDate.monthValue}월 - ${lastDate.monthValue}월"
+                }
+            }
+        }
+
+        binding.layoutCalendarMonth.setOnClickListener {
+            if (binding.calendarView.isWeekMode()) {
+                expandCalendar()
+            } else {
+                collapseCalendar()
+            }
+        }
+    }
+
+
+    private fun dpToPx(dp: Float, context: Context?): Float {
+        return if (context != null) {
+            val resources = context.resources
+            val metrics = resources.displayMetrics
+            dp * (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+        } else {
+            val metrics = Resources.getSystem().displayMetrics
+            dp * (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+        }
+    }
+
+
+    @SuppressLint("NotifyDataSetChanged")
     private fun addLiveDataObserver() {
         viewModel.diaryList.observe(viewLifecycleOwner) {
-            with (binding.recyclerviewDiary.adapter as DiaryRecyclerViewAdapter) {
-                diaryList = it
-                notifyDataSetChanged()
-                binding.recyclerviewDiary.visibility = View.VISIBLE
-            }
+            binding.recyclerviewDiary.adapter?.notifyDataSetChanged()
         }
 
         viewModel.diaryChanged.observe(viewLifecycleOwner) {
             if (it) {
-                binding.calendarView.selectedDate?.let { date ->
-                     viewModel.loadAllDiaryAtDate(getFormattedDate(date.year, date.month, date.day))
+                (binding.calendarView.dayBinder as CalendarDayBinder).selectedDate.let { date ->
+                    viewModel.loadAllDiaryAtDate(getFormattedDate(date.year, date.monthValue, date.dayOfMonth))
                 }
             }
         }
@@ -207,21 +251,74 @@ class DiaryFragment: Fragment() {
         }
     }
 
-    private fun expandCalendar() {
-        binding.calendarView.state().edit()
-            .setCalendarDisplayMode(CalendarMode.MONTHS)
-            .commit()
 
-        binding.recyclerviewDiary.visibility = View.GONE
+    private fun expandCalendar() {
+        if (!binding.calendarView.isWeekMode()) return
+
+        val firstDate = binding.calendarView.findFirstVisibleDay()?.date ?: return
+        val lastDate = minOf( dayBinder.lastDate,
+            binding.calendarView.findLastVisibleDay()?.date ?: return)
+
+        val dest = if (dayBinder.selectedDate in firstDate..lastDate) {
+            dayBinder.selectedDate.yearMonth
+        } else {
+            lastDate.yearMonth
+        }
+
+        val oldHeight = binding.calendarView.daySize.height
+        val newHeight = oldHeight * 6
+
+        val animator = ValueAnimator.ofInt(oldHeight, newHeight)
+        animator.addUpdateListener {
+            binding.calendarView.updateLayoutParams {
+                height = it.animatedValue as Int
+            }
+        }
+
+        binding.calendarView.updateMonthConfigurationAsync(
+            inDateStyle = InDateStyle.ALL_MONTHS,
+            maxRowCount = 6,
+            hasBoundaries = true
+        ) {
+            binding.calendarView.scrollToMonth(dest)
+            animator.start()
+        }
+
+
     }
 
     private fun collapseCalendar() {
-        binding.calendarView.state().edit()
-            .setCalendarDisplayMode(CalendarMode.WEEKS)
-            .commit()
+        if (binding.calendarView.isWeekMode()) return
 
-        binding.recyclerviewDiary.visibility = View.VISIBLE
+        val firstDate = binding.calendarView.findFirstVisibleDay()?.date ?: return
+        val lastDate = binding.calendarView.findLastVisibleDay()?.date ?: return
+
+        val newHeight = binding.calendarView.daySize.height
+        val oldHeight = newHeight * 6
+
+        val animator = ValueAnimator.ofInt(oldHeight, newHeight)
+        animator.addUpdateListener {
+            binding.calendarView.updateLayoutParams {
+                height = it.animatedValue as Int
+            }
+        }
+
+        binding.calendarView.updateMonthConfiguration(
+            inDateStyle = InDateStyle.FIRST_MONTH,
+            maxRowCount = 1,
+            hasBoundaries = false
+        )
+
+        if (dayBinder.selectedDate in firstDate..lastDate) {
+            binding.calendarView.scrollToDate(dayBinder.selectedDate)
+        } else {
+            binding.calendarView.scrollToDate(firstDate)
+        }
+
+        animator.start()
     }
+
+    private fun CalendarView.isWeekMode() = binding.calendarView.maxRowCount == 1
 
     private fun getFormattedDate(year: Int, month: Int, date: Int)
         = "${year}_${month}_${date}"
@@ -231,7 +328,4 @@ class DiaryFragment: Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-
-
 }
