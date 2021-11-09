@@ -11,6 +11,7 @@ import com.example.nutrihanjum.databinding.ActivityAddDiaryBinding
 import java.util.*
 import android.view.View
 import androidx.activity.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.canhub.cropper.*
 import com.example.nutrihanjum.R
@@ -24,13 +25,13 @@ class AddDiaryActivity : AppCompatActivity() {
     private var photoURI: Uri? = null
     private var isPhotoExist = false
 
-    private val viewModel: DiaryViewModel by viewModels()
-    private lateinit var content: ContentDTO
+    private lateinit var viewModel: DiaryViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityAddDiaryBinding.inflate(layoutInflater)
+        viewModel = ViewModelProvider(this).get(DiaryViewModel::class.java)
         setContentView(binding.root)
 
         initCommonView()
@@ -74,11 +75,24 @@ class AddDiaryActivity : AppCompatActivity() {
                 }
             }
         }
+
+        viewModel.diary.observe(this) {
+            if (it != null) {
+                val mIntent = Intent()
+                mIntent.putExtra("addedContent", it)
+                setResult(Activity.RESULT_OK, mIntent)
+                finish()
+            }
+            else {
+                Toast.makeText(this, getString(R.string.failed_to_upload), Toast.LENGTH_SHORT).show()
+                binding.btnRegisterDiary.isClickable = true
+            }
+        }
     }
 
 
     private fun initForModifyDiary() {
-        content = intent.getSerializableExtra("content") as ContentDTO
+       val content = intent.getSerializableExtra("content") as ContentDTO
 
         with(binding) {
             btnRegisterDiary.text = getString(R.string.modify_diary)
@@ -89,9 +103,8 @@ class AddDiaryActivity : AppCompatActivity() {
                 .load(content.imageUrl)
                 .into(imageviewPreview)
 
-
-            binding.btnRegisterDiary.setOnClickListener {
-                val selectedMealTime = mapMealTimeIdToString(binding.radioGroupMealTime.checkedRadioButtonId)
+            btnRegisterDiary.setOnClickListener {
+                val selectedMealTime = mapMealTimeIdToString(radioGroupMealTime.checkedRadioButtonId)
 
                 it.isClickable = false
 
@@ -106,8 +119,19 @@ class AddDiaryActivity : AppCompatActivity() {
                         if (isPhotoExist) photoURI.toString() else null
                     )
                 }
+            }
+        }
 
-
+        viewModel.diary.observe(this) {
+            if (it != null) {
+                val mIntent = Intent()
+                mIntent.putExtra("modifiedContent", it)
+                setResult(Activity.RESULT_OK, mIntent)
+                finish()
+            }
+            else {
+                Toast.makeText(this, getString(R.string.failed_to_upload), Toast.LENGTH_SHORT).show()
+                binding.btnRegisterDiary.isClickable = true
             }
         }
     }
@@ -124,20 +148,6 @@ class AddDiaryActivity : AppCompatActivity() {
                 binding.imageviewPreview.setImageURI(photoURI)
                 isPhotoExist = true
             }
-        }
-
-        viewModel.diaryChanged.observe(this) {
-            if (it) {
-                val intent = Intent()
-                intent.putExtra("modifiedContent", content)
-                setResult(Activity.RESULT_OK, intent)
-                finish()
-            }
-            else {
-                Toast.makeText(this, getString(R.string.failed_to_upload), Toast.LENGTH_SHORT).show()
-                binding.btnRegisterDiary.isClickable = true
-            }
-
         }
     }
 
@@ -157,7 +167,7 @@ class AddDiaryActivity : AppCompatActivity() {
         R.id.radio_btn_breakfast -> getString(R.string.meal_time_breakfast)
         R.id.radio_btn_lunch -> getString(R.string.meal_time_lunch)
         R.id.radio_btn_dinner -> getString(R.string.meal_time_dinner)
-        R.id.radio_btn_snack -> getString(R.string.meal_time_dinner)
+        R.id.radio_btn_snack -> getString(R.string.meal_time_snack)
         R.id.radio_btn_midnight -> getString(R.string.meal_time_midnight_snack)
         else -> null
     }
@@ -166,7 +176,7 @@ class AddDiaryActivity : AppCompatActivity() {
         getString(R.string.meal_time_breakfast) -> R.id.radio_btn_breakfast
         getString(R.string.meal_time_lunch) -> R.id.radio_btn_lunch
         getString(R.string.meal_time_dinner) -> R.id.radio_btn_dinner
-        getString(R.string.meal_time_dinner) -> R.id.radio_btn_snack
+        getString(R.string.meal_time_snack) -> R.id.radio_btn_snack
         getString(R.string.meal_time_midnight_snack) -> R.id.radio_btn_midnight
         else -> View.NO_ID
     }

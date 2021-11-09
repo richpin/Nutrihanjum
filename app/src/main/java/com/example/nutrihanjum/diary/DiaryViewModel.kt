@@ -11,44 +11,54 @@ import kotlinx.coroutines.launch
 import kotlin.collections.ArrayList
 
 class DiaryViewModel : ViewModel() {
-    private val _diaryChanged = MutableLiveData<Boolean>()
-    val diaryChanged: LiveData<Boolean> get() = _diaryChanged
 
-    private val _diaryList = MutableLiveData<ArrayList<ContentDTO>>(arrayListOf())
-    val diaryList: LiveData<ArrayList<ContentDTO>> get() = _diaryList
+    // for add diary activity
+    private val _diary = MutableLiveData<ContentDTO>()
+    val diary: LiveData<ContentDTO> = _diary
+
 
     fun addDiary(content: ContentDTO, imageUri: String) = viewModelScope.launch {
         DiaryRepository.addDiary(content, imageUri).collect {
-            _diaryChanged.postValue(it)
+            _diary.postValue(it)
         }
     }
 
-    fun deleteDiary(documentId: String, imageUrl: String) = viewModelScope.launch {
-        DiaryRepository.deleteDiary(documentId, imageUrl).collect {
-            _diaryChanged.postValue(it)
-        }
-    }
 
     fun modifyDiary(content: ContentDTO, imageUri: String?) {
         viewModelScope.launch {
             if (imageUri != null) {
                 DiaryRepository.modifyDiaryWithPhoto(content, imageUri).collect {
-                    _diaryChanged.postValue(it)
+                    _diary.postValue(it)
                 }
             } else {
                 DiaryRepository.modifyDiaryWithoutPhoto(content).collect {
-                    _diaryChanged.postValue(it)
+                    _diary.postValue(it)
                 }
             }
         }
     }
+
+
+    // for diary fragment
+    private val _diaryList = MutableLiveData<ArrayList<ContentDTO>>(arrayListOf())
+    val diaryList: LiveData<ArrayList<ContentDTO>> get() = _diaryList
+
+    private val _diaryDeleteResult = MutableLiveData<Boolean>()
+    val diaryDeleteResult: LiveData<Boolean> = _diaryDeleteResult
+
+    fun deleteDiary(documentId: String, imageUrl: String) = viewModelScope.launch {
+        DiaryRepository.deleteDiary(documentId, imageUrl).collect {
+            _diaryDeleteResult.postValue(it)
+        }
+    }
+
 
     fun loadAllDiaryAtDate(date: String) = viewModelScope.launch {
         val list = _diaryList.value!!
         list.clear()
 
         DiaryRepository.loadAllDiaryAtDate(date).collect {
-            list.add(it)
+            list.addAll(it)
         }
 
         _diaryList.postValue(list)
