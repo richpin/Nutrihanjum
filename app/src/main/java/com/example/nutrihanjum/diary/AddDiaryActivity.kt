@@ -1,5 +1,6 @@
 package com.example.nutrihanjum.diary
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -16,6 +17,10 @@ import com.bumptech.glide.Glide
 import com.canhub.cropper.*
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.model.ContentDTO
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayout
+import com.google.android.flexbox.FlexboxLayoutManager
 
 class AddDiaryActivity : AppCompatActivity() {
 
@@ -50,6 +55,12 @@ class AddDiaryActivity : AppCompatActivity() {
 
         binding.btnRegisterDiary.text = getString(R.string.add_diary)
 
+        addListenerForAddDairy(date)
+        addLiveDataObserverForAddDairy()
+    }
+
+
+    private fun addListenerForAddDairy(date: String) {
         binding.btnRegisterDiary.setOnClickListener {
             val selectedMealTime = mapMealTimeIdToString(binding.radioGroupMealTime.checkedRadioButtonId)
 
@@ -75,7 +86,10 @@ class AddDiaryActivity : AppCompatActivity() {
                 }
             }
         }
+    }
 
+
+    private fun addLiveDataObserverForAddDairy() {
         viewModel.diary.observe(this) {
             if (it != null) {
                 val mIntent = Intent()
@@ -102,26 +116,35 @@ class AddDiaryActivity : AppCompatActivity() {
             Glide.with(this@AddDiaryActivity)
                 .load(content.imageUrl)
                 .into(imageviewPreview)
-
-            btnRegisterDiary.setOnClickListener {
-                val selectedMealTime = mapMealTimeIdToString(radioGroupMealTime.checkedRadioButtonId)
-
-                it.isClickable = false
-
-                with(content) {
-                    this.content = edittextDiaryMemo.text.toString()
-                    mealTime = selectedMealTime!!
-                    isPublic = switchPublic.isChecked
-                    timestamp = System.currentTimeMillis()
-
-                    viewModel.modifyDiary(
-                        this,
-                        if (isPhotoExist) photoURI.toString() else null
-                    )
-                }
-            }
         }
 
+        addListenerForModifyDairy(content)
+        addLiveDataObserverForModifyDairy()
+    }
+
+
+    private fun addListenerForModifyDairy(content: ContentDTO) {
+        binding.btnRegisterDiary.setOnClickListener {
+            val selectedMealTime = mapMealTimeIdToString(binding.radioGroupMealTime.checkedRadioButtonId)
+
+            it.isClickable = false
+
+            with(content) {
+                this.content = binding.edittextDiaryMemo.text.toString()
+                mealTime = selectedMealTime!!
+                isPublic = binding.switchPublic.isChecked
+                timestamp = System.currentTimeMillis()
+
+                viewModel.modifyDiary(
+                    this,
+                    if (isPhotoExist) photoURI.toString() else null
+                )
+            }
+        }
+    }
+
+
+    private fun addLiveDataObserverForModifyDairy() {
         viewModel.diary.observe(this) {
             if (it != null) {
                 val mIntent = Intent()
@@ -137,7 +160,11 @@ class AddDiaryActivity : AppCompatActivity() {
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initCommonView() {
+        binding.recyclerviewFoods.adapter = AutoCompleteAdapter(viewModel.foodList.value!!)
+        binding.recyclerviewFoods.layoutManager = FlexboxLayoutManager(this, FlexDirection.ROW, FlexWrap.WRAP)
+
         binding.imageviewPreview.setOnClickListener {
             getPhoto()
         }
@@ -148,6 +175,23 @@ class AddDiaryActivity : AppCompatActivity() {
                 binding.imageviewPreview.setImageURI(photoURI)
                 isPhotoExist = true
             }
+        }
+
+        binding.btnAddFood.setOnClickListener {
+            if (binding.edittextFood.visibility == View.VISIBLE) {
+                if (binding.edittextFood.text.isNotEmpty()) {
+                    viewModel.loadFoodList(binding.edittextFood.text.toString())
+                }
+
+                binding.edittextFood.setText("")
+                binding.edittextFood.visibility = View.GONE
+            } else {
+                binding.edittextFood.visibility = View.VISIBLE
+            }
+        }
+
+        viewModel.foodList.observe(this) {
+            binding.recyclerviewFoods.adapter?.notifyDataSetChanged()
         }
     }
 

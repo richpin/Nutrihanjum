@@ -3,6 +3,7 @@ package com.example.nutrihanjum.repository
 import android.net.Uri
 import android.util.Log
 import com.example.nutrihanjum.model.ContentDTO
+import com.example.nutrihanjum.model.FoodDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -147,6 +148,25 @@ object DiaryRepository {
                     trySend(null)
                 }
 
+                close()
+            }
+
+        awaitClose()
+    }
+
+
+    fun loadFoodList(foodName: String) = callbackFlow {
+        store.collection("foods")
+            .orderBy("식품명")
+            .whereArrayContains("keywords", foodName)
+            .limit(10)
+            .get()
+            .addOnSuccessListener {
+                trySend(it.documents.map { doc -> FoodDTO(doc["식품명"].toString()) })
+                close()
+            }
+            .addOnFailureListener {
+                Log.wtf(this@DiaryRepository.javaClass.simpleName, it.stackTraceToString())
                 close()
             }
 

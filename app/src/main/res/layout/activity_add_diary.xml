@@ -7,9 +7,8 @@
     android:padding="10dp"
     tools:context=".diary.AddDiaryActivity">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_alignParentTop="true"
-        android:layout_above="@id/btn_register_diary"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none">
@@ -54,22 +53,41 @@
                 android:orientation="vertical"
                 android:layout_margin="10dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/font_bold"
-                    android:text="@string/diary_menu"
-                    android:textColor="@color/black"
-                    android:textSize="25sp" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_bold"
+                        android:text="@string/diary_menu"
+                        android:textColor="@color/black"
+                        android:textSize="25sp" />
 
+                    <EditText
+                        android:id="@+id/edittext_food"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:inputType="text" />
+
+                    <ImageView
+                        android:id="@+id/btn_add_food"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_baseline_add"
+                        tools:ignore="ContentDescription" />
 
                 </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerview_foods"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
             </LinearLayout>
 
@@ -243,23 +261,22 @@
 
             </LinearLayout>
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_register_diary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="20dp"
+                android:background="@color/yellow_200"
+                android:fontFamily="@font/font_bold"
+                android:text="@string/add_diary"
+                android:textColor="@color/black"
+                android:textSize="17sp" />
+
         </LinearLayout>
 
-    </ScrollView>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_register_diary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"
-        android:background="@color/yellow_200"
-        android:fontFamily="@font/font_bold"
-        android:text="@string/add_diary"
-        android:textColor="@color/black"
-        android:textSize="17sp" />
+    </androidx.core.widget.NestedScrollView>
 
 </RelativeLayout>
 

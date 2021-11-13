@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nutrihanjum.model.ContentDTO
+import com.example.nutrihanjum.model.FoodDTO
 import com.example.nutrihanjum.repository.DiaryRepository
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -16,6 +17,8 @@ class DiaryViewModel : ViewModel() {
     private val _diary = MutableLiveData<ContentDTO>()
     val diary: LiveData<ContentDTO> = _diary
 
+    private val _foodList = MutableLiveData<ArrayList<FoodDTO>>(arrayListOf())
+    val foodList: LiveData<ArrayList<FoodDTO>> = _foodList
 
     fun addDiary(content: ContentDTO, imageUri: String) = viewModelScope.launch {
         DiaryRepository.addDiary(content, imageUri).collect {
@@ -36,6 +39,17 @@ class DiaryViewModel : ViewModel() {
                 }
             }
         }
+    }
+
+
+    fun loadFoodList(foodName: String) = viewModelScope.launch {
+        _foodList.value?.clear()
+
+        DiaryRepository.loadFoodList(foodName).collect {
+            _foodList.value?.addAll(it)
+        }
+
+        _foodList.postValue(_foodList.value)
     }
 
 
