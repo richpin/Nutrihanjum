@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide
 import com.example.nutrihanjum.databinding.NewsFragmentBinding
 import com.example.nutrihanjum.model.NewsDTO
 import com.example.nutrihanjum.repository.CommunityRepository
+import com.example.nutrihanjum.repository.CommunityRepository.boardLimit
 
 class NewsFragment : Fragment() {
     private var _binding: NewsFragmentBinding? = null
@@ -68,8 +69,8 @@ class NewsFragment : Fragment() {
         viewModel.news.observe(viewLifecycleOwner, Observer {
             recyclerViewAdapter.updateNews(it)
             recyclerViewAdapter.notifyItemRangeInserted(
-                ((page - 1) * CommunityRepository.boardLimit).toInt(),
-                CommunityRepository.boardLimit.toInt()
+                ((page - 1) * boardLimit).toInt(),
+                boardLimit.toInt()
             )
         })
 

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.TextUtils
-import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -71,59 +70,6 @@ class CommunityRecyclerViewAdapter() :
     var deleteClickEvent: ((String, String) -> Unit)? = null
     lateinit var commentLauncher: ActivityResultLauncher<Intent>
     lateinit var addDiaryLauncher: ActivityResultLauncher<Intent>
-
-    fun initDialog(mContext: Context) {
-        popupMyDialog = Dialog(mContext)
-        popupOtherDialog = Dialog(mContext)
-        popupDeleteDialog = Dialog(mContext)
-
-        popupMyBinding = LayoutPopupMyBinding.inflate(LayoutInflater.from(mContext))
-        popupOtherBinding = LayoutPopupOtherBinding.inflate(LayoutInflater.from(mContext))
-        popupDeleteBinding = inflate(LayoutInflater.from(mContext))
-        popupMyDialog.setContentView(popupMyBinding.root)
-        popupOtherDialog.setContentView(popupOtherBinding.root)
-        popupDeleteDialog.setContentView(popupDeleteBinding.root)
-
-        popupMyDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        popupOtherDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        popupDeleteDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        addPopupListener(mContext)
-    }
-
-    private fun addPopupListener(mContext: Context) {
-        popupMyBinding.btnPopupModify.setOnClickListener {
-            popupMyDialog.dismiss()
-            val intent = Intent(mContext, AddDiaryActivity::class.java)
-            intent.putExtra("content", contentDTOs[contentPosition])
-            addDiaryLauncher.launch(intent)
-        }
-
-        popupMyBinding.btnPopupDelete.setOnClickListener {
-            popupMyDialog.dismiss()
-            popupDeleteDialog.show()
-        }
-
-        popupDeleteBinding.btnDeleteCheckNo.setOnClickListener {
-            popupDeleteDialog.dismiss()
-            contentPosition = -1
-        }
-
-        popupDeleteBinding.btnDeleteCheckYes.setOnClickListener {
-            popupDeleteDialog.dismiss()
-            if (contentPosition != -1) {
-                deleteClickEvent?.let {
-                    it(
-                        contentDTOs[contentPosition].id,
-                        contentDTOs[contentPosition].imageUrl
-                    )
-                }
-                contentDTOs.removeAt(contentPosition)
-                notifyItemRemoved(contentPosition)
-            }
-            contentPosition = -1
-        }
-    }
 
     fun updateContents(data: ArrayList<ContentDTO>) {
         contentDTOs.addAll(data)
@@ -237,7 +183,7 @@ class CommunityRecyclerViewAdapter() :
             }
             press_comment_layout.setOnClickListener {
                 val intent = Intent(it.context, CommentActivity::class.java)
-                intent.putExtra("contentId", contentDTOs[bindingAdapterPosition].id)
+                intent.putExtra("contentDTO", contentDTOs[bindingAdapterPosition])
                 contentPosition = bindingAdapterPosition
                 commentLauncher.launch(intent)
             }
@@ -299,6 +245,59 @@ class CommunityRecyclerViewAdapter() :
                     }
                 }
             }
+        }
+    }
+
+    fun initDialog(mContext: Context) {
+        popupMyDialog = Dialog(mContext)
+        popupOtherDialog = Dialog(mContext)
+        popupDeleteDialog = Dialog(mContext)
+
+        popupMyBinding = LayoutPopupMyBinding.inflate(LayoutInflater.from(mContext))
+        popupOtherBinding = LayoutPopupOtherBinding.inflate(LayoutInflater.from(mContext))
+        popupDeleteBinding = inflate(LayoutInflater.from(mContext))
+        popupMyDialog.setContentView(popupMyBinding.root)
+        popupOtherDialog.setContentView(popupOtherBinding.root)
+        popupDeleteDialog.setContentView(popupDeleteBinding.root)
+
+        popupMyDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupOtherDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupDeleteDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        addPopupListener(mContext)
+    }
+
+    private fun addPopupListener(mContext: Context) {
+        popupMyBinding.btnPopupModify.setOnClickListener {
+            popupMyDialog.dismiss()
+            val intent = Intent(mContext, AddDiaryActivity::class.java)
+            intent.putExtra("content", contentDTOs[contentPosition])
+            addDiaryLauncher.launch(intent)
+        }
+
+        popupMyBinding.btnPopupDelete.setOnClickListener {
+            popupMyDialog.dismiss()
+            popupDeleteDialog.show()
+        }
+
+        popupDeleteBinding.btnDeleteCheckNo.setOnClickListener {
+            popupDeleteDialog.dismiss()
+            contentPosition = -1
+        }
+
+        popupDeleteBinding.btnDeleteCheckYes.setOnClickListener {
+            popupDeleteDialog.dismiss()
+            if (contentPosition != -1) {
+                deleteClickEvent?.let {
+                    it(
+                        contentDTOs[contentPosition].id,
+                        contentDTOs[contentPosition].imageUrl
+                    )
+                }
+                contentDTOs.removeAt(contentPosition)
+                notifyItemRemoved(contentPosition)
+            }
+            contentPosition = -1
         }
     }
 

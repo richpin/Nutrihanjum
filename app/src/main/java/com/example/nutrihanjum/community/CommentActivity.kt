@@ -3,24 +3,28 @@ package com.example.nutrihanjum.community
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Canvas
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.R
-import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.databinding.ActivityCommentBinding
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.repository.UserRepository.isSigned
 import com.example.nutrihanjum.repository.UserRepository.uid
 import com.example.nutrihanjum.repository.UserRepository.userName
 import com.example.nutrihanjum.repository.UserRepository.userPhoto
+import com.example.nutrihanjum.util.SwipeController
+import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import com.example.nutrihanjum.util.MyItemDecoration
+
 
 class CommentActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCommentBinding
@@ -28,37 +32,59 @@ class CommentActivity : AppCompatActivity() {
     private lateinit var communityViewModel: CommunityViewModel
 
     private val recyclerViewAdapter = CommentRecyclerViewAdapter()
+    private var swipeController = SwipeController()
 
-    private lateinit var contentId: String
+    private lateinit var contentDTO: ContentDTO
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCommentBinding.inflate(layoutInflater)
         communityViewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
 
-        contentId = intent.getStringExtra("contentId")!!
-        communityViewModel.loadComments(contentId!!)
-
-        binding.commentActivityRecyclerview.layoutManager = LinearLayoutManager(this)
-        binding.commentActivityRecyclerview.setHasFixedSize(true)
-
-        recyclerViewAdapter.deleteCommentEvent =
-            { it -> communityViewModel.deleteComment(contentId, it) }
-        binding.commentActivityRecyclerview.adapter = recyclerViewAdapter
+        contentDTO = intent.getSerializableExtra("contentDTO") as ContentDTO
 
         addLiveDataObserver()
         addViewListener()
+        addRecyclerView()
 
         Glide.with(this).load(userPhoto).circleCrop()
             .into(binding.commentActivityProfileImageview)
 
+        communityViewModel.loadComments(contentDTO.id)
 
         setContentView(binding.root)
+    }
+
+    private fun addRecyclerView() {
+        swipeController = SwipeController().apply{ setClamp(150f) }
+        val itemTouchHelper = ItemTouchHelper(swipeController)
+        itemTouchHelper.attachToRecyclerView(binding.commentActivityRecyclerview)
+
+        binding.commentActivityRecyclerview.apply{
+            layoutManager = LinearLayoutManager(applicationContext)
+            setHasFixedSize(true)
+            adapter = recyclerViewAdapter
+            addItemDecoration(MyItemDecoration())
+
+            setOnTouchListener { _, _ ->
+                swipeController.removePreviousClamp(this)
+                false
+            }
+        }
     }
 
     private fun addLiveDataObserver() {
         communityViewModel.comments.observe(this, {
             recyclerViewAdapter.updateComments(it)
+
+            it.forEach { comment ->
+                if (recyclerViewAdapter.isUserEmpty(comment.uid)) {
+                    communityViewModel.loadUserInfo(comment.uid)
+                }
+            }
+        })
+        communityViewModel.user.observe(this, {
+            recyclerViewAdapter.users[it.first] = it.second
             recyclerViewAdapter.notifyDataSetChanged()
         })
     }
@@ -74,16 +100,16 @@ class CommentActivity : AppCompatActivity() {
             } else if (!isSigned()) {
 
             } else {
+                recyclerViewAdapter.users[uid!!] = Pair(userName!!, userPhoto.toString())
+
                 val newComment = ContentDTO.CommentDTO()
 
                 newComment.timeStamp = System.currentTimeMillis()
                 newComment.id = uid + newComment.timeStamp
                 newComment.uid = uid!!
-                newComment.profileUrl = userPhoto.toString()
-                newComment.profileName = userName.toString()
                 newComment.comment = content
 
-                communityViewModel.addComment(contentId, newComment)
+                communityViewModel.addComment(contentDTO, newComment)
                 binding.commentActivityCommentEdittext.setText("")
                 hideKeyboard()
                 recyclerViewAdapter.commentDTOs.add(newComment)

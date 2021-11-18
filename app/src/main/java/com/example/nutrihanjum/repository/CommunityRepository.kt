@@ -4,7 +4,9 @@ package com.example.nutrihanjum.repository
 import android.util.Log
 import androidx.core.content.contentValuesOf
 import com.example.nutrihanjum.model.ContentDTO
+import com.example.nutrihanjum.model.UserDTO
 import com.example.nutrihanjum.repository.UserRepository.uid
+import com.example.nutrihanjum.repository.UserRepository.userName
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -14,8 +16,9 @@ import kotlinx.coroutines.flow.callbackFlow as callbackFlow
 
 object CommunityRepository {
     private val store get() = FirebaseFirestore.getInstance()
-    private lateinit var lastVisible: DocumentSnapshot
-    val boardLimit: Long = 3
+    private lateinit var lastVisibleContent: DocumentSnapshot
+    private lateinit var lastVisibleNotice: DocumentSnapshot
+    val boardLimit: Long = 20
 
     fun loadContentsInit() = callbackFlow {
         store.collection("posts")
@@ -27,7 +30,7 @@ object CommunityRepository {
                     it.result.documents.forEach { snapshot ->
                         trySend(snapshot.toObject(ContentDTO::class.java))
                     }
-                    lastVisible = it.result.documents[it.result.size() - 1]
+                    lastVisibleContent = it.result.documents[it.result.size() - 1]
                 } else {
                     Log.wtf("Repository", it.exception?.message)
                 }
@@ -41,20 +44,61 @@ object CommunityRepository {
         store.collection("posts")
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .whereEqualTo("public", true)
-            .startAfter(lastVisible)
+            .startAfter(lastVisibleContent)
             .limit(boardLimit)
             .get().continueWith {
                 if (it.isSuccessful) {
                     it.result.documents.forEach { snapshot ->
                         trySend(snapshot.toObject(ContentDTO::class.java))
                     }
-                    lastVisible = it.result.documents[it.result.size() - 1]
+                    lastVisibleContent = it.result.documents[it.result.size() - 1]
                 } else {
                     Log.wtf("Repository", it.exception?.message)
                 }
                 close()
             }
 
+        awaitClose()
+    }
+
+    fun loadNoticesInit() = callbackFlow {
+        store.collection("users")
+            .document(uid!!)
+            .collection("notices")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .limit(boardLimit)
+            .get().continueWith {
+                if (it.isSuccessful) {
+                    it.result.documents.forEach { snapshot ->
+                        trySend(snapshot.toObject(UserDTO.NoticeDTO::class.java))
+                    }
+                    lastVisibleNotice = it.result.documents[it.result.size() - 1]
+                } else {
+                    Log.wtf("Repository", it.exception?.message)
+                }
+                close()
+            }
+        awaitClose()
+    }
+
+    fun loadNoticesMore() = callbackFlow {
+        store.collection("users")
+            .document(uid!!)
+            .collection("notices")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .startAfter(lastVisibleNotice)
+            .limit(boardLimit)
+            .get().continueWith {
+                if (it.isSuccessful) {
+                    it.result.documents.forEach { snapshot ->
+                        trySend(snapshot.toObject(UserDTO.NoticeDTO::class.java))
+                    }
+                    lastVisibleNotice = it.result.documents[it.result.size() - 1]
+                } else {
+                    Log.wtf("Repository", it.exception?.message)
+                }
+                close()
+            }
         awaitClose()
     }
 
@@ -77,54 +121,92 @@ object CommunityRepository {
         awaitClose()
     }
 
-    fun addComment(contentId: String, commentDTO: ContentDTO.CommentDTO) = callbackFlow {
-        val ref = store.collection("posts").document(contentId)
-
-
-        ref.collection("comments")
-            .document(commentDTO.id)
-            .set(commentDTO).onSuccessTask {
-                ref.update("commentCount", FieldValue.increment(1))
-            }.continueWith {
+    fun loadUserInfo(uid: String) = callbackFlow {
+        store.collection("users")
+            .document(uid)
+            .get().continueWith {
                 if (it.isSuccessful) {
-                    trySend(true)
+                    val name = it.result.get("name") as String
+                    val url = it.result.get("profileUrl") as String
+                    trySend(Pair(name, url))
                 } else {
-                    trySend(false)
+                    Log.wtf("Repository", it.exception?.message)
                 }
                 close()
             }
+        awaitClose()
+    }
+
+    fun addComment(contentDTO: ContentDTO, commentDTO: ContentDTO.CommentDTO) = callbackFlow {
+        val ptref = store.collection("posts").document(contentDTO.id)
+        val ntref = store.collection("users").document(contentDTO.uid)
+            .collection("notices").document()
+
+        store.runBatch { batch ->
+            batch.set(ptref.collection("comments").document(commentDTO.id), commentDTO)
+            batch.update(ptref, "commentCount", FieldValue.increment(1))
+
+            val newNotice = UserDTO.NoticeDTO()
+            newNotice.kind = 1
+            newNotice.timestamp = System.currentTimeMillis()
+            newNotice.uid = contentDTO.uid
+            newNotice.senderName = userName!!
+            newNotice.content = '"' + commentDTO.comment + '"'
+            newNotice.contentId = contentDTO.id
+            newNotice.contentUrl = contentDTO.imageUrl
+
+            batch.set(ntref, newNotice)
+        }.continueWith {
+            if (it.isSuccessful) {
+                trySend(true)
+            } else {
+                trySend(false)
+            }
+            close()
+        }
 
         awaitClose()
     }
 
     fun deleteComment(contentId: String, commentId: String) = callbackFlow {
         val ref = store.collection("posts").document(contentId)
+            .collection("comments").document(commentId)
 
-        ref.collection("comments")
-            .document(commentId)
-            .delete().onSuccessTask {
-                ref.update("commentCount", FieldValue.increment(-1))
-            }.continueWith {
-                if (it.isSuccessful) {
-                    trySend(true)
-                } else {
-                    trySend(false)
-                }
-                close()
+        ref.delete().onSuccessTask {
+            ref.update("commentCount", FieldValue.increment(-1))
+        }.continueWith {
+            if (it.isSuccessful) {
+                trySend(true)
+            } else {
+                trySend(false)
             }
+            close()
+        }
 
         awaitClose()
     }
 
 
     fun eventLikes(contentDTO: ContentDTO, isLiked: Boolean) = callbackFlow {
-        val registration = store.collection("posts").document(contentDTO.id)
+        val ptref = store.collection("posts").document(contentDTO.id)
+        val ntref =
+            store.collection("users").document(contentDTO.uid).collection("notices").document()
 
-        with(registration) {
+        store.runBatch { batch ->
             if (isLiked) {
-                this.update("likes", FieldValue.arrayRemove(uid))
+                batch.update(ptref, "likes", FieldValue.arrayRemove(uid))
             } else {
-                this.update("likes", FieldValue.arrayUnion(uid))
+                batch.update(ptref, "likes", FieldValue.arrayUnion(uid))
+
+                val newNotice = UserDTO.NoticeDTO()
+                newNotice.kind = 0
+                newNotice.timestamp = System.currentTimeMillis()
+                newNotice.uid = contentDTO.uid
+                newNotice.senderName = userName!!
+                newNotice.contentId = contentDTO.id
+                newNotice.contentUrl = contentDTO.imageUrl
+
+                batch.set(ntref, newNotice)
             }
         }.continueWith {
             if (it.isSuccessful) {
@@ -212,6 +294,20 @@ object CommunityRepository {
                 Log.wtf("Repository", it.exception?.message)
         }
 
+        awaitClose()
+    }
+
+    fun loadSelectedContent(contentId: String) = callbackFlow {
+        store.collection("posts")
+            .document(contentId)
+            .get().continueWith {
+                if (it.isSuccessful) {
+                    trySend(it.result.toObject(ContentDTO::class.java))
+                } else {
+                    Log.wtf("Repository", it.exception?.message)
+                }
+                close()
+            }
         awaitClose()
     }
 }

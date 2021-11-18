@@ -17,6 +17,8 @@ class NewsDetailActivity : AppCompatActivity() {
 
         binding = ActivityNewsDetailBinding.inflate(layoutInflater)
 
+        binding.newsDetailActivityBackButton.setOnClickListener { onBackPressed() }
+
         binding.webview.settings.javaScriptEnabled = true
         binding.webview.webChromeClient = WebChromeClient()
         binding.webview.webViewClient = object: WebViewClient() {

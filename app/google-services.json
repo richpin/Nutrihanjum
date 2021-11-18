@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "913031910028-fak518l19orp0pe14dceq7piei0nvgv3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.nutrihanjum",
+            "certificate_hash": "b0f90a17f6c7e961119194a5a5e209ec57de2fcd"
+          }
+        },
+        {
+          "client_id": "913031910028-k63hls7ka82epfif3hi2f5eg9me3crdd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.nutrihanjum",
+            "certificate_hash": "bbd03b10e0e78b87cdc074e8d5699af6b0483b7a"
+          }
+        },
+        {
           "client_id": "913031910028-prr8utnrelive27pj4klm795ek1lm86n.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -38,7 +38,13 @@ class MyPostActivity : AppCompatActivity() {
         makeLauncher(recyclerViewAdapter)
         recyclerViewAdapter.initDialog(this)
 
-        postViewModel.loadMyContents()
+        val contentId = intent.getStringExtra("contentId")
+
+        if(contentId == null) {
+            postViewModel.loadMyContents()
+        } else {
+            postViewModel.loadSelectedContent(contentId)
+        }
 
         setContentView(binding.root)
     }
@@ -78,6 +84,10 @@ class MyPostActivity : AppCompatActivity() {
     private fun addLiveDataObserver() {
         postViewModel.myContents.observe(this, {
             recyclerViewAdapter.updateContents(it)
+            recyclerViewAdapter.notifyDataSetChanged()
+        })
+        postViewModel.selectedContent.observe(this, {
+            recyclerViewAdapter.updateContents(arrayListOf(it))
             recyclerViewAdapter.notifyDataSetChanged()
         })
     }

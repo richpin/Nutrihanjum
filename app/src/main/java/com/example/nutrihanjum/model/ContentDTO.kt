@@ -16,12 +16,10 @@ data class ContentDTO(
     var saved: MutableList<String> = mutableListOf(),
     var mealTime: String = "",
     var isPublic: Boolean = true,
-    ): Serializable{
+) : Serializable {
     data class CommentDTO(
         var id: String = "",
         var uid: String = "",
-        var profileName: String = "",
-        var profileUrl: String = "",
         var comment: String = "",
         var timeStamp: Long = 0
     )

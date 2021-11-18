@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nutrihanjum.model.ContentDTO
+import com.example.nutrihanjum.model.UserDTO
 import com.example.nutrihanjum.repository.CommunityRepository
 import com.example.nutrihanjum.repository.UserRepository
 import kotlinx.coroutines.flow.collect
@@ -17,6 +18,12 @@ class CommunityViewModel : ViewModel() {
 
     private val _comments = MutableLiveData<ArrayList<ContentDTO.CommentDTO>>()
     val comments: LiveData<ArrayList<ContentDTO.CommentDTO>> get() = _comments
+
+    private val _notices = MutableLiveData<ArrayList<UserDTO.NoticeDTO>>()
+    val notices: LiveData<ArrayList<UserDTO.NoticeDTO>> get() = _notices
+
+    private val _user = MutableLiveData<Pair<String,Pair<String, String>>>()
+    val user: LiveData<Pair<String,Pair<String, String>>> get() = _user
 
     fun loadContentsInit() = viewModelScope.launch {
         val list: ArrayList<ContentDTO> = arrayListOf()
@@ -36,17 +43,41 @@ class CommunityViewModel : ViewModel() {
         _contents.postValue(list)
     }
 
+    fun loadNoticesInit() = viewModelScope.launch {
+        val list: ArrayList<UserDTO.NoticeDTO> = arrayListOf()
+
+        CommunityRepository.loadNoticesInit().collect { item ->
+            item?.let { list.add(item) }
+        }
+        _notices.postValue(list)
+    }
+
+    fun loadNoticesMore() = viewModelScope.launch {
+        val list: ArrayList<UserDTO.NoticeDTO> = arrayListOf()
+
+        CommunityRepository.loadNoticesMore().collect { item ->
+            item?.let { list.add(item) }
+        }
+        _notices.postValue(list)
+    }
+
     fun loadComments(contentId : String) = viewModelScope.launch {
         val list: ArrayList<ContentDTO.CommentDTO> = arrayListOf()
 
         CommunityRepository.loadComments(contentId).collect { item ->
             item?.let { list.add(item) }
         }
-        _comments.postValue((list))
+        _comments.postValue(list)
     }
 
-    fun addComment(contentId: String, commentDTO: ContentDTO.CommentDTO) = viewModelScope.launch {
-        CommunityRepository.addComment(contentId, commentDTO).collect {
+    fun loadUserInfo(uid: String) = viewModelScope.launch {
+        CommunityRepository.loadUserInfo(uid).collect { item ->
+            item.let { _user.postValue(Pair(uid, item)) }
+        }
+    }
+
+    fun addComment(contentDTO: ContentDTO, commentDTO: ContentDTO.CommentDTO) = viewModelScope.launch {
+        CommunityRepository.addComment(contentDTO, commentDTO).collect {
             if(!it) Log.wtf("AddComment", it.toString())
         }
     }

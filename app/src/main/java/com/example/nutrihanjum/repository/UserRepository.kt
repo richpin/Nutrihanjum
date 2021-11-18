@@ -1,5 +1,6 @@
 package com.example.nutrihanjum.repository
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.net.Uri
 import android.util.Log
@@ -14,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.awaitCancellation
@@ -238,6 +240,19 @@ object UserRepository {
 
     }
 
+    fun updateToken(newToken: String) {
+        val uref = store.collection("users").document(uid!!)
+
+        store.runTransaction { transaction ->
+            val snapshot = transaction.get(uref)
+
+            val tokens = snapshot.get("tokens") as List<String>
+            if(!tokens.contains(newToken)) {
+                transaction.update(uref, "tokens", FieldValue.arrayUnion(newToken))
+            }
+        }.addOnSuccessListener { Log.d(TAG, "Token registration success!") }
+            .addOnFailureListener { e -> Log.w(TAG, "Token registration failure.", e) }
+    }
 
     fun isSigned() = auth.currentUser != null
 }

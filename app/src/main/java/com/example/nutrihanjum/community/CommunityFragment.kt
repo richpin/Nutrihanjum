@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nutrihanjum.databinding.CommunityFragmentBinding
@@ -17,6 +18,7 @@ import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.diary.DiaryViewModel
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.repository.CommunityRepository.boardLimit
+import com.example.nutrihanjum.util.SwipeController
 
 class CommunityFragment : Fragment() {
     private var _binding: CommunityFragmentBinding? = null
@@ -81,6 +83,7 @@ class CommunityFragment : Fragment() {
                             countChange?.let {
                                 adapter.contentDTOs[this].commentCount += it
                                 adapter.notifyItemChanged(this, "comment")
+                                viewModel.updateCommentCount(adapter.contentDTOs[this].id, it)
                             }
                         }
                     }
@@ -133,7 +136,7 @@ class CommunityFragment : Fragment() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
-                if (!binding.communityfragmentRecylerview.canScrollVertically(1) && newState==RecyclerView.SCROLL_STATE_IDLE) {
+                if (!recyclerView.canScrollVertically(1) && newState==RecyclerView.SCROLL_STATE_IDLE) {
                     page++
                     viewModel.loadContentsMore()
                 }

@@ -53,6 +53,7 @@ class UserFragment: Fragment() {
         loginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 userViewModel.notifyUserSigned()
+
             }
         }
 
