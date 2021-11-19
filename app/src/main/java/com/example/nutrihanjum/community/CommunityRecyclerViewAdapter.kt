@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.TextUtils
+import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -14,60 +15,29 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.R
-import com.example.nutrihanjum.databinding.LayoutPopupMyBinding
-import com.example.nutrihanjum.databinding.LayoutPopupOtherBinding
-import com.example.nutrihanjum.databinding.LayoutPopupDeleteBinding
-import com.example.nutrihanjum.databinding.LayoutPopupDeleteBinding.*
+import com.example.nutrihanjum.databinding.*
 import com.example.nutrihanjum.diary.AddDiaryActivity
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.repository.UserRepository.uid
+import com.example.nutrihanjum.util.NHUtil
 
 class CommunityRecyclerViewAdapter() :
     RecyclerView.Adapter<CommunityRecyclerViewAdapter.ViewHolder>() {
     var contentDTOs = arrayListOf<ContentDTO>()
     var contentPosition = -1
 
-    private lateinit var popupMyDialog: Dialog
-    private lateinit var popupOtherDialog: Dialog
-    private lateinit var popupDeleteDialog: Dialog
-    private lateinit var popupMyBinding: LayoutPopupMyBinding
-    private lateinit var popupOtherBinding: LayoutPopupOtherBinding
-    private lateinit var popupDeleteBinding: LayoutPopupDeleteBinding
-
-    private object TIME_MAXIMUM {
-        const val SEC = 60
-        const val MIN = 60
-        const val HOUR = 24
-        const val DAY = 30
-        const val MONTH = 12
-    }
-
-    companion object {
-        fun formatTime(mContext: Context, regTime: Long): String {
-            val currentTime = System.currentTimeMillis()
-            val diffSEC = (currentTime - regTime) / 1000
-            val diffMIN = diffSEC / TIME_MAXIMUM.SEC
-            val diffHOUR = diffMIN / TIME_MAXIMUM.MIN
-            val diffDAY = diffHOUR / TIME_MAXIMUM.HOUR
-            val diffMONTH = diffDAY / TIME_MAXIMUM.DAY
-            val diffYEAR = diffMONTH / TIME_MAXIMUM.MONTH
-
-            val msg: String = when {
-                diffSEC < TIME_MAXIMUM.SEC -> mContext.getString(R.string.time_just_now)
-                diffMIN < TIME_MAXIMUM.MIN -> diffMIN.toString() + mContext.getString(R.string.time_minute_before)
-                diffHOUR < TIME_MAXIMUM.HOUR -> diffHOUR.toString() + mContext.getString(R.string.time_hour_before)
-                diffDAY < TIME_MAXIMUM.DAY -> diffDAY.toString() + mContext.getString(R.string.time_day_before)
-                diffMONTH < TIME_MAXIMUM.MONTH -> diffMONTH.toString() + mContext.getString(R.string.time_month_before)
-                else -> diffYEAR.toString() + mContext.getString(R.string.time_year_before)
-            }
-
-            return msg
-        }
-    }
+    private lateinit var popupDeleteModifyDialog: Dialog
+    private lateinit var popupReportDialog: Dialog
+    private lateinit var popupDeleteCheckDialog: Dialog
+    private lateinit var popupReportCheckDialog: Dialog
+    private lateinit var popupDeleteModifyBinding: LayoutPopupDeleteModifyBinding
+    private lateinit var popupReportBinding: LayoutPopupReportBinding
+    private lateinit var popupDeleteCheckBinding: LayoutPopupDeleteCheckBinding
+    private lateinit var popupReportCheckBinding: LayoutPopupReportCheckBinding
 
     var likeClickEvent: ((ContentDTO, Boolean) -> Unit)? = null
     var savedClickEvent: ((ContentDTO, Boolean) -> Unit)? = null
-    var deleteClickEvent: ((String, String) -> Unit)? = null
+    var deleteContentEvent: ((String, String) -> Unit)? = null
     lateinit var commentLauncher: ActivityResultLauncher<Intent>
     lateinit var addDiaryLauncher: ActivityResultLauncher<Intent>
 
@@ -132,9 +102,9 @@ class CommunityRecyclerViewAdapter() :
         private fun addListener() {
             press_etc_imageview.setOnClickListener {
                 if (contentDTOs[bindingAdapterPosition].uid == uid)
-                    popupMyDialog.show()
+                    popupDeleteModifyDialog.show()
                 else
-                    popupOtherDialog.show()
+                    popupReportDialog.show()
 
                 contentPosition = bindingAdapterPosition
             }
@@ -210,7 +180,7 @@ class CommunityRecyclerViewAdapter() :
                 contentDTOs[position].commentCount
             )
         holder.communityitem_timeago_textview.text =
-            formatTime(holder.itemView.context, contentDTOs[position].timestamp)
+            NHUtil.formatTime(holder.itemView.context, contentDTOs[position].timestamp)
         holder.communityitem_content_textview.text = contentDTOs[position].content
 
         with(holder.press_like_imageview) {
@@ -249,46 +219,60 @@ class CommunityRecyclerViewAdapter() :
     }
 
     fun initDialog(mContext: Context) {
-        popupMyDialog = Dialog(mContext)
-        popupOtherDialog = Dialog(mContext)
-        popupDeleteDialog = Dialog(mContext)
+        popupDeleteModifyDialog = Dialog(mContext)
+        popupReportDialog = Dialog(mContext)
+        popupDeleteCheckDialog = Dialog(mContext)
+        popupReportCheckDialog = Dialog(mContext)
 
-        popupMyBinding = LayoutPopupMyBinding.inflate(LayoutInflater.from(mContext))
-        popupOtherBinding = LayoutPopupOtherBinding.inflate(LayoutInflater.from(mContext))
-        popupDeleteBinding = inflate(LayoutInflater.from(mContext))
-        popupMyDialog.setContentView(popupMyBinding.root)
-        popupOtherDialog.setContentView(popupOtherBinding.root)
-        popupDeleteDialog.setContentView(popupDeleteBinding.root)
+        popupDeleteModifyBinding = LayoutPopupDeleteModifyBinding.inflate(LayoutInflater.from(mContext))
+        popupReportBinding = LayoutPopupReportBinding.inflate(LayoutInflater.from(mContext))
+        popupDeleteCheckBinding = LayoutPopupDeleteCheckBinding.inflate(LayoutInflater.from(mContext))
+        popupReportCheckBinding = LayoutPopupReportCheckBinding.inflate(LayoutInflater.from(mContext))
+        popupDeleteModifyDialog.setContentView(popupDeleteModifyBinding.root)
+        popupReportDialog.setContentView(popupReportBinding.root)
+        popupDeleteCheckDialog.setContentView(popupDeleteCheckBinding.root)
+        popupReportCheckDialog.setContentView(popupReportCheckBinding.root)
 
-        popupMyDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        popupOtherDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        popupDeleteDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupDeleteModifyDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupReportDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupDeleteCheckDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupReportCheckDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         addPopupListener(mContext)
     }
 
     private fun addPopupListener(mContext: Context) {
-        popupMyBinding.btnPopupModify.setOnClickListener {
-            popupMyDialog.dismiss()
+        popupDeleteModifyBinding.btnPopupModify.setOnClickListener {
+            popupDeleteModifyDialog.dismiss()
             val intent = Intent(mContext, AddDiaryActivity::class.java)
             intent.putExtra("content", contentDTOs[contentPosition])
             addDiaryLauncher.launch(intent)
         }
 
-        popupMyBinding.btnPopupDelete.setOnClickListener {
-            popupMyDialog.dismiss()
-            popupDeleteDialog.show()
+        popupDeleteModifyBinding.btnPopupDelete.setOnClickListener {
+            popupDeleteModifyDialog.dismiss()
+            popupDeleteCheckDialog.show()
         }
 
-        popupDeleteBinding.btnDeleteCheckNo.setOnClickListener {
-            popupDeleteDialog.dismiss()
+        popupReportBinding.btnPopupReport.setOnClickListener {
+            popupReportDialog.dismiss()
+            popupReportCheckDialog.show()
+        }
+
+        popupDeleteCheckBinding.btnDeleteCheckNo.setOnClickListener {
+            popupDeleteCheckDialog.dismiss()
             contentPosition = -1
         }
 
-        popupDeleteBinding.btnDeleteCheckYes.setOnClickListener {
-            popupDeleteDialog.dismiss()
+        popupReportCheckBinding.btnReportCheckNo.setOnClickListener {
+            popupReportCheckDialog.dismiss()
+            contentPosition = -1
+        }
+
+        popupDeleteCheckBinding.btnDeleteCheckYes.setOnClickListener {
+            popupDeleteCheckDialog.dismiss()
             if (contentPosition != -1) {
-                deleteClickEvent?.let {
+                deleteContentEvent?.let {
                     it(
                         contentDTOs[contentPosition].id,
                         contentDTOs[contentPosition].imageUrl
@@ -298,6 +282,11 @@ class CommunityRecyclerViewAdapter() :
                 notifyItemRemoved(contentPosition)
             }
             contentPosition = -1
+        }
+
+        popupReportCheckBinding.btnReportCheckYes.setOnClickListener {
+            Log.wtf("CheckReport", "Yes")
+            popupReportCheckDialog.dismiss()
         }
     }
 

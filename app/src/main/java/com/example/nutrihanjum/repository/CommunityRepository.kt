@@ -170,9 +170,8 @@ object CommunityRepository {
 
     fun deleteComment(contentId: String, commentId: String) = callbackFlow {
         val ref = store.collection("posts").document(contentId)
-            .collection("comments").document(commentId)
 
-        ref.delete().onSuccessTask {
+        ref.collection("comments").document(commentId).delete().onSuccessTask {
             ref.update("commentCount", FieldValue.increment(-1))
         }.continueWith {
             if (it.isSuccessful) {

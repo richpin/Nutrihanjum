@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/box_rounded_white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/btn_popup_report"
+        android:layout_width="250dp"
+        android:layout_height="100dp"
+        android:fontFamily="@font/font_regular"
+        android:gravity="center"
+        android:text="@string/popup_report_check"
+        android:textColor="@color/black"
+        android:textSize="20dp" />
+
+    <RelativeLayout
+        android:layout_width="250dp"
+        android:layout_height="50dp">
+
+        <TextView
+            android:id="@+id/btn_report_check_yes"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:gravity="center"
+            android:fontFamily="@font/font_regular"
+            android:text="@string/yes"
+            android:textColor="@color/google_red"/>
+
+        <TextView
+            android:id="@+id/btn_report_check_no"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:gravity="center"
+            android:fontFamily="@font/font_regular"
+            android:text="@string/no"
+            android:textColor="@color/black"/>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

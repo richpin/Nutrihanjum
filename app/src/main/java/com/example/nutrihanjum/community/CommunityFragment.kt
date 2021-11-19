@@ -41,7 +41,9 @@ class CommunityFragment : Fragment() {
     private lateinit var userViewModel: UserViewModel
     private lateinit var diaryViewModel: DiaryViewModel
 
-    private val recyclerViewAdapter = CommunityRecyclerViewAdapter()
+    private val recyclerViewAdapter = CommunityRecyclerViewAdapter().apply{
+        makeLauncher(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,7 +55,6 @@ class CommunityFragment : Fragment() {
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         diaryViewModel = ViewModelProvider(requireActivity()).get(DiaryViewModel::class.java)
 
-        makeLauncher(recyclerViewAdapter)
         recyclerViewAdapter.initDialog(requireActivity())
         addViewListener()
 
@@ -83,7 +84,6 @@ class CommunityFragment : Fragment() {
                             countChange?.let {
                                 adapter.contentDTOs[this].commentCount += it
                                 adapter.notifyItemChanged(this, "comment")
-                                viewModel.updateCommentCount(adapter.contentDTOs[this].id, it)
                             }
                         }
                     }
@@ -120,12 +120,12 @@ class CommunityFragment : Fragment() {
                     { first, second -> viewModel.eventLikes(first, second) }
                 recyclerViewAdapter.savedClickEvent =
                     { first, second -> viewModel.eventSaved(first, second) }
-                recyclerViewAdapter.deleteClickEvent =
+                recyclerViewAdapter.deleteContentEvent =
                     { first, second -> diaryViewModel.deleteDiary(first, second) }
             } else {
                 recyclerViewAdapter.likeClickEvent = null
                 recyclerViewAdapter.savedClickEvent = null
-                recyclerViewAdapter.deleteClickEvent = null
+                recyclerViewAdapter.deleteContentEvent = null
             }
         }
     }

@@ -65,6 +65,7 @@
     <string name="failed_to_upload">잠시 후에 다시 시도해주세요</string>
 
     <string name="popup_delete_check">정말 삭제하시겠습니까?</string>
+    <string name="popup_report_check">정말 신고하시겠습니까?</string>
 
     <string name="comment_hint">댓글 달기</string>
     <string name="comment_empty">댓글을 입력해주세요</string>

@@ -71,7 +71,9 @@
         <entry key="app/src/main/res/layout/layout_pop_up_delete.xml" value="0.335" />
         <entry key="app/src/main/res/layout/layout_pop_up_other.xml" value="0.1234375" />
         <entry key="app/src/main/res/layout/layout_popup_delete.xml" value="0.335" />
-        <entry key="app/src/main/res/layout/layout_popup_my.xml" value="0.7576219512195121" />
+        <entry key="app/src/main/res/layout/layout_popup_my.xml" value="0.4909456740442656" />
+        <entry key="app/src/main/res/layout/layout_popup_other.xml" value="0.24166666666666667" />
+        <entry key="app/src/main/res/layout/layout_popup_report_check.xml" value="0.24166666666666667" />
         <entry key="app/src/main/res/layout/news_detail.xml" value="0.240625" />
         <entry key="app/src/main/res/layout/news_fragment.xml" value="0.165" />
         <entry key="app/src/main/res/layout/user_fragment.xml" value="0.23135058156024405" />

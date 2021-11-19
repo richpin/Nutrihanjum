@@ -14,6 +14,7 @@ import com.example.nutrihanjum.R
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.model.UserDTO
 import com.example.nutrihanjum.user.MyPostActivity
+import com.example.nutrihanjum.util.NHUtil
 
 class NoticeRecyclerViewAdapter() : RecyclerView.Adapter<NoticeRecyclerViewAdapter.ViewHolder>() {
     var noticeDTOs = arrayListOf<UserDTO.NoticeDTO>()
@@ -72,7 +73,7 @@ class NoticeRecyclerViewAdapter() : RecyclerView.Adapter<NoticeRecyclerViewAdapt
             if (noticeDTOs[position].content.isEmpty()) visibility = View.GONE
             else text = noticeDTOs[position].content
         }
-        holder.notice_timeago_textview.text = CommunityRecyclerViewAdapter.formatTime(
+        holder.notice_timeago_textview.text = NHUtil.formatTime(
             holder.itemView.context,
             noticeDTOs[position].timestamp
         )

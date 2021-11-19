@@ -1,5 +1,11 @@
 package com.example.nutrihanjum.community
 
+import android.app.Dialog
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,14 +15,27 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.R
+import com.example.nutrihanjum.databinding.LayoutPopupDeleteCheckBinding
+import com.example.nutrihanjum.databinding.LayoutPopupDeleteModifyBinding
+import com.example.nutrihanjum.databinding.LayoutPopupReportBinding
+import com.example.nutrihanjum.databinding.LayoutPopupReportCheckBinding
+import com.example.nutrihanjum.diary.AddDiaryActivity
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.repository.UserRepository.uid
+import com.example.nutrihanjum.util.NHUtil
 
 class CommentRecyclerViewAdapter : RecyclerView.Adapter<CommentRecyclerViewAdapter.ViewHolder>() {
     var commentDTOs = arrayListOf<ContentDTO.CommentDTO>()
     var users = hashMapOf<String, Pair<String, String>>()
+    lateinit var contentId: String
+    var commentPosition = -1
 
-    lateinit var deleteCommentEvent: ((String) -> Unit)
+    private lateinit var popupDeleteCheckDialog: Dialog
+    private lateinit var popupReportCheckDialog: Dialog
+    private lateinit var popupDeleteCheckBinding: LayoutPopupDeleteCheckBinding
+    private lateinit var popupReportCheckBinding: LayoutPopupReportCheckBinding
+
+    var deleteCommentEvent: ((String, String) -> Unit)? = null
     var countChange: Int = 0
 
     fun updateComments(data: ArrayList<ContentDTO.CommentDTO>) {
@@ -61,7 +80,7 @@ class CommentRecyclerViewAdapter : RecyclerView.Adapter<CommentRecyclerViewAdapt
         Glide.with(holder.itemView.context).load(users[commentDTOs[position].uid]!!.second).circleCrop()
             .into(holder.comment_profile_imageview)
         holder.comment_profile_textview.text = users[commentDTOs[position].uid]!!.first
-        holder.comment_timeago_textview.text = CommunityRecyclerViewAdapter.formatTime(
+        holder.comment_timeago_textview.text = NHUtil.formatTime(
             holder.itemView.context,
             commentDTOs[position].timeStamp
         )
@@ -69,8 +88,62 @@ class CommentRecyclerViewAdapter : RecyclerView.Adapter<CommentRecyclerViewAdapt
 
         if(commentDTOs[position].uid == uid){
             holder.btn_swipe_imageview.setImageResource(R.drawable.ic_trash)
+            holder.btn_swipe_task.setOnClickListener {
+                commentPosition = position
+                popupDeleteCheckDialog.show() }
         } else {
             holder.btn_swipe_imageview.setImageResource(R.drawable.ic_report)
+            holder.btn_swipe_task.setOnClickListener {
+                commentPosition = position
+                popupReportCheckDialog.show() }
+        }
+    }
+
+    fun initDialog(mContext: Context) {
+        popupDeleteCheckDialog = Dialog(mContext)
+        popupReportCheckDialog = Dialog(mContext)
+
+        popupDeleteCheckBinding = LayoutPopupDeleteCheckBinding.inflate(LayoutInflater.from(mContext))
+        popupReportCheckBinding = LayoutPopupReportCheckBinding.inflate(LayoutInflater.from(mContext))
+        popupDeleteCheckDialog.setContentView(popupDeleteCheckBinding.root)
+        popupReportCheckDialog.setContentView(popupReportCheckBinding.root)
+
+        popupDeleteCheckDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupReportCheckDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        addPopupListener()
+    }
+
+    private fun addPopupListener() {
+        popupDeleteCheckBinding.btnDeleteCheckNo.setOnClickListener {
+            popupDeleteCheckDialog.dismiss()
+            commentPosition = -1
+        }
+
+        popupReportCheckBinding.btnReportCheckNo.setOnClickListener {
+            popupReportCheckDialog.dismiss()
+            commentPosition = -1
+        }
+
+        popupDeleteCheckBinding.btnDeleteCheckYes.setOnClickListener {
+            popupDeleteCheckDialog.dismiss()
+            if (commentPosition != -1) {
+                deleteCommentEvent?.let {
+                    it(
+                        contentId,
+                        commentDTOs[commentPosition].id
+                    )
+                }
+                commentDTOs.removeAt(commentPosition)
+                notifyItemRemoved(commentPosition)
+                countChange -= 1
+            }
+            commentPosition = -1
+        }
+
+        popupReportCheckBinding.btnReportCheckYes.setOnClickListener {
+            Log.wtf("CheckReport", "Yes")
+            popupReportCheckDialog.dismiss()
         }
     }
 

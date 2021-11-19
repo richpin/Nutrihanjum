@@ -23,6 +23,8 @@ import com.example.nutrihanjum.repository.UserRepository.userName
 import com.example.nutrihanjum.repository.UserRepository.userPhoto
 import com.example.nutrihanjum.util.SwipeController
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import com.example.nutrihanjum.MainActivity
+import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.util.MyItemDecoration
 
 
@@ -30,6 +32,7 @@ class CommentActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCommentBinding
 
     private lateinit var communityViewModel: CommunityViewModel
+    private lateinit var userViewModel: UserViewModel
 
     private val recyclerViewAdapter = CommentRecyclerViewAdapter()
     private var swipeController = SwipeController()
@@ -40,6 +43,7 @@ class CommentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCommentBinding.inflate(layoutInflater)
         communityViewModel = ViewModelProvider(this).get(CommunityViewModel::class.java)
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
 
         contentDTO = intent.getSerializableExtra("contentDTO") as ContentDTO
 
@@ -56,11 +60,21 @@ class CommentActivity : AppCompatActivity() {
     }
 
     private fun addRecyclerView() {
-        swipeController = SwipeController().apply{ setClamp(150f) }
+        swipeController = SwipeController().apply { setClamp(150f) }
         val itemTouchHelper = ItemTouchHelper(swipeController)
         itemTouchHelper.attachToRecyclerView(binding.commentActivityRecyclerview)
+        recyclerViewAdapter.initDialog(this)
+        recyclerViewAdapter.contentId = contentDTO.id
 
-        binding.commentActivityRecyclerview.apply{
+        if (isSigned()) {
+            recyclerViewAdapter.deleteCommentEvent = { first, second ->
+                communityViewModel.deleteComment(first, second)
+            }
+        } else {
+            recyclerViewAdapter.deleteCommentEvent = null
+        }
+
+        binding.commentActivityRecyclerview.apply {
             layoutManager = LinearLayoutManager(applicationContext)
             setHasFixedSize(true)
             adapter = recyclerViewAdapter
@@ -97,7 +111,7 @@ class CommentActivity : AppCompatActivity() {
 
             if (TextUtils.isEmpty(content)) {
                 Toast.makeText(this, R.string.comment_empty, Toast.LENGTH_SHORT).show()
-            } else if (!isSigned()) {
+            } else if (!userViewModel.isSigned()) {
 
             } else {
                 recyclerViewAdapter.users[uid!!] = Pair(userName!!, userPhoto.toString())
