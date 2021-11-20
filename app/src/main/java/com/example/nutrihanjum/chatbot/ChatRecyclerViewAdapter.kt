@@ -1,20 +1,15 @@
 package com.example.nutrihanjum.chatbot
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Toast
 import androidx.core.view.children
-import androidx.core.view.size
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.chatbot.model.BotData
-import com.example.nutrihanjum.chatbot.model.ChatBotResponseDTO
 import com.example.nutrihanjum.chatbot.model.ChatData
 import com.example.nutrihanjum.chatbot.model.UserData
 import com.example.nutrihanjum.databinding.ItemChatBotBinding
@@ -24,7 +19,7 @@ import com.example.nutrihanjum.databinding.ItemQuickReplyBinding
 class ChatRecyclerViewAdapter(private val chatList: ArrayList<ChatData>)
     : RecyclerView.Adapter<ChatRecyclerViewAdapter.ViewHolder>() {
 
-    var quickReplyListener: ((String) -> Unit)? = null
+    var quickReplyListener: ((String, String) -> Unit)? = null
 
     private lateinit var recyclerView: RecyclerView
 
@@ -74,7 +69,7 @@ class ChatRecyclerViewAdapter(private val chatList: ArrayList<ChatData>)
                         binding.layoutQuickReplies.children.forEach { view ->
                             view.findViewById<View>(R.id.btn_action).isEnabled = false
                         }
-                        quickReplyListener?.invoke(quickReply.action)
+                        quickReplyListener?.invoke(quickReply.text, quickReply.event)
                     }
                 } else {
                     quickReplyBinding.btnAction.isEnabled = false

@@ -2,14 +2,13 @@ package com.example.nutrihanjum.chatbot
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nutrihanjum.R
-import com.example.nutrihanjum.chatbot.model.ChatBotProfileDTO
+import com.example.nutrihanjum.chatbot.model.ChatBotDTO
 import com.example.nutrihanjum.databinding.ActivityChatBinding
 
 class ChatActivity : AppCompatActivity() {
@@ -31,17 +30,13 @@ class ChatActivity : AppCompatActivity() {
 
 
     private fun initChatBot() {
-        val chatBot = intent.getSerializableExtra("chatBot") as ChatBotProfileDTO
+        val chatBot = intent.getSerializableExtra("chatBot") as ChatBotDTO
 
         viewModel.initChatBot(chatBot)
         binding.layoutLoading.visibility = View.VISIBLE
 
         viewModel.initialized.observe(this) {
             binding.layoutLoading.visibility = View.GONE
-
-            if (it) {
-                viewModel.welcomeMessage()
-            }
         }
     }
 
@@ -59,7 +54,7 @@ class ChatActivity : AppCompatActivity() {
             binding.btnSendChat.isEnabled = true
         }
 
-        adapter.quickReplyListener = { viewModel.sendMessage(it) }
+        adapter.quickReplyListener = { text, event -> viewModel.sendEvent(text, event) }
 
         addViewListener()
     }

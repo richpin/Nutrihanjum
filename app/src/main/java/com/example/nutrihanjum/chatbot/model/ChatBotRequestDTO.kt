@@ -1,21 +1,22 @@
 package com.example.nutrihanjum.chatbot.model
 
 data class ChatBotRequestDTO(
-    private var queryInput: QueryInput = QueryInput()
+    var projectId: String = "",
+    var userName: String = "",
+    var userEmail: String = "",
+    var query: String = "",
+    var type: String = "",
+    var languageCode: String = ""
 ) {
-    fun setMessage(message: String) {
-        queryInput.text.text = message
-    }
-    fun setLanguageCode(code: String) {
-        queryInput.text.languageCode = code
+    fun toMap(): Map<String, Any> {
+
+        return hashMapOf(
+            "projectId" to projectId,
+            "userName" to userName,
+            "userEmail" to userEmail,
+            "query" to query,
+            "type" to type,
+            "languageCode" to languageCode,
+        )
     }
 }
-
-data class QueryInput (
-    var text: QueryInputBody = QueryInputBody()
-)
-
-data class QueryInputBody (
-    var text: String = "",
-    var languageCode: String = "",
-)
