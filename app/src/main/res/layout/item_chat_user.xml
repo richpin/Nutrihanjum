@@ -20,7 +20,7 @@
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@id/imageview_user_profile"
         android:layout_marginEnd="10dp"
-        android:fontFamily="@font/font_bold"
+        android:fontFamily="@font/apple_gothic_neo_b"
         android:textSize="17dp"
         android:text="유저"/>
 

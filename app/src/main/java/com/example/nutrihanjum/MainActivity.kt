@@ -79,9 +79,14 @@ class MainActivity : AppCompatActivity() {
                     transaction.show(CommunityFragment.getInstance()).commit()
                     curFragment = CommunityFragment.getInstance()
                     binding.topBarTextview.text = getString(R.string.home_category)
-                    binding.topBarActionImageview.visibility = View.VISIBLE
-                    binding.topBarActionImageview.setOnClickListener {
-                        startActivity(Intent(this, NoticeActivity::class.java))
+                    binding.topBarActionImageview.setImageResource(R.drawable.ic_notification)
+                    binding.topBarActionLayout.setOnClickListener {
+                        startActivity(
+                            Intent(
+                                this,
+                                NoticeActivity::class.java
+                            )
+                        )
                     }
                     return@setOnItemSelectedListener true
                 }
@@ -89,36 +94,59 @@ class MainActivity : AppCompatActivity() {
                     transaction.show(ChatBotFragment.getInstance()).commit()
                     curFragment = ChatBotFragment.getInstance()
                     binding.topBarTextview.text = getString(R.string.chatbot_category)
-                    binding.topBarActionImageview.visibility = View.GONE
+                    binding.topBarActionImageview.setImageResource(R.drawable.ic_notification)
+                    binding.topBarActionLayout.setOnClickListener {
+                        startActivity(
+                            Intent(
+                                this,
+                                NoticeActivity::class.java
+                            )
+                        )
+                    }
                     return@setOnItemSelectedListener true
                 }
                 R.id.action_diary -> {
                     transaction.show(DiaryFragment.getInstance()).commit()
                     curFragment = DiaryFragment.getInstance()
                     binding.topBarTextview.text = getString(R.string.diary_category)
-                    binding.topBarActionImageview.visibility = View.GONE
+                    binding.topBarActionImageview.setImageResource(R.drawable.ic_notification)
+                    binding.topBarActionLayout.setOnClickListener {
+                        startActivity(
+                            Intent(
+                                this,
+                                NoticeActivity::class.java
+                            )
+                        )
+                    }
                     return@setOnItemSelectedListener true
                 }
                 R.id.action_news -> {
                     transaction.show(NewsFragment.getInstance()).commit()
                     curFragment = NewsFragment.getInstance()
                     binding.topBarTextview.text = getString(R.string.news_category)
-                    binding.topBarActionImageview.visibility = View.GONE
+                    binding.topBarActionImageview.setImageResource(R.drawable.ic_notification)
+                    binding.topBarActionLayout.setOnClickListener {
+                        startActivity(
+                            Intent(
+                                this,
+                                NoticeActivity::class.java
+                            )
+                        )
+                    }
                     return@setOnItemSelectedListener true
                 }
                 R.id.action_user -> {
                     transaction.show(UserFragment.getInstance()).commit()
                     curFragment = UserFragment.getInstance()
                     binding.topBarTextview.text = getString(R.string.user_category)
-                    binding.topBarActionImageview.visibility = View.GONE
+                    binding.topBarActionImageview.setImageResource(R.drawable.ic_notification)
+                    binding.topBarActionLayout.setOnClickListener { }
                     return@setOnItemSelectedListener true
                 }
+                else -> { return@setOnItemSelectedListener false }
             }
-
-            false
         }
     }
-
 
     private fun initFragments() {
         val transaction = supportFragmentManager.beginTransaction()
@@ -130,10 +158,8 @@ class MainActivity : AppCompatActivity() {
         transaction.commitNow()
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.main_content, ChatBotFragment.getInstance())
-            .hide(ChatBotFragment.getInstance())
-            .add(R.id.main_content, CommunityFragment.getInstance())
-            .hide(CommunityFragment.getInstance())
+            .add(R.id.main_content, ChatBotFragment.getInstance()).hide(ChatBotFragment.getInstance())
+            .add(R.id.main_content, CommunityFragment.getInstance()).hide(CommunityFragment.getInstance())
             .add(R.id.main_content, DiaryFragment.getInstance()).hide(DiaryFragment.getInstance())
             .add(R.id.main_content, NewsFragment.getInstance()).hide(NewsFragment.getInstance())
             .add(R.id.main_content, UserFragment.getInstance()).hide(UserFragment.getInstance())

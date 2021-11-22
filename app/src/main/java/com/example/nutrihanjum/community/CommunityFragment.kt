@@ -19,6 +19,8 @@ import com.example.nutrihanjum.diary.DiaryViewModel
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.repository.CommunityRepository.boardLimit
 import com.example.nutrihanjum.util.SwipeController
+import com.google.firebase.functions.ktx.functions
+import com.google.firebase.ktx.Firebase
 
 class CommunityFragment : Fragment() {
     private var _binding: CommunityFragmentBinding? = null
@@ -62,7 +64,7 @@ class CommunityFragment : Fragment() {
         binding.communityfragmentRecylerview.setHasFixedSize(true)
 
         binding.communityfragmentRecylerview.adapter = recyclerViewAdapter
-
+0
         viewModel.loadContentsInit()
 
         return binding.root

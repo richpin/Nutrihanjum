@@ -7,12 +7,12 @@
         android:title="@string/home"/>
     <item
         android:id="@+id/action_diary"
-        android:icon="@drawable/ic_bowl"
+        android:icon="@drawable/ic_diary"
         android:enabled="true"
         android:title="@string/diary"/>
     <item
         android:id="@+id/action_chatbot"
-        android:icon="@drawable/ic_chat"
+        android:icon="@drawable/ic_chatbot"
         android:enabled="true"
         android:title="@string/chatbot"/>
     <item

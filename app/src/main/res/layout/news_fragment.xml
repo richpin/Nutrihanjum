@@ -30,7 +30,7 @@
                 android:layout_marginStart="13dp"
                 android:layout_marginTop="13dp"
                 android:background="@drawable/box_rounded_boarder_white"
-                android:fontFamily="@font/font_bold"
+                android:fontFamily="@font/apple_gothic_neo_b"
                 android:gravity="center"
                 android:text="@string/recommend"
                 android:textColor="@color/white"
@@ -43,7 +43,7 @@
                 android:layout_gravity="bottom"
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginBottom="40dp"
-                android:fontFamily="@font/font_regular"
+                android:fontFamily="@font/apple_gothic_neo_r"
                 android:textColor="@color/white"
                 android:textSize="20dp" />
 
@@ -54,7 +54,7 @@
                 android:layout_gravity="bottom"
                 android:layout_marginStart="10dp"
                 android:layout_marginBottom="15dp"
-                android:fontFamily="@font/font_regular"
+                android:fontFamily="@font/apple_gothic_neo_r"
                 android:textColor="@color/white" />
         </FrameLayout>
 

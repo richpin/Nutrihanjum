@@ -9,7 +9,7 @@
         android:id="@+id/btn_popup_report"
         android:layout_width="250dp"
         android:layout_height="60dp"
-        android:fontFamily="@font/font_regular"
+        android:fontFamily="@font/apple_gothic_neo_r"
         android:gravity="center"
         android:text="@string/popup_report"
         android:textColor="@color/google_red"

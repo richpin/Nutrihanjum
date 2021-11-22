@@ -15,7 +15,7 @@
         android:paddingHorizontal="12dp"
         android:background="@drawable/selector_quick_reply_background"
         android:button="@null"
-        android:fontFamily="@font/font_bold"
+        android:fontFamily="@font/apple_gothic_neo_b"
         android:textAlignment="center"
         android:textColor="@drawable/selector_quick_reply_text"
         android:textSize="15sp" />

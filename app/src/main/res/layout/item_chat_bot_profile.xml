@@ -25,7 +25,7 @@
         android:layout_toEndOf="@id/card_view_chat_bot_profile"
         android:layout_marginTop="35dp"
         android:textColor="@color/black"
-        android:fontFamily="@font/font_bold"
+        android:fontFamily="@font/apple_gothic_neo_b"
         android:textSize="25dp"/>
 
     <TextView
@@ -36,7 +36,7 @@
         android:layout_marginTop="30dp"
         android:layout_toEndOf="@id/textview_chat_bot_profile"
         android:background="@drawable/box_rounded_yellow"
-        android:fontFamily="@font/font_bold"
+        android:fontFamily="@font/apple_gothic_neo_b"
         android:gravity="center"
         android:textAlignment="center"
         android:textSize="16dp" />
@@ -48,7 +48,7 @@
         android:layout_below="@id/textview_chat_bot_profile"
         android:layout_marginTop="25dp"
         android:layout_toEndOf="@id/card_view_chat_bot_profile"
-        android:fontFamily="@font/font_bold"
+        android:fontFamily="@font/apple_gothic_neo_b"
         android:textSize="15dp" />
 
 </RelativeLayout>

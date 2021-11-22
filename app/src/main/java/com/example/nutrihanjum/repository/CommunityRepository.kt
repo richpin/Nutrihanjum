@@ -2,20 +2,24 @@ package com.example.nutrihanjum.repository
 
 
 import android.util.Log
-import androidx.core.content.contentValuesOf
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.model.UserDTO
 import com.example.nutrihanjum.repository.UserRepository.uid
 import com.example.nutrihanjum.repository.UserRepository.userName
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.functions.HttpsCallableResult
+import com.google.firebase.functions.ktx.functions
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow as callbackFlow
 
 object CommunityRepository {
     private val store get() = FirebaseFirestore.getInstance()
+    private val functions = Firebase.functions
     private lateinit var lastVisibleContent: DocumentSnapshot
     private lateinit var lastVisibleNotice: DocumentSnapshot
     val boardLimit: Long = 20
@@ -308,5 +312,15 @@ object CommunityRepository {
                 close()
             }
         awaitClose()
+    }
+
+    fun sendReportMail(type: Int, contentId: String, commentId: String? = null): Task<HttpsCallableResult> {
+        val data = hashMapOf(
+            "type" to type,
+            "contentId" to contentId,
+            "commentId" to commentId
+        )
+
+        return functions.getHttpsCallable("sendReportMail").call(data)
     }
 }

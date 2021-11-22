@@ -9,7 +9,7 @@
         android:id="@+id/btn_popup_delete"
         android:layout_width="250dp"
         android:layout_height="100dp"
-        android:fontFamily="@font/font_regular"
+        android:fontFamily="@font/apple_gothic_neo_r"
         android:gravity="center"
         android:text="@string/popup_delete_check"
         android:textColor="@color/black"
@@ -25,7 +25,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:gravity="center"
-            android:fontFamily="@font/font_regular"
+            android:fontFamily="@font/apple_gothic_neo_r"
             android:text="@string/yes"
             android:textColor="@color/google_red"/>
 
@@ -35,7 +35,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:gravity="center"
-            android:fontFamily="@font/font_regular"
+            android:fontFamily="@font/apple_gothic_neo_r"
             android:text="@string/no"
             android:textColor="@color/black"/>
 

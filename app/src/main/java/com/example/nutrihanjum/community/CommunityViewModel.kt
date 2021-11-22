@@ -35,7 +35,7 @@ class CommunityViewModel : ViewModel() {
     }
 
     fun loadContentsMore() = viewModelScope.launch {
-        val list: ArrayList<ContentDTO> = arrayListOf()
+        val list: ArrayList<ContentDTO> = contents.value!!
 
         CommunityRepository.loadContentsMore().collect { item ->
             item?.let { list.add(item) }
@@ -53,7 +53,7 @@ class CommunityViewModel : ViewModel() {
     }
 
     fun loadNoticesMore() = viewModelScope.launch {
-        val list: ArrayList<UserDTO.NoticeDTO> = arrayListOf()
+        val list: ArrayList<UserDTO.NoticeDTO> = notices.value!!
 
         CommunityRepository.loadNoticesMore().collect { item ->
             item?.let { list.add(item) }

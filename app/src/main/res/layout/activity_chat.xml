@@ -32,7 +32,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="30dp"
                 android:gravity="center"
-                android:fontFamily="@font/font_bold"
+                android:fontFamily="@font/apple_gothic_neo_b"
                 android:textColor="@color/black"
                 android:textSize="35dp" />
 

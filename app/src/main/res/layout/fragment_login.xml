@@ -49,7 +49,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:gravity="center"
-                        android:fontFamily="@font/font_bold"
+                        android:fontFamily="@font/apple_gothic_neo_b"
                         android:textSize="20sp"
                         android:textColor="@color/orange"
                         android:text="@string/login_email"/>
@@ -81,7 +81,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:gravity="center"
-                        android:fontFamily="@font/font_bold"
+                        android:fontFamily="@font/apple_gothic_neo_b"
                         android:textSize="20sp"
                         android:textColor="@color/orange"
                         android:text="@string/login_password"/>
@@ -114,7 +114,7 @@
                         android:layout_height="wrap_content"
                         android:background="@color/yellow_200"
                         android:text="@string/request_login"
-                        android:fontFamily="@font/font_bold"
+                        android:fontFamily="@font/apple_gothic_neo_b"
                         android:textColor="@color/black"
                         android:textSize="17sp"/>
 
@@ -135,7 +135,7 @@
                         android:layout_gravity="center"
                         android:background="@color/google_red"
                         android:text="@string/google_login"
-                        android:fontFamily="@font/font_bold"
+                        android:fontFamily="@font/apple_gothic_neo_b"
                         android:textColor="@color/white"
                         android:textSize="17sp" />
 
@@ -154,7 +154,7 @@
         android:layout_marginBottom="10dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:fontFamily="@font/font_bold"
+        android:fontFamily="@font/apple_gothic_neo_b"
         android:textSize="15sp"
         android:textColor="@color/gray"
         android:text="@string/msg_sign_up" />

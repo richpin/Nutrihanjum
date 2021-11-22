@@ -1,10 +1,16 @@
 <resources>
     <string name="app_name">영양한줌</string>
-    <string name="home">영양한줌</string>
+    <string name="home">홈</string>
     <string name="diary">식단일지</string>
     <string name="chatbot">챗봇상담</string>
     <string name="news">영양뉴스</string>
     <string name="user">마이페이지</string>
+
+    <string name="report_email">richpinkr99@gmail.com</string>
+    <string name="report_content">게시글 신고</string>
+    <string name="report_comment">댓글 신고</string>
+    <string name="report_result_success">신고가 정상적으로 접수되었습니다.</string>
+    <string name="report_result_fail">신고가 접수되지 않았습니다.</string>
 
     <string name="home_category">영양한줌</string>
     <string name="diary_category">식단일지</string>

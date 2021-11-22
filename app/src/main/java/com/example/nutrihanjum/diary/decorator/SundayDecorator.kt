@@ -25,7 +25,7 @@ class SundayDecorator(val context: Context): DayViewDecorator {
         view?.let {
             if (!it.areDaysDisabled()) {
                 it.addSpan(TextAppearanceSpan(context, R.style.CalendarSundayAppearance))
-                ResourcesCompat.getFont(context, R.font.font_bold)?.let { font ->
+                ResourcesCompat.getFont(context, R.font.apple_gothic_neo_b)?.let { font ->
                     it.addSpan(FontSpan(font))
                 }
             }

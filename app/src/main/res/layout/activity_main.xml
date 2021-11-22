@@ -17,28 +17,35 @@
             android:id="@+id/top_bar_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:fontFamily="@font/font_bold"
-            android:textColor="@color/black"
             android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            android:fontFamily="@font/apple_gothic_neo_eb"
+            android:textColor="@color/black"
             android:textSize="35dp" />
 
-        <ImageView
-            android:id="@+id/top_bar_action_imageview"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+        <RelativeLayout
+            android:id="@+id/top_bar_action_layout"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="20dp"
-            android:src="@drawable/ic_notification" />
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/top_bar_action_imageview"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_notification" />
+        </RelativeLayout>
     </RelativeLayout>
 
     <FrameLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/top_bar"
-        android:layout_above="@id/nav_division">
+        android:layout_above="@id/nav_division"
+        android:layout_below="@id/top_bar">
+
     </FrameLayout>
     <LinearLayout
         android:id="@+id/nav_division"
@@ -55,6 +62,9 @@
         android:layout_alignParentBottom="true"
         android:theme="@style/BottomNavigationViewTitle"
         app:itemBackground="@color/white"
+        app:itemIconSize="28dp"
+        app:itemIconTint="@drawable/bottom_nav_icon_color_selector"
+        app:itemTextColor="@drawable/bottom_nav_icon_color_selector"
         app:menu="@menu/bottom_navigation_menu"
         app:labelVisibilityMode="labeled">
     </com.google.android.material.bottomnavigation.BottomNavigationView>

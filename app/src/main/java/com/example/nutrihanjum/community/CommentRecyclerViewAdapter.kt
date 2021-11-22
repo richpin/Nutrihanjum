@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.R
@@ -21,8 +22,10 @@ import com.example.nutrihanjum.databinding.LayoutPopupReportBinding
 import com.example.nutrihanjum.databinding.LayoutPopupReportCheckBinding
 import com.example.nutrihanjum.diary.AddDiaryActivity
 import com.example.nutrihanjum.model.ContentDTO
+import com.example.nutrihanjum.repository.CommunityRepository
 import com.example.nutrihanjum.repository.UserRepository.uid
 import com.example.nutrihanjum.util.NHUtil
+import com.google.firebase.functions.FirebaseFunctionsException
 
 class CommentRecyclerViewAdapter : RecyclerView.Adapter<CommentRecyclerViewAdapter.ViewHolder>() {
     var commentDTOs = arrayListOf<ContentDTO.CommentDTO>()
@@ -111,10 +114,10 @@ class CommentRecyclerViewAdapter : RecyclerView.Adapter<CommentRecyclerViewAdapt
         popupDeleteCheckDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         popupReportCheckDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        addPopupListener()
+        addPopupListener(mContext)
     }
 
-    private fun addPopupListener() {
+    private fun addPopupListener(mContext: Context) {
         popupDeleteCheckBinding.btnDeleteCheckNo.setOnClickListener {
             popupDeleteCheckDialog.dismiss()
             commentPosition = -1
@@ -142,8 +145,18 @@ class CommentRecyclerViewAdapter : RecyclerView.Adapter<CommentRecyclerViewAdapt
         }
 
         popupReportCheckBinding.btnReportCheckYes.setOnClickListener {
-            Log.wtf("CheckReport", "Yes")
             popupReportCheckDialog.dismiss()
+            CommunityRepository.sendReportMail(0, contentId, commentDTOs[commentPosition].id).addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    val e = task.exception
+                    if (e is FirebaseFunctionsException) {
+                        val detail = e.details
+                        Toast.makeText(mContext, mContext.getString(R.string.report_result_success) + '(' + detail.toString() + ')', Toast.LENGTH_LONG).show()
+                    }
+                } else {
+                    Toast.makeText(mContext, mContext.getString(R.string.report_result_success), Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 

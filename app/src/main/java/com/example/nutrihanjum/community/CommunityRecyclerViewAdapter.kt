@@ -11,15 +11,26 @@ import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.core.view.marginTop
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.*
 import com.example.nutrihanjum.diary.AddDiaryActivity
 import com.example.nutrihanjum.model.ContentDTO
+import com.example.nutrihanjum.repository.CommunityRepository.sendReportMail
 import com.example.nutrihanjum.repository.UserRepository.uid
+import com.example.nutrihanjum.repository.UserRepository.userEmail
 import com.example.nutrihanjum.util.NHUtil
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.functions.FirebaseFunctions
+import com.google.firebase.functions.FirebaseFunctionsException
+import com.google.firebase.functions.HttpsCallableResult
+import java.lang.Exception
+
 
 class CommunityRecyclerViewAdapter() :
     RecyclerView.Adapter<CommunityRecyclerViewAdapter.ViewHolder>() {
@@ -42,7 +53,7 @@ class CommunityRecyclerViewAdapter() :
     lateinit var addDiaryLauncher: ActivityResultLauncher<Intent>
 
     fun updateContents(data: ArrayList<ContentDTO>) {
-        contentDTOs.addAll(data)
+        contentDTOs = data
     }
 
     fun initContents() {
@@ -181,7 +192,13 @@ class CommunityRecyclerViewAdapter() :
             )
         holder.communityitem_timeago_textview.text =
             NHUtil.formatTime(holder.itemView.context, contentDTOs[position].timestamp)
-        holder.communityitem_content_textview.text = contentDTOs[position].content
+        with(holder.communityitem_content_textview) {
+            if(TextUtils.isEmpty(contentDTOs[position].content)) {
+                this.visibility = View.GONE
+            } else {
+                holder.communityitem_content_textview.text = contentDTOs[position].content
+            }
+        }
 
         with(holder.press_like_imageview) {
             if (isLiked(contentDTOs[position].likes)) {
@@ -285,8 +302,18 @@ class CommunityRecyclerViewAdapter() :
         }
 
         popupReportCheckBinding.btnReportCheckYes.setOnClickListener {
-            Log.wtf("CheckReport", "Yes")
             popupReportCheckDialog.dismiss()
+            sendReportMail(0, contentDTOs[contentPosition].id).addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    val e = task.exception
+                    if (e is FirebaseFunctionsException) {
+                        val detail = e.details
+                        Toast.makeText(mContext, mContext.getString(R.string.report_result_success) + '(' + detail.toString() + ')', Toast.LENGTH_LONG).show()
+                    }
+                } else {
+                    Toast.makeText(mContext, mContext.getString(R.string.report_result_success), Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 

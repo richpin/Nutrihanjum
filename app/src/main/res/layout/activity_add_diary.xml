@@ -57,7 +57,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/font_bold"
+                    android:fontFamily="@font/apple_gothic_neo_b"
                     android:text="@string/diary_menu"
                     android:textColor="@color/black"
                     android:textSize="25sp" />
@@ -82,7 +82,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/font_bold"
+                    android:fontFamily="@font/apple_gothic_neo_b"
                     android:text="@string/diary_hashtag"
                     android:textColor="@color/black"
                     android:textSize="25sp" />
@@ -105,7 +105,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/font_bold"
+                    android:fontFamily="@font/apple_gothic_neo_b"
                     android:text="@string/diary_meal_time"
                     android:textColor="@color/black"
                     android:textSize="25sp" />
@@ -129,7 +129,7 @@
                            android:layout_marginStart="7dp"
                            android:background="@drawable/selector_meal_time_radio_button"
                            android:button="@null"
-                           android:fontFamily="@font/font_bold"
+                           android:fontFamily="@font/apple_gothic_neo_b"
                            android:text="@string/meal_time_breakfast"
                            android:textAlignment="center"
                            android:textColor="@drawable/selector_meal_time_radio_text"
@@ -142,7 +142,7 @@
                            android:layout_marginStart="7dp"
                            android:background="@drawable/selector_meal_time_radio_button"
                            android:button="@null"
-                           android:fontFamily="@font/font_bold"
+                           android:fontFamily="@font/apple_gothic_neo_b"
                            android:text="@string/meal_time_lunch"
                            android:textAlignment="center"
                            android:textColor="@drawable/selector_meal_time_radio_text"
@@ -155,7 +155,7 @@
                            android:layout_marginStart="7dp"
                            android:background="@drawable/selector_meal_time_radio_button"
                            android:button="@null"
-                           android:fontFamily="@font/font_bold"
+                           android:fontFamily="@font/apple_gothic_neo_b"
                            android:text="@string/meal_time_dinner"
                            android:textAlignment="center"
                            android:textColor="@drawable/selector_meal_time_radio_text"
@@ -168,7 +168,7 @@
                            android:layout_marginStart="7dp"
                            android:background="@drawable/selector_meal_time_radio_button"
                            android:button="@null"
-                           android:fontFamily="@font/font_bold"
+                           android:fontFamily="@font/apple_gothic_neo_b"
                            android:text="@string/meal_time_snack"
                            android:textAlignment="center"
                            android:textColor="@drawable/selector_meal_time_radio_text"
@@ -181,7 +181,7 @@
                            android:layout_marginStart="7dp"
                            android:background="@drawable/selector_meal_time_radio_button"
                            android:button="@null"
-                           android:fontFamily="@font/font_bold"
+                           android:fontFamily="@font/apple_gothic_neo_b"
                            android:text="@string/meal_time_midnight_snack"
                            android:textAlignment="center"
                            android:textColor="@drawable/selector_meal_time_radio_text"
@@ -201,7 +201,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/font_bold"
+                    android:fontFamily="@font/apple_gothic_neo_b"
                     android:text="@string/diary_public_option"
                     android:textColor="@color/black"
                     android:textSize="17sp" />
@@ -225,7 +225,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
-                    android:fontFamily="@font/font_bold"
+                    android:fontFamily="@font/apple_gothic_neo_b"
                     android:text="@string/diary_memo"
                     android:textColor="@color/black"
                     android:textSize="20sp" />
@@ -256,7 +256,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"
         android:background="@color/yellow_200"
-        android:fontFamily="@font/font_bold"
+        android:fontFamily="@font/apple_gothic_neo_b"
         android:text="@string/add_diary"
         android:textColor="@color/black"
         android:textSize="17sp" />

@@ -35,6 +35,7 @@
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/item_quick_reply.xml" value="0.3592592592592593" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/user_fragment.xml" value="0.3388888888888889" />
         <entry key="app/src/main/res/drawable-mdpi/box_rounded.xml" value="0.3546875" />
+        <entry key="app/src/main/res/drawable/bottom_nav_icon_color_selector.xml" value="0.2558974358974359" />
         <entry key="app/src/main/res/drawable/box_rounded.xml" value="0.3546875" />
         <entry key="app/src/main/res/drawable/box_rounded_boarder.xml" value="0.3546875" />
         <entry key="app/src/main/res/drawable/box_rounded_boarder_white.xml" value="0.203125" />
@@ -43,14 +44,23 @@
         <entry key="app/src/main/res/drawable/box_rounded_yellow.xml" value="0.203125" />
         <entry key="app/src/main/res/drawable/comment_box_rounded.xml" value="0.3546875" />
         <entry key="app/src/main/res/drawable/ic_account_circle.xml" value="0.15416666666666667" />
+        <entry key="app/src/main/res/drawable/ic_arrow_back.xml" value="0.1421875" />
         <entry key="app/src/main/res/drawable/ic_baseline_add.xml" value="0.3546875" />
+        <entry key="app/src/main/res/drawable/ic_baseline_add_a_photo.xml" value="0.25384615384615383" />
+        <entry key="app/src/main/res/drawable/ic_bookmark.xml" value="0.25384615384615383" />
+        <entry key="app/src/main/res/drawable/ic_chat.xml" value="0.2558974358974359" />
         <entry key="app/src/main/res/drawable/ic_check_circle.xml" value="0.15416666666666667" />
+        <entry key="app/src/main/res/drawable/ic_collections_bookmark.xml" value="0.25384615384615383" />
         <entry key="app/src/main/res/drawable/ic_comment.xml" value="0.13958333333333334" />
         <entry key="app/src/main/res/drawable/ic_report.xml" value="0.12962962962962962" />
+        <entry key="app/src/main/res/drawable/ic_settings.xml" value="0.25384615384615383" />
+        <entry key="app/src/main/res/drawable/ic_user.xml" value="0.2558974358974359" />
         <entry key="app/src/main/res/drawable/public_option_thumb.xml" value="0.3546875" />
+        <entry key="app/src/main/res/drawable/test_home.xml" value="0.2558974358974359" />
+        <entry key="app/src/main/res/drawable/test_home_background.xml" value="0.2558974358974359" />
         <entry key="app/src/main/res/layout/activity_chat.xml" value="0.240625" />
         <entry key="app/src/main/res/layout/activity_comment.xml" value="0.18802083333333333" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.45" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.16151127056551448" />
         <entry key="app/src/main/res/layout/activity_my_post.xml" value="0.334375" />
         <entry key="app/src/main/res/layout/activity_news_detail.xml" value="0.240625" />
         <entry key="app/src/main/res/layout/activity_notice.xml" value="0.1" />
