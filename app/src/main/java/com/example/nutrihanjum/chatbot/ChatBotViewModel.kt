@@ -11,8 +11,8 @@ import kotlinx.coroutines.launch
 
 class ChatBotViewModel : ViewModel() {
 
-    private val _chatBotList = MutableLiveData<ArrayList<ChatBotProfileDTO>>()
-    val chatBotList: LiveData<ArrayList<ChatBotProfileDTO>> get() = _chatBotList
+    private val _chatBotList = MutableLiveData<ArrayList<ChatBotDTO>>()
+    val chatBotList: LiveData<ArrayList<ChatBotDTO>> get() = _chatBotList
 
     fun loadAllChatBots() = viewModelScope.launch {
         ChatBotRepository.loadAllChatBots().collect {
@@ -23,14 +23,16 @@ class ChatBotViewModel : ViewModel() {
 
     private val REPLY_FAILED by lazy {
         val temp = BotData()
-        temp.message = "응답에 실패했습니다. 잠시 후 다시 시도해주세요."
         temp.name = chatBot.profileName
         temp.profileUrl = chatBot.profileUrl
+        temp.quickReplies.add(QuickReplyOption("다시 시도하기", ""))
+        temp.quickReplies.add(QuickReplyOption("처음으로", "event_welcome"))
         temp
     }
 
-    var chatBot = ChatBotProfileDTO()
-    private var info: ChatBotRequestInfo? = null
+    private var lastRequest = Pair("event_welcome", "event")
+
+    lateinit var chatBot: ChatBotDTO
 
     private val _chatList = MutableLiveData<ArrayList<ChatData>>(arrayListOf())
     val chatList: LiveData<ArrayList<ChatData>> get() = _chatList
@@ -38,32 +40,22 @@ class ChatBotViewModel : ViewModel() {
     private val _initialized = MutableLiveData<Boolean>()
     val initialized: LiveData<Boolean> get() = _initialized
 
-    fun initChatBot(chatBot: ChatBotProfileDTO) {
-        if (info != null) return
-
+    fun initChatBot(chatBot: ChatBotDTO) {
         this.chatBot = chatBot
-
-        viewModelScope.launch {
-            ChatBotRepository.initChatBot(chatBot.id, viewModelScope).collect {
-                if (it != null) {
-                    info = it
-                } else {
-                    _chatList.value!!.add(REPLY_FAILED)
-                    _chatList.postValue(_chatList.value)
-                }
-
-                _initialized.postValue(true)
-            }
-        }
+        REPLY_FAILED.message = chatBot.fallback
+        ChatBotRepository.initChatBot(chatBot)
+        welcomeMessage()
     }
 
 
-    fun welcomeMessage() {
-        if (chatList.value?.isNotEmpty() == true) return
+    private fun welcomeMessage() {
+        if (chatList.value?.isNotEmpty() == true) {
+            _initialized.value = true
+            return
+        }
 
-        info?.welcome?.let {
-            _chatList.value!!.add(makeBotData(it))
-            _chatList.value = _chatList.value
+        requestToBot("event_welcome", "event").invokeOnCompletion {
+            _initialized.value = true
         }
     }
 
@@ -71,24 +63,31 @@ class ChatBotViewModel : ViewModel() {
     fun sendMessage(message: String) = viewModelScope.launch {
         _chatList.value!!.add(makeUserData(message))
         _chatList.value = _chatList.value
-        requestToBot(message)
+        requestToBot(message, "text")
     }
 
-
-    private fun requestToBot(message: String) = viewModelScope.launch {
-        if (info != null) {
-            ChatBotRepository.sendMessage(message, info!!).collect {
-                if (it != null) {
-                    _chatList.value!!.add(makeBotData(it))
-                    _chatList.postValue(_chatList.value)
-                } else {
-                    _chatList.value!!.add(REPLY_FAILED)
-                    _chatList.postValue(_chatList.value)
-                }
-            }
+    fun sendEvent(message: String, event: String) = viewModelScope.launch {
+        if (event.isEmpty()) {
+            requestToBot(lastRequest.first, lastRequest.second)
         }
         else {
-            initChatBot(chatBot)
+            _chatList.value!!.add(makeUserData(message))
+            _chatList.value = _chatList.value
+            requestToBot(event, "event")
+        }
+    }
+
+    private fun requestToBot(message: String, type: String) = viewModelScope.launch {
+        lastRequest = Pair(message, type)
+
+        ChatBotRepository.sendMessage(message, type, chatBot).collect {
+            if (it != null) {
+                _chatList.value!!.add(makeBotData(it))
+                _chatList.postValue(_chatList.value)
+            } else {
+                _chatList.value!!.add(REPLY_FAILED)
+                _chatList.postValue(_chatList.value)
+            }
         }
     }
 
@@ -98,10 +97,9 @@ class ChatBotViewModel : ViewModel() {
 
         data.name = chatBot.profileName
         data.profileUrl = chatBot.profileUrl
-        data.message = response.getMessage()
-        data.quickReplies = ArrayList(response.getQuickReplies().map {
-            QuickReplyOption(text = it.text, action = it.action)
-        })
+        data.message = response.text
+
+        data.quickReplies = response.quickReplies
 
         return data
     }

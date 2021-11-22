@@ -13,7 +13,7 @@ class DiaryRecyclerViewAdapter(
     var diaryList: ArrayList<ContentDTO>
 ): RecyclerView.Adapter<DiaryRecyclerViewAdapter.ViewHolder>() {
 
-    var onPopupClickListener: ((view: View, item: ContentDTO) -> Unit)? = null
+    var onPopupClickListener: ((view: View, item: ContentDTO, pos: Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemBinding =
@@ -25,7 +25,7 @@ class DiaryRecyclerViewAdapter(
             val pos = viewHolder.bindingAdapterPosition
 
             if (pos != RecyclerView.NO_POSITION) {
-                onPopupClickListener?.let { it(v, diaryList[pos]) }
+                onPopupClickListener?.let { it(v, diaryList[pos], pos) }
             }
         }
 

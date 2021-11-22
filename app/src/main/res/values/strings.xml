@@ -103,6 +103,7 @@
 
     <string name="chat_bot_hint">키워드를 입력해보세요</string>
     <string name="chat_empty_input">내용을 입력해주세요</string>
+    <string name="edittext_food_name_hint">음식이름을 입력해주세요.</string>
 
     <string name="default_notification_channel_id">927born</string>
     <string name="channel_name">PN</string>

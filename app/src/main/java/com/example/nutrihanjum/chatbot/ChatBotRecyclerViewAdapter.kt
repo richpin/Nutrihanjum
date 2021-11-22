@@ -4,13 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.nutrihanjum.chatbot.model.ChatBotProfileDTO
+import com.example.nutrihanjum.chatbot.model.ChatBotDTO
 import com.example.nutrihanjum.databinding.ItemChatBotProfileBinding
 
-class ChatBotRecyclerViewAdapter(private var chatBotProfileDTOS: ArrayList<ChatBotProfileDTO>) :
+class ChatBotRecyclerViewAdapter(private var chatBotDTOs: ArrayList<ChatBotDTO>) :
     RecyclerView.Adapter<ChatBotRecyclerViewAdapter.ViewHolder>() {
 
-    var chatBotListener: ((id: ChatBotProfileDTO) -> Unit)? = null
+    var chatBotListener: ((id: ChatBotDTO) -> Unit)? = null
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemChatBotProfileBinding.inflate(
@@ -21,7 +21,7 @@ class ChatBotRecyclerViewAdapter(private var chatBotProfileDTOS: ArrayList<ChatB
         binding.root.setOnClickListener {
             val pos = viewHolder.bindingAdapterPosition
             if (pos != RecyclerView.NO_POSITION) {
-                chatBotListener?.let { it(chatBotProfileDTOS[pos]) }
+                chatBotListener?.let { it(chatBotDTOs[pos]) }
             }
         }
 
@@ -35,12 +35,12 @@ class ChatBotRecyclerViewAdapter(private var chatBotProfileDTOS: ArrayList<ChatB
 
 
     override fun getItemCount(): Int {
-        return chatBotProfileDTOS.size
+        return chatBotDTOs.size
     }
 
 
-    fun updateDataSet(dataSet: ArrayList<ChatBotProfileDTO>) {
-        chatBotProfileDTOS = dataSet
+    fun updateDataSet(dataSet: ArrayList<ChatBotDTO>) {
+        chatBotDTOs = dataSet
         notifyDataSetChanged()
     }
 
@@ -49,13 +49,13 @@ class ChatBotRecyclerViewAdapter(private var chatBotProfileDTOS: ArrayList<ChatB
             val pos = bindingAdapterPosition
 
             Glide.with(itemView.context)
-                .load(chatBotProfileDTOS[pos].profileUrl)
+                .load(chatBotDTOs[pos].profileUrl)
                 .circleCrop()
                 .into(binding.imageviewChatBotProfile)
 
-            binding.textviewChatBotProfile.text = chatBotProfileDTOS[pos].profileName
-            binding.textviewChatBotCategory.text = chatBotProfileDTOS[pos].category
-            binding.textviewChatBotContent.text = chatBotProfileDTOS[pos].content
+            binding.textviewChatBotProfile.text = chatBotDTOs[pos].profileName
+            binding.textviewChatBotCategory.text = chatBotDTOs[pos].category
+            binding.textviewChatBotContent.text = chatBotDTOs[pos].content
         }
     }
 }

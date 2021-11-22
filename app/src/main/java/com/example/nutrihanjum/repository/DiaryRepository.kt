@@ -3,6 +3,7 @@ package com.example.nutrihanjum.repository
 import android.net.Uri
 import android.util.Log
 import com.example.nutrihanjum.model.ContentDTO
+import com.example.nutrihanjum.model.FoodDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,18 +27,16 @@ object DiaryRepository {
 
     fun loadAllDiaryAtDate(date: String) = callbackFlow {
         store.collection("posts")
-                .whereEqualTo("date", date)
-                .whereEqualTo("uid", uid)
-                .get().continueWith {
-                    if (it.isSuccessful) {
-                        it.result.documents.forEach { item ->
-                            trySend(item.toObject(ContentDTO::class.java)!!)
-                        }
-                    } else {
-                        Log.wtf("Repository", "${it.exception?.message}")
-                    }
-                    close()
+            .whereEqualTo("date", date)
+            .whereEqualTo("uid", uid)
+            .get().continueWith {
+                if (it.isSuccessful) {
+                    trySend(it.result.toObjects(ContentDTO::class.java))
+                } else {
+                    Log.wtf("Repository", "${it.exception?.message}")
                 }
+                close()
+            }
 
         awaitClose()
     }
@@ -45,20 +44,20 @@ object DiaryRepository {
 
     fun modifyDiaryWithoutPhoto(content: ContentDTO) = callbackFlow {
         store.collection("posts")
-                .document(content.id)
-                .update(
-                        "content", content.content,
-                        "mealTime", content.mealTime,
-                        "public", content.isPublic
-                )
-                .continueWith {
-                    if (it.isSuccessful) {
-                        trySend(true)
-                    } else {
-                        trySend(false)
-                    }
-                    close()
+            .document(content.id)
+            .update(
+                "content", content.content,
+                "mealTime", content.mealTime,
+                "public", content.isPublic
+            )
+            .continueWith {
+                if (it.isSuccessful) {
+                    trySend(content)
+                } else {
+                    trySend(null)
                 }
+                close()
+            }
 
 
         awaitClose()
@@ -84,9 +83,9 @@ object DiaryRepository {
             }
             .continueWith { result ->
                 if (result.isSuccessful) {
-                    trySend(true)
+                    trySend(content)
                 } else {
-                    trySend(false)
+                    trySend(null)
                 }
                 close()
             }
@@ -144,11 +143,30 @@ object DiaryRepository {
 
             }.continueWith {
                 if (it.isSuccessful) {
-                    trySend(true)
+                    trySend(content)
                 } else {
-                    trySend(false)
+                    trySend(null)
                 }
 
+                close()
+            }
+
+        awaitClose()
+    }
+
+
+    fun loadFoodList(foodName: String) = callbackFlow {
+        store.collection("foods")
+            .orderBy("식품명")
+            .whereArrayContains("keywords", foodName)
+            .limit(10)
+            .get()
+            .addOnSuccessListener {
+                trySend(it.documents.map { doc -> FoodDTO(doc["식품명"].toString()) })
+                close()
+            }
+            .addOnFailureListener {
+                Log.wtf(this@DiaryRepository.javaClass.simpleName, it.stackTraceToString())
                 close()
             }
 

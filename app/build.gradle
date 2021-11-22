@@ -39,16 +39,10 @@ android {
     buildFeatures {
         viewBinding true
     }
-    packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-    }
 }
 
 dependencies {
     implementation 'com.google.firebase:firebase-messaging:22.0.0'
-    implementation files('libs/activation.jar')
-    implementation files('libs/additionnal.jar')
-    implementation files('libs/mail.jar')
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
     implementation("androidx.multidex:multidex:2.0.1")
@@ -80,14 +74,14 @@ dependencies {
 
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
+    implementation 'com.github.kizitonwose:CalendarView:1.0.4'
     implementation 'kr.co.prnd:readmore-textview:1.0.0'
 
     implementation 'com.github.CanHub:Android-Image-Cropper:3.3.5'
-    implementation 'com.google.auth:google-auth-library-oauth2-http:1.2.2'
-    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'com.google.code.gson:gson:2.8.7'
 
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
+
 
 }
 

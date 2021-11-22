@@ -63,10 +63,10 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="20dp"
                 android:layout_toStartOf="@id/btn_send_chat"
-                android:inputType="text"
                 android:background="@null"
+                android:hint="@string/chat_bot_hint"
                 android:imeOptions="actionSend"
-                android:hint="@string/chat_bot_hint" />
+                android:inputType="text" />
 
             <ImageView
                 android:id="@+id/btn_send_chat"

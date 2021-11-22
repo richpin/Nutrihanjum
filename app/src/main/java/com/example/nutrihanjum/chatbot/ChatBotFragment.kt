@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.databinding.ChatbotFragmentBinding
 
 
@@ -30,6 +32,7 @@ class ChatBotFragment : Fragment() {
     }
 
     private lateinit var viewModel: ChatBotViewModel
+    private lateinit var userViewModel: UserViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +40,7 @@ class ChatBotFragment : Fragment() {
     ): View {
         _binding = ChatbotFragmentBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this).get(ChatBotViewModel::class.java)
+        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
 
         initRecyclerView()
 
@@ -58,11 +62,16 @@ class ChatBotFragment : Fragment() {
         }
 
         adapter.chatBotListener = {
-            val mIntent = Intent(activity, ChatActivity::class.java)
+            if (userViewModel.isSigned()) {
+                val mIntent = Intent(activity, ChatActivity::class.java)
 
-            mIntent.putExtra("chatBot", it)
+                mIntent.putExtra("chatBot", it)
 
-            startActivity(mIntent)
+                startActivity(mIntent)
+            }
+            else {
+                Toast.makeText(activity, "로그인 해주세요.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

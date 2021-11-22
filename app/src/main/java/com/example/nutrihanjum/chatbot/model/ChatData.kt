@@ -15,12 +15,11 @@ data class BotData(
     var profileUrl: String = "",
     var quickReplies: ArrayList<QuickReplyOption> = arrayListOf()
 ): ChatData {
-
 }
 
 data class QuickReplyOption(
     var text: String = "",
-    var action: String = "",
+    var event: String = "",
     var isSelected: Boolean = false,
 )
 
