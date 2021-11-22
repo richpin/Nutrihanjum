@@ -1,22 +1,16 @@
 package com.example.nutrihanjum.chatbot.model
 
 data class ChatBotRequestDTO(
-    var projectId: String = "",
-    var userName: String = "",
-    var userEmail: String = "",
+    var botId: String = "",
     var query: String = "",
-    var type: String = "",
-    var languageCode: String = ""
+    var type: String = ""
 ) {
     fun toMap(): Map<String, Any> {
 
         return hashMapOf(
-            "projectId" to projectId,
-            "userName" to userName,
-            "userEmail" to userEmail,
+            "botId" to botId,
             "query" to query,
-            "type" to type,
-            "languageCode" to languageCode,
+            "type" to type
         )
     }
 }

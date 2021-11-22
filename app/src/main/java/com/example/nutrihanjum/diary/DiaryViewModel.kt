@@ -20,6 +20,13 @@ class DiaryViewModel : ViewModel() {
     private val _foodList = MutableLiveData<ArrayList<FoodDTO>>(arrayListOf())
     val foodList: LiveData<ArrayList<FoodDTO>> = _foodList
 
+    var workingPosition = -1
+    var workingItem: FoodDTO? = null
+
+
+    private val _foodAutoComplete = MutableLiveData<ArrayList<FoodDTO>>(arrayListOf())
+    val foodAutoComplete: LiveData<ArrayList<FoodDTO>> = _foodAutoComplete
+
     fun addDiary(content: ContentDTO, imageUri: String) = viewModelScope.launch {
         DiaryRepository.addDiary(content, imageUri).collect {
             _diary.postValue(it)
@@ -42,14 +49,16 @@ class DiaryViewModel : ViewModel() {
     }
 
 
-    fun loadFoodList(foodName: String) = viewModelScope.launch {
-        _foodList.value?.clear()
+    fun loadFoodAutoComplete(foodName: String) = synchronized(this) {
+        viewModelScope.launch {
+            _foodAutoComplete.value?.clear()
 
-        DiaryRepository.loadFoodList(foodName).collect {
-            _foodList.value?.addAll(it)
+            DiaryRepository.loadFoodList(foodName).collect {
+                _foodAutoComplete.value?.addAll(it)
+            }
+
+            _foodAutoComplete.postValue(_foodAutoComplete.value)
         }
-
-        _foodList.postValue(_foodList.value)
     }
 
 

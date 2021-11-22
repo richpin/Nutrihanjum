@@ -47,14 +47,10 @@ object ChatBotRepository {
     fun sendMessage(message: String, type: String, chatBot: ChatBotDTO) = callbackFlow {
         val data = ChatBotRequestDTO(
             chatBot.id,
-            userName!!,
-            userEmail!!,
             message,
             type,
-            "ko",
         )
 
-        Log.wtf(TAG, data.toString())
         function.getHttpsCallable("detectIntent")
             .call(data.toMap())
             .addOnSuccessListener {

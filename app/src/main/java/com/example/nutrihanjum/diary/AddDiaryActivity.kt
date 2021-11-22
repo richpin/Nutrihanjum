@@ -11,15 +11,14 @@ import androidx.activity.result.ActivityResultLauncher
 import com.example.nutrihanjum.databinding.ActivityAddDiaryBinding
 import java.util.*
 import android.view.View
-import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.canhub.cropper.*
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.model.ContentDTO
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
-import com.google.android.flexbox.FlexboxLayout
 import com.google.android.flexbox.FlexboxLayoutManager
 
 class AddDiaryActivity : AppCompatActivity() {
@@ -160,11 +159,7 @@ class AddDiaryActivity : AppCompatActivity() {
     }
 
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun initCommonView() {
-        binding.recyclerviewFoods.adapter = AutoCompleteAdapter(viewModel.foodList.value!!)
-        binding.recyclerviewFoods.layoutManager = FlexboxLayoutManager(this, FlexDirection.ROW, FlexWrap.WRAP)
-
         binding.imageviewPreview.setOnClickListener {
             getPhoto()
         }
@@ -177,21 +172,99 @@ class AddDiaryActivity : AppCompatActivity() {
             }
         }
 
-        binding.btnAddFood.setOnClickListener {
-            if (binding.edittextFood.visibility == View.VISIBLE) {
-                if (binding.edittextFood.text.isNotEmpty()) {
-                    viewModel.loadFoodList(binding.edittextFood.text.toString())
-                }
+        initFoodRecyclerView()
+        initAutoCompleteRecyclerview()
+    }
 
-                binding.edittextFood.setText("")
-                binding.edittextFood.visibility = View.GONE
-            } else {
-                binding.edittextFood.visibility = View.VISIBLE
+
+    private fun initFoodRecyclerView() {
+        val adapter = FoodRecyclerViewAdapter(viewModel.foodList.value!!)
+        binding.recyclerviewFoods.adapter = adapter
+        binding.recyclerviewFoods.layoutManager = FlexboxLayoutManager(this, FlexDirection.ROW, FlexWrap.WRAP)
+
+        adapter.revokeListener = { binding.layoutFoodDetail.root.visibility = View.GONE }
+        adapter.textChangeListener = { name ->
+            synchronized(this) {
+                viewModel.loadFoodAutoComplete(name)
             }
         }
 
-        viewModel.foodList.observe(this) {
-            binding.recyclerviewFoods.adapter?.notifyDataSetChanged()
+        adapter.addFoodListener = { food, pos ->
+            with (binding.layoutFoodDetail) {
+                edittextFoodDetailName.setText(food.name)
+                edittextFoodDetailCalorie.setText(food.calorie)
+                edittextFoodDetailCarbohydrate.setText(food.carbohydrate)
+                edittextFoodDetailProtein.setText(food.protein)
+                edittextFoodDetailFat.setText(food.fat)
+
+                when {
+                    food.name.isEmpty() -> { edittextFoodDetailName.requestFocus() }
+                    food.calorie.isEmpty() -> { edittextFoodDetailCalorie.requestFocus() }
+                    food.carbohydrate.isEmpty() -> { edittextFoodDetailCarbohydrate.requestFocus() }
+                    food.protein.isEmpty() -> { edittextFoodDetailProtein.requestFocus() }
+                    else -> { edittextFoodDetailFat.requestFocus() }
+                }
+            }
+            binding.layoutFoodDetail.root.visibility = View.VISIBLE
+            viewModel.workingPosition = pos
+            viewModel.workingItem = food
+        }
+
+        binding.layoutFoodDetail.btnSetFood.setOnClickListener {
+            viewModel.workingItem?.let { food ->
+                with (binding.layoutFoodDetail) {
+                    food.name = edittextFoodDetailName.text.toString()
+                    food.calorie = edittextFoodDetailCalorie.text.toString()
+                    food.carbohydrate = edittextFoodDetailCarbohydrate.text.toString()
+                    food.protein = edittextFoodDetailProtein.text.toString()
+                    food.fat = edittextFoodDetailFat.text.toString()
+                }
+
+                binding.layoutFoodDetail.root.visibility = View.GONE
+
+                adapter.notifyItemChanged(viewModel.workingPosition)
+                viewModel.workingItem = null
+            }
+        }
+
+        binding.layoutFoodDetail.btnCancelSetFood.setOnClickListener {
+            binding.layoutFoodDetail.root.visibility = View.GONE
+        }
+    }
+
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun initAutoCompleteRecyclerview() {
+        val adapter = AutoCompleteAdapter(viewModel.foodAutoComplete.value!!)
+        binding.recyclerviewAutocomplete.adapter = adapter
+        binding.recyclerviewAutocomplete.layoutManager = LinearLayoutManager(this)
+
+        viewModel.foodAutoComplete.observe(this) {
+            binding.recyclerviewAutocomplete.adapter?.notifyDataSetChanged()
+        }
+
+        adapter.itemSelectedListener = { food ->
+            viewModel.foodList.value?.add(food)
+            binding.recyclerviewFoods.adapter!!.notifyItemInserted(viewModel.foodList.value!!.size - 1)
+
+            with (binding.layoutFoodDetail) {
+                edittextFoodDetailName.setText(food.name)
+                edittextFoodDetailCalorie.setText(food.calorie)
+                edittextFoodDetailCarbohydrate.setText(food.carbohydrate)
+                edittextFoodDetailProtein.setText(food.protein)
+                edittextFoodDetailFat.setText(food.fat)
+
+                when {
+                    food.name.isEmpty() -> { edittextFoodDetailName.requestFocus() }
+                    food.calorie.isEmpty() -> { edittextFoodDetailCalorie.requestFocus() }
+                    food.carbohydrate.isEmpty() -> { edittextFoodDetailCarbohydrate.requestFocus() }
+                    food.protein.isEmpty() -> { edittextFoodDetailProtein.requestFocus() }
+                    else -> { edittextFoodDetailFat.requestFocus() }
+                }
+            }
+            binding.layoutFoodDetail.root.visibility = View.VISIBLE
+            viewModel.workingPosition = viewModel.foodList.value!!.size - 1
+            viewModel.workingItem = food
         }
     }
 

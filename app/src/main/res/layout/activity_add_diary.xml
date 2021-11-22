@@ -66,26 +66,23 @@
                         android:textColor="@color/black"
                         android:textSize="25sp" />
 
-                    <EditText
-                        android:id="@+id/edittext_food"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:inputType="text" />
-
-                    <ImageView
-                        android:id="@+id/btn_add_food"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/ic_baseline_add"
-                        tools:ignore="ContentDescription" />
-
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerview_foods"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edittext_underline"/>
+
+                <include
+                    android:id="@+id/layout_food_detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    layout="@layout/layout_food_detail"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerview_autocomplete"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 

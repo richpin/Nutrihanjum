@@ -125,7 +125,7 @@ class ChatRecyclerViewAdapter(private val chatList: ArrayList<ChatData>)
         return chatList.size
     }
 
-    open class ViewHolder(binding: ViewBinding): RecyclerView.ViewHolder(binding.root) {
+    open inner class ViewHolder(binding: ViewBinding): RecyclerView.ViewHolder(binding.root) {
         open fun bind(item: ChatData) {}
     }
 }

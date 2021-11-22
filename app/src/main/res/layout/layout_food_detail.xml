@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/edittext_food_detail_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:inputType="text"
+        android:hint="@string/edittext_food_name_hint"/>
+
+    <EditText
+        android:id="@+id/edittext_food_detail_calorie"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:inputType="text"
+        android:hint="칼로리를 입력해주세요."/>
+
+    <EditText
+        android:id="@+id/edittext_food_detail_carbohydrate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:inputType="text"
+        android:hint="탄수화물을 입력해주세요."/>
+
+    <EditText
+        android:id="@+id/edittext_food_detail_protein"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:inputType="text"
+        android:hint="단백질을 입력해주세요."/>
+
+    <EditText
+        android:id="@+id/edittext_food_detail_fat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:inputType="text"
+        android:hint="지방을 입력해주세요."/>
+
+    <Button
+        android:id="@+id/btn_set_food"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="등록"/>
+
+    <Button
+        android:id="@+id/btn_cancel_set_food"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="취소"/>
+
+
+</LinearLayout>
