@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:fontFamily="@font/font_bold"
+                android:fontFamily="@font/apple_gothic_neo_b"
                 android:text="@string/meal_time_breakfast"
                 android:textColor="@color/black"
                 android:textSize="30sp" />
@@ -61,7 +61,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:adjustViewBounds="true"
-                android:src="@drawable/ic_baseline_more_horiz"/>
+                android:src="@drawable/ic_etc"/>
 
         </RelativeLayout>
 
@@ -72,7 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:fontFamily="@font/font_regular"
+            android:fontFamily="@font/apple_gothic_neo_r"
             app:readMoreMaxLine="2"
             app:readMoreColor="@color/gray"
             app:readMoreText="@string/read_more"/>
