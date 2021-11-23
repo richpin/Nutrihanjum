@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -12,50 +13,77 @@
         android:orientation="vertical">
 
         <FrameLayout
-            android:id="@+id/newsfragment_head_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/newsfragment_head_imageview"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="35dp"
+                android:src="@drawable/ic_bookmark_reverse" />
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop" />
+                android:layout_height="250dp"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="5dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp">
+                <FrameLayout
+                    android:id="@+id/newsfragment_head_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-            <TextView
-                android:layout_width="50dp"
-                android:layout_height="30dp"
-                android:layout_gravity="top|start"
-                android:layout_marginStart="13dp"
-                android:layout_marginTop="13dp"
-                android:background="@drawable/box_rounded_boarder_white"
-                android:fontFamily="@font/apple_gothic_neo_b"
-                android:gravity="center"
-                android:text="@string/recommend"
-                android:textColor="@color/white"
-                android:textSize="13dp" />
+                    <ImageView
+                        android:id="@+id/newsfragment_head_imageview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:adjustViewBounds="true"
+                        android:scaleType="centerCrop" />
 
-            <TextView
-                android:id="@+id/newsfragment_head_title_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginHorizontal="10dp"
-                android:layout_marginBottom="40dp"
-                android:fontFamily="@font/apple_gothic_neo_r"
-                android:textColor="@color/white"
-                android:textSize="20dp" />
+                    <ImageView
+                        android:id="@+id/newsfragment_head_curtain"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@color/black"/>
 
-            <TextView
-                android:id="@+id/newsfragment_head_source_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="15dp"
-                android:layout_gravity="bottom"
-                android:layout_marginStart="10dp"
-                android:layout_marginBottom="15dp"
-                android:fontFamily="@font/apple_gothic_neo_r"
-                android:textColor="@color/white" />
+                    <TextView
+                        android:layout_width="40dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="top|end"
+                        android:layout_margin="15dp"
+                        android:background="@drawable/box_rounded_boarder_orange"
+                        android:fontFamily="@font/apple_gothic_neo_b"
+                        android:gravity="center"
+                        android:text="@string/recommend"
+                        android:textColor="@color/orange"
+                        android:textSize="13dp" />
+
+                    <TextView
+                        android:id="@+id/newsfragment_head_title_textview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginHorizontal="15dp"
+                        android:layout_marginBottom="40dp"
+                        android:fontFamily="@font/apple_gothic_neo_b"
+                        android:textColor="@color/white"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/newsfragment_head_source_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:fontFamily="@font/apple_gothic_neo_r"
+                        android:textColor="@color/white"
+                        android:textSize="10dp"/>
+                </FrameLayout>
+
+            </androidx.cardview.widget.CardView>
         </FrameLayout>
 
         <androidx.recyclerview.widget.RecyclerView

@@ -1,35 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/box_rounded_white"
-    android:orientation="vertical">
+    android:layout_marginHorizontal="20dp"
+    android:background="@drawable/box_rounded_white">
 
     <TextView
         android:id="@+id/btn_popup_delete"
-        android:layout_width="250dp"
-        android:layout_height="60dp"
-        android:fontFamily="@font/apple_gothic_neo_r"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:fontFamily="@font/apple_gothic_neo_b"
         android:gravity="center"
         android:text="@string/popup_delete"
         android:textColor="@color/google_red"
-        android:textSize="20dp" />
-
-    <LinearLayout
-        android:background="@color/colorDivision"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="1dp">
-    </LinearLayout>
+        android:textSize="15dp" />
 
     <TextView
         android:id="@+id/btn_popup_modify"
-        android:layout_width="250dp"
-        android:layout_height="60dp"
-        android:fontFamily="@font/apple_gothic_neo_r"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@+id/btn_popup_delete"
+        android:fontFamily="@font/apple_gothic_neo_b"
         android:gravity="center"
         android:text="@string/popup_modify"
         android:textColor="@color/black"
-        android:textSize="20dp" />
+        android:textSize="15dp" />
 
-</LinearLayout>
+</RelativeLayout>

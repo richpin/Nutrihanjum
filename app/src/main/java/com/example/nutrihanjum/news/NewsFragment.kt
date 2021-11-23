@@ -103,6 +103,6 @@ class NewsFragment : Fragment() {
         Glide.with(this).load(headNews.imageUrl).into(binding.newsfragmentHeadImageview)
         binding.newsfragmentHeadTitleTextview.text = headNews.title
         binding.newsfragmentHeadSourceTextview.text = headNews.source
-        binding.newsfragmentHeadImageview.alpha = 0.7f
+        binding.newsfragmentHeadCurtain.alpha = 0.5f
     }
 }

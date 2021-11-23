@@ -251,7 +251,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:inputType="textMultiLine"
-                    android:background="@drawable/box_rounded_boarder_yellow"
+                    android:background="@drawable/box_rounded_boarder_orange"
                     android:padding="7dp"
                     android:gravity="top"
                     android:minLines="3" />

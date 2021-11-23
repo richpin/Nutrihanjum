@@ -1,45 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="20dp"
     android:background="@drawable/box_rounded_white"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/btn_popup_delete"
-        android:layout_width="250dp"
+        android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:fontFamily="@font/apple_gothic_neo_r"
+        android:fontFamily="@font/apple_gothic_neo_b"
         android:gravity="center"
         android:text="@string/popup_delete_check"
         android:textColor="@color/black"
-        android:textSize="20dp" />
+        android:textSize="15dp" />
 
-    <RelativeLayout
-        android:layout_width="250dp"
-        android:layout_height="50dp">
+    <LinearLayout
+        android:id="@+id/btn_popup_division"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/btn_popup_delete"
+        android:layout_marginHorizontal="10dp"
+        android:background="@color/colorDivision"
+        android:orientation="horizontal">
+    </LinearLayout>
 
-        <TextView
-            android:id="@+id/btn_delete_check_yes"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:gravity="center"
-            android:fontFamily="@font/apple_gothic_neo_r"
-            android:text="@string/yes"
-            android:textColor="@color/google_red"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/btn_popup_division">
 
         <TextView
             android:id="@+id/btn_delete_check_no"
-            android:layout_width="80dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
+            android:fontFamily="@font/apple_gothic_neo_b"
             android:gravity="center"
-            android:fontFamily="@font/apple_gothic_neo_r"
-            android:text="@string/no"
-            android:textColor="@color/black"/>
+            android:text="@string/cancel"
+            android:textColor="@color/black"
+            android:textSize="16dp"/>
 
-    </RelativeLayout>
+        <TextView
+            android:id="@+id/btn_delete_check_yes"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:fontFamily="@font/apple_gothic_neo_b"
+            android:text="@string/check"
+            android:textColor="@color/red"
+            android:textSize="16dp"/>
+
+    </LinearLayout>
 
 
-</LinearLayout>
+</RelativeLayout>

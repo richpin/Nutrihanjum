@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.callbackFlow
 object NewsRepository {
     private val store get() = FirebaseFirestore.getInstance()
     private lateinit var lastVisible: DocumentSnapshot
-    val boardLimit: Long = 1
+    val boardLimit: Long = 10
 
     fun loadNewsInit() = callbackFlow {
         store.collection("news")

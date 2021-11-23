@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nutrihanjum.databinding.CommunityFragmentBinding
@@ -18,9 +17,6 @@ import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.diary.DiaryViewModel
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.repository.CommunityRepository.boardLimit
-import com.example.nutrihanjum.util.SwipeController
-import com.google.firebase.functions.ktx.functions
-import com.google.firebase.ktx.Firebase
 
 class CommunityFragment : Fragment() {
     private var _binding: CommunityFragmentBinding? = null
@@ -43,7 +39,7 @@ class CommunityFragment : Fragment() {
     private lateinit var userViewModel: UserViewModel
     private lateinit var diaryViewModel: DiaryViewModel
 
-    private val recyclerViewAdapter = CommunityRecyclerViewAdapter().apply{
+    private val recyclerViewAdapter = CommunityRecyclerViewAdapter().apply {
         makeLauncher(this)
     }
 
@@ -64,7 +60,7 @@ class CommunityFragment : Fragment() {
         binding.communityfragmentRecylerview.setHasFixedSize(true)
 
         binding.communityfragmentRecylerview.adapter = recyclerViewAdapter
-0
+
         viewModel.loadContentsInit()
 
         return binding.root
@@ -98,7 +94,8 @@ class CommunityFragment : Fragment() {
                 if (result.resultCode == Activity.RESULT_OK) {
                     with(adapter.contentPosition) {
                         if (this != -1) {
-                            adapter.contentDTOs[this] = result.data?.getSerializableExtra("modifiedContent") as ContentDTO
+                            adapter.contentDTOs[this] =
+                                result.data?.getSerializableExtra("modifiedContent") as ContentDTO
                             adapter.notifyItemChanged(this)
                         }
                     }
@@ -109,11 +106,13 @@ class CommunityFragment : Fragment() {
 
     private fun addLiveDataObserver() {
         viewModel.contents.observe(viewLifecycleOwner, Observer {
-            recyclerViewAdapter.updateContents(it)
-            recyclerViewAdapter.notifyItemRangeInserted(
-                ((page - 1) * boardLimit).toInt(),
-                boardLimit.toInt()
-            )
+            if (recyclerViewAdapter.itemCount == 0) {
+                recyclerViewAdapter.updateContents(it)
+                recyclerViewAdapter.notifyItemRangeInserted(
+                    ((page - 1) * boardLimit).toInt(),
+                    boardLimit.toInt()
+                )
+            }
         })
 
         userViewModel.signed.observe(viewLifecycleOwner) {
@@ -138,7 +137,8 @@ class CommunityFragment : Fragment() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
-                if (!recyclerView.canScrollVertically(1) && newState==RecyclerView.SCROLL_STATE_IDLE) {
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    Log.wtf("Gang", "more")
                     page++
                     viewModel.loadContentsMore()
                 }
