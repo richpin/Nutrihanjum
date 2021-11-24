@@ -63,8 +63,9 @@ class CommunityFragment : Fragment() {
         binding.communityfragmentRecylerview.layoutManager = LinearLayoutManager(activity)
         binding.communityfragmentRecylerview.setHasFixedSize(true)
 
+        recyclerViewAdapter.contentDTOs.clear()
+        recyclerViewAdapter.notifyDataSetChanged()
         binding.communityfragmentRecylerview.adapter = recyclerViewAdapter
-0
         viewModel.loadContentsInit()
 
         return binding.root
@@ -112,7 +113,7 @@ class CommunityFragment : Fragment() {
             recyclerViewAdapter.updateContents(it)
             recyclerViewAdapter.notifyItemRangeInserted(
                 ((page - 1) * boardLimit).toInt(),
-                boardLimit.toInt()
+                recyclerViewAdapter.itemCount - ((page - 1) * boardLimit).toInt()
             )
         })
 

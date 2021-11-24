@@ -6,6 +6,7 @@ data class ContentDTO(
     var id: String = "",
     var content: String = "",
     var imageUrl: String = "",
+    //var foods: MutableList<String> = mutableListOf(),
     var uid: String = "",
     var profileName: String = "",
     var profileUrl: String = "",

@@ -1,6 +1,5 @@
 package com.example.nutrihanjum.diary
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -12,11 +11,12 @@ import com.example.nutrihanjum.databinding.ActivityAddDiaryBinding
 import java.util.*
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.canhub.cropper.*
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.model.ContentDTO
+import com.example.nutrihanjum.model.FoodDTO
+import com.example.nutrihanjum.util.DelayedTextWatcher
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -173,42 +173,9 @@ class AddDiaryActivity : AppCompatActivity() {
         }
 
         initFoodRecyclerView()
-        initAutoCompleteRecyclerview()
-    }
+        initAutoCompleteText()
 
-
-    private fun initFoodRecyclerView() {
-        val adapter = FoodRecyclerViewAdapter(viewModel.foodList.value!!)
-        binding.recyclerviewFoods.adapter = adapter
-        binding.recyclerviewFoods.layoutManager = FlexboxLayoutManager(this, FlexDirection.ROW, FlexWrap.WRAP)
-
-        adapter.revokeListener = { binding.layoutFoodDetail.root.visibility = View.GONE }
-        adapter.textChangeListener = { name ->
-            synchronized(this) {
-                viewModel.loadFoodAutoComplete(name)
-            }
-        }
-
-        adapter.addFoodListener = { food, pos ->
-            with (binding.layoutFoodDetail) {
-                edittextFoodDetailName.setText(food.name)
-                edittextFoodDetailCalorie.setText(food.calorie)
-                edittextFoodDetailCarbohydrate.setText(food.carbohydrate)
-                edittextFoodDetailProtein.setText(food.protein)
-                edittextFoodDetailFat.setText(food.fat)
-
-                when {
-                    food.name.isEmpty() -> { edittextFoodDetailName.requestFocus() }
-                    food.calorie.isEmpty() -> { edittextFoodDetailCalorie.requestFocus() }
-                    food.carbohydrate.isEmpty() -> { edittextFoodDetailCarbohydrate.requestFocus() }
-                    food.protein.isEmpty() -> { edittextFoodDetailProtein.requestFocus() }
-                    else -> { edittextFoodDetailFat.requestFocus() }
-                }
-            }
-            binding.layoutFoodDetail.root.visibility = View.VISIBLE
-            viewModel.workingPosition = pos
-            viewModel.workingItem = food
-        }
+        val adapter = binding.recyclerviewFoods.adapter as FoodRecyclerViewAdapter
 
         binding.layoutFoodDetail.btnSetFood.setOnClickListener {
             viewModel.workingItem?.let { food ->
@@ -229,24 +196,59 @@ class AddDiaryActivity : AppCompatActivity() {
 
         binding.layoutFoodDetail.btnCancelSetFood.setOnClickListener {
             binding.layoutFoodDetail.root.visibility = View.GONE
+            viewModel.workingItem = null
         }
     }
 
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun initAutoCompleteRecyclerview() {
-        val adapter = AutoCompleteAdapter(viewModel.foodAutoComplete.value!!)
-        binding.recyclerviewAutocomplete.adapter = adapter
-        binding.recyclerviewAutocomplete.layoutManager = LinearLayoutManager(this)
+    private fun initAutoCompleteText() {
 
-        viewModel.foodAutoComplete.observe(this) {
-            binding.recyclerviewAutocomplete.adapter?.notifyDataSetChanged()
+        val adapter = AutoCompleteAdapter(this, arrayListOf())
+
+        binding.autoCompleteTextFood.setAdapter(adapter)
+        binding.autoCompleteTextFood.threshold = 1
+
+        binding.autoCompleteTextFood.setOnItemClickListener { adapterView, _, i, _ ->
+            with (binding.recyclerviewFoods.adapter as FoodRecyclerViewAdapter) {
+                val item = adapterView.getItemAtPosition(i) as FoodDTO
+
+                foodList.add(item)
+                notifyItemInserted(itemCount - 1)
+                binding.autoCompleteTextFood.setText("")
+                binding.layoutFoodDetail.root.visibility = View.VISIBLE
+                foodSetListener?.invoke(item, itemCount - 1)
+            }
         }
 
-        adapter.itemSelectedListener = { food ->
-            viewModel.foodList.value?.add(food)
-            binding.recyclerviewFoods.adapter!!.notifyItemInserted(viewModel.foodList.value!!.size - 1)
+        binding.autoCompleteTextFood.setOnFocusChangeListener { _, b ->
+            if (b) {
+                binding.layoutFoodDetail.root.visibility = View.GONE
+            }
+        }
 
+        binding.autoCompleteTextFood.addTextChangedListener(object: DelayedTextWatcher(this) {
+            override fun delayedOnTextChanged(text: CharSequence?) {
+                if (!binding.autoCompleteTextFood.isPerformingCompletion && binding.autoCompleteTextFood.hasFocus()) {
+                    viewModel.loadFoodAutoComplete(text.toString())
+                }
+            }
+        })
+
+        viewModel.foodAutoComplete.observe(this) {
+            adapter.foodList.clear()
+            adapter.addAll(it)
+            adapter.notifyDataSetChanged()
+        }
+    }
+
+
+    private fun initFoodRecyclerView() {
+        val adapter = FoodRecyclerViewAdapter(viewModel.foodList.value!!)
+
+        binding.recyclerviewFoods.adapter = adapter
+        binding.recyclerviewFoods.layoutManager = FlexboxLayoutManager(this, FlexDirection.ROW, FlexWrap.WRAP)
+
+        adapter.foodSetListener = { food, pos ->
             with (binding.layoutFoodDetail) {
                 edittextFoodDetailName.setText(food.name)
                 edittextFoodDetailCalorie.setText(food.calorie)
@@ -263,7 +265,7 @@ class AddDiaryActivity : AppCompatActivity() {
                 }
             }
             binding.layoutFoodDetail.root.visibility = View.VISIBLE
-            viewModel.workingPosition = viewModel.foodList.value!!.size - 1
+            viewModel.workingPosition = pos
             viewModel.workingItem = food
         }
     }

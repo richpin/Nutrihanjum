@@ -157,12 +157,20 @@ object DiaryRepository {
 
     fun loadFoodList(foodName: String) = callbackFlow {
         store.collection("foods")
-            .orderBy("식품명")
+            .orderBy("name")
             .whereArrayContains("keywords", foodName)
             .limit(10)
             .get()
             .addOnSuccessListener {
-                trySend(it.documents.map { doc -> FoodDTO(doc["식품명"].toString()) })
+                Log.wtf(this@DiaryRepository.javaClass.simpleName, it.documents.size.toString())
+                trySend(it.documents.map { doc -> FoodDTO(
+                    doc["name"].toString(),
+                    doc["calorie"].toString(),
+                    doc["carbohydrate"].toString(),
+                    doc["protein"].toString(),
+                    doc["fat"].toString()
+                )})
+
                 close()
             }
             .addOnFailureListener {

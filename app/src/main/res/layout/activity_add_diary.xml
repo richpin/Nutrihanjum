@@ -23,14 +23,16 @@
                 android:layout_height="wrap_content">
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
+                    android:id="@+id/card_view_food_image"
+                    android:layout_width="150dp"
                     android:layout_height="0dp"
                     android:layout_margin="10dp"
+                    app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/layout_public"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintDimensionRatio="H,1:1"
+                    app:layout_constraintDimensionRatio="W,1:1"
                     app:cardElevation="0dp"
                     app:cardCornerRadius="20dp">
 
@@ -42,6 +44,33 @@
                         android:src="@drawable/ic_baseline_add_a_photo"/>
 
                 </androidx.cardview.widget.CardView>
+
+                <LinearLayout
+                    android:id="@+id/layout_public"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toRightOf="@id/card_view_food_image"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/apple_gothic_neo_b"
+                        android:text="@string/diary_public_option"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switch_public"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        app:trackTint="@drawable/public_option_track"
+                        app:thumbTint="@drawable/public_option_thumb"/>
+
+                </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -56,6 +85,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -72,7 +102,18 @@
                     android:id="@+id/recyclerview_foods"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/edittext_underline"/>
+                    android:paddingVertical="5dp"/>
+
+                <AutoCompleteTextView
+                    android:id="@+id/auto_complete_text_food"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="5dp"
+                    android:background="@drawable/edittext_underline"
+                    android:hint="@string/edittext_food_name_hint"
+                    android:textSize="16sp"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"/>
 
                 <include
                     android:id="@+id/layout_food_detail"
@@ -80,11 +121,6 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone"
                     layout="@layout/layout_food_detail"/>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerview_autocomplete"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
 
             </LinearLayout>
 
@@ -204,29 +240,6 @@
 
                    </RadioGroup>
                </HorizontalScrollView>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginStart="10dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/apple_gothic_neo_b"
-                    android:text="@string/diary_public_option"
-                    android:textColor="@color/black"
-                    android:textSize="17sp" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switch_public"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:trackTint="@drawable/public_option_track"
-                    app:thumbTint="@drawable/public_option_thumb"/>
 
             </LinearLayout>
 

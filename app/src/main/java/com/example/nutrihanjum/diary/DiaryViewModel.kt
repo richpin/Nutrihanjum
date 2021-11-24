@@ -49,7 +49,7 @@ class DiaryViewModel : ViewModel() {
     }
 
 
-    fun loadFoodAutoComplete(foodName: String) = synchronized(this) {
+    fun loadFoodAutoComplete(foodName: String) {
         viewModelScope.launch {
             _foodAutoComplete.value?.clear()
 
