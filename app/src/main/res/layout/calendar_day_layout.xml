@@ -1,9 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/textview_calendar_day"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:textColor="@color/black"
-    android:textSize="16sp"/>
+    android:layout_margin="2dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/textview_calendar_day"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="16sp"/>
+
+    <View
+        android:id="@+id/indicator_diary_exist"
+        android:layout_width="5dp"
+        android:layout_height="5dp"
+        android:layout_marginBottom="3dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@drawable/calendar_diary_indicator"/>
+
+</FrameLayout>

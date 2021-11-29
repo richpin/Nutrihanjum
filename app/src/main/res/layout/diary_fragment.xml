@@ -15,7 +15,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -33,13 +32,16 @@
                     android:textColor="@color/black"
                     android:textSize="18sp"/>
 
-                <ImageView
-                    android:id="@+id/bar_calendar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/textview_calendar_month"
+                <View
+                    android:id="@+id/calendar_mode_controller"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
                     android:layout_marginStart="5dp"
-                    android:src="@drawable/ic_arrow_drop_down"/>
+                    android:backgroundTint="@color/black"
+                    android:background="@drawable/ic_arrow_down"/>
 
             </RelativeLayout>
 
@@ -48,6 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="2dp"
+                android:overScrollMode="never"
                 app:cv_dayViewResource="@layout/calendar_day_layout"
                 app:cv_monthHeaderResource="@layout/calendar_header_layout"
                 app:cv_maxRowCount="1"
@@ -80,12 +83,13 @@
         
         <View
             android:layout_width="match_parent"
-            android:layout_height="85dp"/>
+            android:layout_height="70dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview_diary"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:overScrollMode="never"
             android:clipToPadding="false"
             android:paddingBottom="100dp"
             android:visibility="gone" />

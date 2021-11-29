@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.view.View
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.CalendarDayLayoutBinding
+import com.example.nutrihanjum.model.ContentDTO
 import com.kizitonwose.calendarview.CalendarView
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.DayOwner
@@ -12,7 +13,10 @@ import com.kizitonwose.calendarview.ui.ViewContainer
 import java.time.LocalDate
 import java.time.YearMonth
 
-class CalendarDayBinder(val calendarView: CalendarView): DayBinder<CalendarDayBinder.DayViewContainer> {
+class CalendarDayBinder(
+    val calendarView: CalendarView,
+    val diaryList: Map<String, ArrayList<ContentDTO>>
+): DayBinder<CalendarDayBinder.DayViewContainer> {
 
     var selectedDate: LocalDate = LocalDate.now()
     var onDaySelectedListener: ((day: LocalDate) -> Unit)? = null
@@ -23,7 +27,7 @@ class CalendarDayBinder(val calendarView: CalendarView): DayBinder<CalendarDayBi
     override fun bind(container: DayViewContainer, day: CalendarDay) {
 
         if (day.date.isAfter(lastDate)) {
-            container.binding.textviewCalendarDay.visibility = View.INVISIBLE
+            container.binding.root.visibility = View.INVISIBLE
         }
         else {
             container.binding.textviewCalendarDay.text = day.date.dayOfMonth.toString()
@@ -32,15 +36,30 @@ class CalendarDayBinder(val calendarView: CalendarView): DayBinder<CalendarDayBi
             if (day.owner == DayOwner.THIS_MONTH && !day.date.isAfter(today)) {
                 container.binding.textviewCalendarDay.setTextColor(Color.BLACK)
                 if (day.date == selectedDate) {
-                    container.binding.textviewCalendarDay.setBackgroundResource(R.drawable.box_rounded_yellow)
+                    container.binding.textviewCalendarDay.setBackgroundResource(R.drawable.calendar_selected_date_background)
                 }
                 else {
                     container.binding.textviewCalendarDay.background = null
                 }
+
+                if (diaryList[getFormattedDate(day.date)].isNullOrEmpty()) {
+                    container.binding.indicatorDiaryExist.visibility = View.GONE
+                }
+                else {
+                    container.binding.indicatorDiaryExist.visibility = View.VISIBLE
+                }
+
             }
             else {
                 container.binding.textviewCalendarDay.setTextColor(Color.LTGRAY)
                 container.binding.textviewCalendarDay.background = null
+
+                if (diaryList[getFormattedDate(day.date)].isNullOrEmpty()) {
+                    container.binding.indicatorDiaryExist.visibility = View.GONE
+                }
+                else {
+                    container.binding.indicatorDiaryExist.visibility = View.VISIBLE
+                }
             }
         }
     }
@@ -72,4 +91,5 @@ class CalendarDayBinder(val calendarView: CalendarView): DayBinder<CalendarDayBi
             }
         }
     }
+    private fun getFormattedDate(date: LocalDate) = "${date.year}_${date.monthValue}_${date.dayOfMonth}"
 }

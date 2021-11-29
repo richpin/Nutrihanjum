@@ -1,6 +1,5 @@
 package com.example.nutrihanjum.diary
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -11,15 +10,21 @@ import androidx.activity.result.ActivityResultLauncher
 import com.example.nutrihanjum.databinding.ActivityAddDiaryBinding
 import java.util.*
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.canhub.cropper.*
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.model.ContentDTO
+import com.example.nutrihanjum.model.FoodDTO
+import com.example.nutrihanjum.model.NutritionInfo
+import com.example.nutrihanjum.util.DelayedTextWatcher
+import com.example.nutrihanjum.util.ProgressBarAnimationUtil.setProgressWithAnimation
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
+import kotlin.math.max
 
 class AddDiaryActivity : AppCompatActivity() {
 
@@ -80,6 +85,13 @@ class AddDiaryActivity : AppCompatActivity() {
                     content.isPublic = switchPublic.isChecked
                     content.timestamp = System.currentTimeMillis()
                     content.date = date
+                    content.foods = viewModel.foodList
+                    content.foods.forEach {
+                        content.nutritionInfo.calorie += it.calorie
+                        content.nutritionInfo.carbohydrate += it.carbohydrate
+                        content.nutritionInfo.protein += it.protein
+                        content.nutritionInfo.fat += it.fat
+                    }
 
                     viewModel.addDiary(content, photoURI.toString())
                 }
@@ -115,6 +127,7 @@ class AddDiaryActivity : AppCompatActivity() {
             Glide.with(this@AddDiaryActivity)
                 .load(content.imageUrl)
                 .into(imageviewPreview)
+            viewModel.foodList.addAll(content.foods)
         }
 
         addListenerForModifyDairy(content)
@@ -133,6 +146,14 @@ class AddDiaryActivity : AppCompatActivity() {
                 mealTime = selectedMealTime!!
                 isPublic = binding.switchPublic.isChecked
                 timestamp = System.currentTimeMillis()
+                foods = viewModel.foodList
+                nutritionInfo = NutritionInfo()
+                foods.forEach {
+                    nutritionInfo.calorie += it.calorie
+                    nutritionInfo.carbohydrate += it.carbohydrate
+                    nutritionInfo.protein += it.protein
+                    nutritionInfo.fat += it.fat
+                }
 
                 viewModel.modifyDiary(
                     this,
@@ -173,51 +194,20 @@ class AddDiaryActivity : AppCompatActivity() {
         }
 
         initFoodRecyclerView()
-        initAutoCompleteRecyclerview()
-    }
+        initAutoCompleteText()
 
+        val adapter = binding.recyclerviewFoods.adapter as FoodRecyclerViewAdapter
 
-    private fun initFoodRecyclerView() {
-        val adapter = FoodRecyclerViewAdapter(viewModel.foodList.value!!)
-        binding.recyclerviewFoods.adapter = adapter
-        binding.recyclerviewFoods.layoutManager = FlexboxLayoutManager(this, FlexDirection.ROW, FlexWrap.WRAP)
-
-        adapter.revokeListener = { binding.layoutFoodDetail.root.visibility = View.GONE }
-        adapter.textChangeListener = { name ->
-            synchronized(this) {
-                viewModel.loadFoodAutoComplete(name)
-            }
-        }
-
-        adapter.addFoodListener = { food, pos ->
-            with (binding.layoutFoodDetail) {
-                edittextFoodDetailName.setText(food.name)
-                edittextFoodDetailCalorie.setText(food.calorie)
-                edittextFoodDetailCarbohydrate.setText(food.carbohydrate)
-                edittextFoodDetailProtein.setText(food.protein)
-                edittextFoodDetailFat.setText(food.fat)
-
-                when {
-                    food.name.isEmpty() -> { edittextFoodDetailName.requestFocus() }
-                    food.calorie.isEmpty() -> { edittextFoodDetailCalorie.requestFocus() }
-                    food.carbohydrate.isEmpty() -> { edittextFoodDetailCarbohydrate.requestFocus() }
-                    food.protein.isEmpty() -> { edittextFoodDetailProtein.requestFocus() }
-                    else -> { edittextFoodDetailFat.requestFocus() }
-                }
-            }
-            binding.layoutFoodDetail.root.visibility = View.VISIBLE
-            viewModel.workingPosition = pos
-            viewModel.workingItem = food
-        }
+        binding.layoutFoodDetail.layoutSetBtn.visibility = View.VISIBLE
 
         binding.layoutFoodDetail.btnSetFood.setOnClickListener {
             viewModel.workingItem?.let { food ->
                 with (binding.layoutFoodDetail) {
-                    food.name = edittextFoodDetailName.text.toString()
-                    food.calorie = edittextFoodDetailCalorie.text.toString()
-                    food.carbohydrate = edittextFoodDetailCarbohydrate.text.toString()
-                    food.protein = edittextFoodDetailProtein.text.toString()
-                    food.fat = edittextFoodDetailFat.text.toString()
+                    food.name = edittextFoodName.text.toString()
+                    food.calorie = edittextCalorie.text.toString().toFloatOrNull() ?: 0f
+                    food.carbohydrate = edittextCarbohydrate.text.toString().toFloatOrNull() ?: 0f
+                    food.protein = edittextProtein.text.toString().toFloatOrNull() ?: 0f
+                    food.fat = edittextFat.text.toString().toFloatOrNull() ?: 0f
                 }
 
                 binding.layoutFoodDetail.root.visibility = View.GONE
@@ -229,42 +219,152 @@ class AddDiaryActivity : AppCompatActivity() {
 
         binding.layoutFoodDetail.btnCancelSetFood.setOnClickListener {
             binding.layoutFoodDetail.root.visibility = View.GONE
+            viewModel.workingItem = null
+        }
+
+        binding.btnBack.setOnClickListener {
+            onBackPressed()
         }
     }
 
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun initAutoCompleteRecyclerview() {
-        val adapter = AutoCompleteAdapter(viewModel.foodAutoComplete.value!!)
-        binding.recyclerviewAutocomplete.adapter = adapter
-        binding.recyclerviewAutocomplete.layoutManager = LinearLayoutManager(this)
+    private fun initAutoCompleteText() {
 
-        viewModel.foodAutoComplete.observe(this) {
-            binding.recyclerviewAutocomplete.adapter?.notifyDataSetChanged()
+        val adapter = AutoCompleteAdapter(this, arrayListOf())
+
+        binding.autoCompleteTextFood.setAdapter(adapter)
+        binding.autoCompleteTextFood.threshold = 1
+
+        binding.autoCompleteTextFood.setOnItemClickListener { adapterView, _, i, _ ->
+            with (binding.recyclerviewFoods.adapter as FoodRecyclerViewAdapter) {
+                val item = adapterView.getItemAtPosition(i) as FoodDTO
+
+                foodList.add(item)
+                notifyItemInserted(itemCount - 1)
+                binding.autoCompleteTextFood.setText("")
+                binding.layoutFoodDetail.root.visibility = View.VISIBLE
+                foodSetListener?.invoke(item, itemCount - 1)
+            }
         }
 
-        adapter.itemSelectedListener = { food ->
-            viewModel.foodList.value?.add(food)
-            binding.recyclerviewFoods.adapter!!.notifyItemInserted(viewModel.foodList.value!!.size - 1)
+        binding.autoCompleteTextFood.setOnEditorActionListener { textView, actionId, keyEvent ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                with (binding.recyclerviewFoods.adapter as FoodRecyclerViewAdapter) {
+                    val item = FoodDTO(textView.text.toString())
 
+                    foodList.add(FoodDTO(textView.text.toString()))
+                    notifyItemInserted(itemCount - 1)
+                    binding.autoCompleteTextFood.setText("")
+                    binding.layoutFoodDetail.root.visibility = View.VISIBLE
+                    foodSetListener?.invoke(item, itemCount - 1)
+                }
+
+                return@setOnEditorActionListener true
+            }
+
+            false
+        }
+
+        binding.autoCompleteTextFood.setOnFocusChangeListener { _, b ->
+            if (b) {
+                binding.layoutFoodDetail.root.visibility = View.GONE
+            }
+        }
+
+        binding.autoCompleteTextFood.addTextChangedListener(object: DelayedTextWatcher(this) {
+            override fun delayedOnTextChanged(text: CharSequence?) {
+                if (!binding.autoCompleteTextFood.isPerformingCompletion && binding.autoCompleteTextFood.hasFocus()) {
+                    viewModel.loadFoodAutoComplete(text.toString())
+                }
+            }
+        })
+
+        viewModel.foodAutoComplete.observe(this) {
+            adapter.foodList.clear()
+            adapter.addAll(it)
+            adapter.notifyDataSetChanged()
+        }
+    }
+
+
+    private var isAnimated = true
+
+    private fun initFoodRecyclerView() {
+        val adapter = FoodRecyclerViewAdapter(viewModel.foodList)
+
+        binding.recyclerviewFoods.adapter = adapter
+        binding.recyclerviewFoods.layoutManager = FlexboxLayoutManager(this, FlexDirection.ROW, FlexWrap.WRAP)
+
+        adapter.foodSetListener = { food, pos ->
             with (binding.layoutFoodDetail) {
-                edittextFoodDetailName.setText(food.name)
-                edittextFoodDetailCalorie.setText(food.calorie)
-                edittextFoodDetailCarbohydrate.setText(food.carbohydrate)
-                edittextFoodDetailProtein.setText(food.protein)
-                edittextFoodDetailFat.setText(food.fat)
+                isAnimated = false
+                edittextFoodName.setText(food.name)
+                edittextCalorie.setText(food.calorie.toString())
+                edittextCarbohydrate.setText(food.carbohydrate.toString())
+                edittextProtein.setText(food.protein.toString())
+                edittextFat.setText(food.fat.toString())
+                isAnimated = true
+
+                val total = max(food.carbohydrate + food.protein + food.fat, 1f)
+                progressBarCarbohydrate.setProgressWithAnimation((food.carbohydrate / total * 1000).toInt())
+                progressBarProtein.setProgressWithAnimation((food.protein / total * 1000).toInt())
+                progressBarFat.setProgressWithAnimation((food.fat / total * 1000).toInt())
 
                 when {
-                    food.name.isEmpty() -> { edittextFoodDetailName.requestFocus() }
-                    food.calorie.isEmpty() -> { edittextFoodDetailCalorie.requestFocus() }
-                    food.carbohydrate.isEmpty() -> { edittextFoodDetailCarbohydrate.requestFocus() }
-                    food.protein.isEmpty() -> { edittextFoodDetailProtein.requestFocus() }
-                    else -> { edittextFoodDetailFat.requestFocus() }
+                    food.name.isEmpty() -> { edittextFoodName.clearFocus(); edittextFoodName.requestFocus() }
+                    food.calorie == 0f -> { edittextCalorie.clearFocus(); edittextCalorie.requestFocus() }
+                    food.carbohydrate == 0f -> { edittextCarbohydrate.clearFocus(); edittextCarbohydrate.requestFocus() }
+                    food.protein == 0f -> { edittextProtein.clearFocus(); edittextProtein.requestFocus() }
+                    else -> { edittextFat.clearFocus(); edittextFat.requestFocus() }
                 }
             }
             binding.layoutFoodDetail.root.visibility = View.VISIBLE
-            viewModel.workingPosition = viewModel.foodList.value!!.size - 1
+            viewModel.workingPosition = pos
             viewModel.workingItem = food
+        }
+
+        addProgressbarLiveUpdate()
+    }
+
+
+    private fun addProgressbarLiveUpdate() {
+        binding.layoutFoodDetail.edittextCarbohydrate.addTextChangedListener {
+            if (!isAnimated) return@addTextChangedListener
+
+            val carbohydrate = binding.layoutFoodDetail.edittextCarbohydrate.text.toString().toFloatOrNull() ?: 0f
+            val protein = binding.layoutFoodDetail.edittextProtein.text.toString().toFloatOrNull() ?: 0f
+            val fat = binding.layoutFoodDetail.edittextFat.text.toString().toFloatOrNull() ?: 0f
+            val total = max(carbohydrate + protein + fat, 1f)
+
+            binding.layoutFoodDetail.progressBarCarbohydrate.setProgressWithAnimation((carbohydrate / total * 1000).toInt())
+            binding.layoutFoodDetail.progressBarProtein.setProgressWithAnimation((protein / total * 1000).toInt())
+            binding.layoutFoodDetail.progressBarFat.setProgressWithAnimation((fat / total * 1000).toInt())
+        }
+
+        binding.layoutFoodDetail.edittextProtein.addTextChangedListener {
+            if (!isAnimated) return@addTextChangedListener
+
+            val carbohydrate = binding.layoutFoodDetail.edittextCarbohydrate.text.toString().toFloatOrNull() ?: 0f
+            val protein = binding.layoutFoodDetail.edittextProtein.text.toString().toFloatOrNull() ?: 0f
+            val fat = binding.layoutFoodDetail.edittextFat.text.toString().toFloatOrNull() ?: 0f
+            val total = max(carbohydrate + protein + fat, 1f)
+
+            binding.layoutFoodDetail.progressBarCarbohydrate.setProgressWithAnimation((carbohydrate / total * 1000).toInt())
+            binding.layoutFoodDetail.progressBarProtein.setProgressWithAnimation((protein / total * 1000).toInt())
+            binding.layoutFoodDetail.progressBarFat.setProgressWithAnimation((fat / total * 1000).toInt())
+        }
+
+        binding.layoutFoodDetail.edittextFat.addTextChangedListener {
+            if (!isAnimated) return@addTextChangedListener
+
+            val carbohydrate = binding.layoutFoodDetail.edittextCarbohydrate.text.toString().toFloatOrNull() ?: 0f
+            val protein = binding.layoutFoodDetail.edittextProtein.text.toString().toFloatOrNull() ?: 0f
+            val fat = binding.layoutFoodDetail.edittextFat.text.toString().toFloatOrNull() ?: 0f
+            val total = max(carbohydrate + protein + fat, 1f)
+
+            binding.layoutFoodDetail.progressBarCarbohydrate.setProgressWithAnimation((carbohydrate / total * 1000).toInt())
+            binding.layoutFoodDetail.progressBarProtein.setProgressWithAnimation((protein / total * 1000).toInt())
+            binding.layoutFoodDetail.progressBarFat.setProgressWithAnimation((fat / total * 1000).toInt())
         }
     }
 

@@ -10,10 +10,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthProvider
-import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -32,6 +29,22 @@ object UserRepository {
     val userEmail get() = auth.currentUser?.email
     val userName get() = auth.currentUser?.displayName
     val userPhoto get() = auth.currentUser?.photoUrl
+
+
+    fun reAuthenticate(password: String) = callbackFlow {
+        val credential = EmailAuthProvider.getCredential(userEmail!!, password)
+
+        auth.currentUser!!.reauthenticate(credential).addOnSuccessListener {
+            trySend(true)
+            close()
+
+        }.addOnFailureListener {
+            trySend(false)
+            close()
+        }
+
+        awaitClose()
+    }
 
 
     fun updateUserProfile(email: String, name: String, photo: Uri?) = callbackFlow {

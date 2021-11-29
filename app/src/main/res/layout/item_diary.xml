@@ -1,83 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginVertical="10dp"
+    android:layout_margin="10dp"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginStart="10dp">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="0dp"
+        <ImageView
+            android:id="@+id/imageview_post_image"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
+            android:scaleType="centerCrop"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintDimensionRatio="W,1:1"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="0dp">
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-            <ImageView
-                android:id="@+id/imageview_post_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@color/black"
+            android:alpha="0.5"/>
 
-        </androidx.cardview.widget.CardView>
+        <include
+            android:id="@+id/layout_nutrition_info"
+            layout="@layout/layout_nutrition_info_white"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:orientation="vertical">
-
-        <RelativeLayout
-            android:id="@+id/layout_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/textview_meal_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:fontFamily="@font/apple_gothic_neo_b"
-                android:text="@string/meal_time_breakfast"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
-            <ImageView
-                android:id="@+id/btn_more"
-                android:layout_width="30dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:adjustViewBounds="true"
-                android:src="@drawable/ic_etc"/>
-
-        </RelativeLayout>
-
-        <kr.co.prnd.readmore.ReadMoreTextView
-            android:id="@+id/textview_post_memo"
-            android:layout_marginHorizontal="5dp"
-            android:layout_marginVertical="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:fontFamily="@font/apple_gothic_neo_r"
-            app:readMoreMaxLine="2"
-            app:readMoreColor="@color/gray"
-            app:readMoreText="@string/read_more"/>
-
-    </LinearLayout>
-
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>
