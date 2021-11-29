@@ -1,162 +1,254 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="15dp">
+    android:layout_height="match_parent">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_above="@id/btn_sign_up"
-        android:scrollbars="none">
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:paddingBottom="80dp"
+        android:orientation="vertical">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="300dp"
+            android:gravity="center">
 
             <ImageView
                 android:id="@+id/imageview_app_logo"
-                android:layout_width="200dp"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="30dp"
-                android:layout_centerHorizontal="true"
                 android:adjustViewBounds="true"
                 android:src="@drawable/app_logo" />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:orientation="vertical">
+
             <LinearLayout
-                android:id="@+id/layout_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_below="@id/imageview_app_logo"
                 android:orientation="vertical">
 
-                <LinearLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/apple_gothic_neo_b"
+                    android:paddingStart="4dp"
+                    android:text="@string/login_email"
+                    android:textColor="@color/black"
+                    android:textSize="13sp" />
+
+                <EditText
+                    android:id="@+id/edittext_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:gravity="center"
-                        android:fontFamily="@font/apple_gothic_neo_b"
-                        android:textSize="20sp"
-                        android:textColor="@color/orange"
-                        android:text="@string/login_email"/>
-
-                    <EditText
-                        android:id="@+id/edittext_email"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="5dp"
-                        android:inputType="textEmailAddress"
-                        android:background="@drawable/edittext_underline"
-                        android:paddingHorizontal="3dp"
-                        android:paddingTop="2dp"
-                        android:paddingBottom="5dp"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:gravity="center"
-                        android:fontFamily="@font/apple_gothic_neo_b"
-                        android:textSize="20sp"
-                        android:textColor="@color/orange"
-                        android:text="@string/login_password"/>
-
-                    <EditText
-                        android:id="@+id/edittext_password"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="5dp"
-                        android:inputType="textPassword"
-                        android:background="@drawable/edittext_underline"
-                        android:paddingHorizontal="3dp"
-                        android:paddingTop="2dp"
-                        android:paddingBottom="5dp"/>
-
-                </LinearLayout>
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="30dp"
-                    app:cardElevation="0dp"
-                    app:cardCornerRadius="14dp">
-
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/btn_email_login"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/yellow_200"
-                        android:text="@string/request_login"
-                        android:fontFamily="@font/apple_gothic_neo_b"
-                        android:textColor="@color/black"
-                        android:textSize="17sp"/>
-
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="15dp"
-                    app:cardElevation="0dp"
-                    app:cardCornerRadius="14dp">
-
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/btn_google_login"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:background="@color/google_red"
-                        android:text="@string/google_login"
-                        android:fontFamily="@font/apple_gothic_neo_b"
-                        android:textColor="@color/white"
-                        android:textSize="17sp" />
-
-                </androidx.cardview.widget.CardView>
+                    android:layout_marginTop="5dp"
+                    android:backgroundTint="@color/gray"
+                    android:fontFamily="@font/apple_gothic_neo_r"
+                    android:hint="@string/login_email_hint"
+                    android:inputType="textEmailAddress"
+                    android:paddingBottom="16dp"
+                    android:textSize="12sp" />
 
             </LinearLayout>
 
-        </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
 
-    </ScrollView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/apple_gothic_neo_b"
+                    android:paddingStart="4dp"
+                    android:text="@string/login_password"
+                    android:textColor="@color/black"
+                    android:textSize="13sp" />
 
-    <TextView
-        android:id="@+id/btn_sign_up"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:fontFamily="@font/apple_gothic_neo_b"
-        android:textSize="15sp"
-        android:textColor="@color/gray"
-        android:text="@string/msg_sign_up" />
+                <EditText
+                    android:id="@+id/edittext_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:backgroundTint="@color/gray"
+                    android:fontFamily="@font/apple_gothic_neo_r"
+                    android:hint="@string/login_password_hint"
+                    android:inputType="textPassword"
+                    android:paddingBottom="16dp"
+                    android:textSize="12sp" />
 
-</RelativeLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginTop="50dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_email_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/orange"
+                android:fontFamily="@font/apple_gothic_neo_b"
+                android:text="@string/request_login"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:id="@+id/btn_sign_up"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/msg_sign_up"
+                android:textSize="10sp"
+                tools:ignore="SmallSp" />
+
+            <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorDivision"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/msg_find_password"
+                android:textSize="10sp"
+                tools:ignore="SmallSp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    app:cardCornerRadius="160dp"
+                    android:elevation="1dp">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_kakaotalk"
+                        android:adjustViewBounds="true" />
+
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:gravity="center"
+                    android:text="@string/kakaotalk"
+                    android:textColor="@color/kakaotalk"
+                    android:textSize="10sp"
+                    tools:ignore="SmallSp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    app:cardCornerRadius="160dp"
+                    android:elevation="1dp">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_naver"
+                        android:adjustViewBounds="true" />
+
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:gravity="center"
+                    android:fontFamily="@font/apple_gothic_neo_r"
+                    android:text="@string/naver"
+                    android:textSize="12sp"
+                    android:textColor="@color/naver"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btn_google_login"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <androidx.cardview.widget.CardView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    app:cardCornerRadius="160dp"
+                    android:elevation="1dp">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_google"
+                        android:adjustViewBounds="true" />
+
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:gravity="center"
+                    android:text="@string/google"
+                    android:textColor="@color/google"
+                    android:textSize="10sp"
+                    tools:ignore="SmallSp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

@@ -1,5 +1,6 @@
 package com.example.nutrihanjum.community
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -25,6 +26,9 @@ class CommunityViewModel : ViewModel() {
     private val _user = MutableLiveData<Pair<String,Pair<String, String>>>()
     val user: LiveData<Pair<String,Pair<String, String>>> get() = _user
 
+    private val _bannerUri = MutableLiveData<Uri>()
+    val bannerUri: LiveData<Uri> get() = _bannerUri
+
     fun loadContentsInit() = viewModelScope.launch {
         val list: ArrayList<ContentDTO> = arrayListOf()
 
@@ -35,12 +39,14 @@ class CommunityViewModel : ViewModel() {
     }
 
     fun loadContentsMore() = viewModelScope.launch {
-        val list: ArrayList<ContentDTO> = contents.value!!
+        contents.value?.let {
+            val list: ArrayList<ContentDTO> = contents.value!!
 
-        CommunityRepository.loadContentsMore().collect { item ->
-            item?.let { list.add(item) }
+            CommunityRepository.loadContentsMore().collect { item ->
+                item?.let { list.add(item) }
+            }
+            _contents.postValue(list)
         }
-        _contents.postValue(list)
     }
 
     fun loadNoticesInit() = viewModelScope.launch {
@@ -73,6 +79,12 @@ class CommunityViewModel : ViewModel() {
     fun loadUserInfo(uid: String) = viewModelScope.launch {
         CommunityRepository.loadUserInfo(uid).collect { item ->
             item.let { _user.postValue(Pair(uid, item)) }
+        }
+    }
+
+    fun loadBannerImage() = viewModelScope.launch {
+        CommunityRepository.loadBannerImage().collect { item ->
+            item.let { _bannerUri.postValue(item) }
         }
     }
 

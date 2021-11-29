@@ -26,17 +26,19 @@ class NewsViewModel : ViewModel() {
     }
 
     fun loadNewsMore() = viewModelScope.launch {
-        val list: ArrayList<NewsDTO> = arrayListOf()
+        news.value?.let {
+            val list: ArrayList<NewsDTO> = news.value!!
 
-        NewsRepository.loadNewsMore().collect { item ->
-            item?.let { list.add(item) }
+            NewsRepository.loadNewsMore().collect { item ->
+                item?.let { list.add(item) }
+            }
+            _news.postValue(list)
         }
-        _news.postValue(list)
     }
 
     fun loadHeadNews() = viewModelScope.launch {
         NewsRepository.loadHeadNews().collect { item ->
-            item?.let { _headNews.postValue(item)}
+            item?.let { _headNews.postValue(item) }
         }
     }
 }

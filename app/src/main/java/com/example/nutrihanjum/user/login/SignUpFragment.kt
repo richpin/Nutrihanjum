@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.nutrihanjum.R
@@ -120,6 +121,8 @@ class SignUpFragment : Fragment() {
                 Toast.makeText(activity, getString(R.string.signup_not_filled), Toast.LENGTH_LONG).show()
             }
         }
+
+        binding.signupfragmentBackButton.setOnClickListener { requireActivity().onBackPressed() }
     }
 
 

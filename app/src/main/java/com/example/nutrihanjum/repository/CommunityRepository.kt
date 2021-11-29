@@ -14,12 +14,15 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.functions.HttpsCallableResult
 import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow as callbackFlow
 
 object CommunityRepository {
     private val store get() = FirebaseFirestore.getInstance()
+    private val storage get() = FirebaseStorage.getInstance()
     private val functions = Firebase.functions
+
     private lateinit var lastVisibleContent: DocumentSnapshot
     private lateinit var lastVisibleNotice: DocumentSnapshot
     val boardLimit: Long = 20
@@ -311,6 +314,18 @@ object CommunityRepository {
                 }
                 close()
             }
+        awaitClose()
+    }
+
+    fun loadBannerImage() = callbackFlow {
+        storage.reference.child("banner/banner.png").downloadUrl.continueWith {
+            if(it.isSuccessful){
+                trySend(it.result)
+            } else {
+                Log.wtf("Repository", it.exception?.message)
+            }
+            close()
+        }
         awaitClose()
     }
 

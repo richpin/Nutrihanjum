@@ -9,14 +9,14 @@
     <RelativeLayout
         android:id="@+id/commentActivity_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="60dp">
+        android:layout_height="80dp">
 
         <ImageView
             android:id="@+id/commentActivity_back_button"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_centerVertical="true"
-            android:layout_marginStart="15dp"
+            android:layout_marginStart="10dp"
             android:src="@drawable/ic_arrow_back" />
 
         <TextView
@@ -26,26 +26,17 @@
             android:fontFamily="@font/apple_gothic_neo_b"
             android:text="@string/comment"
             android:textColor="@color/black"
-            android:textSize="20dp" />
+            android:textSize="17sp" />
 
     </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/toolbar_division"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@+id/commentActivity_toolbar"
-        android:background="@color/colorDivision"
-        android:orientation="horizontal">
-
-    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/commentActivity_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/comment_division"
-        android:layout_below="@+id/toolbar_division">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/commentActivity_comment_layout"
+        android:layout_below="@+id/commentActivity_toolbar"
+        android:overScrollMode="never">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -62,19 +53,23 @@
         android:id="@+id/commentActivity_comment_layout"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/commentActivity_profile_imageview"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_margin="15dp" />
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="15dp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="15dp"
             android:layout_toEndOf="@+id/commentActivity_profile_imageview"
             android:background="@drawable/comment_box_rounded">
 
@@ -86,7 +81,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_toStartOf="@id/commentActivity_comment_button"
                 android:background="@null"
-                android:hint="@string/comment_hint" />
+                android:hint="@string/comment_empty" />
 
             <ImageView
                 android:id="@+id/commentActivity_comment_button"

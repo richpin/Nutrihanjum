@@ -6,14 +6,12 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.TextUtils
-import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.core.view.marginTop
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.R
@@ -22,18 +20,13 @@ import com.example.nutrihanjum.diary.AddDiaryActivity
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.repository.CommunityRepository.sendReportMail
 import com.example.nutrihanjum.repository.UserRepository.uid
-import com.example.nutrihanjum.repository.UserRepository.userEmail
 import com.example.nutrihanjum.util.NHUtil
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.functions.FirebaseFunctions
-import com.google.firebase.functions.FirebaseFunctionsException
-import com.google.firebase.functions.HttpsCallableResult
-import java.lang.Exception
 
+import com.google.firebase.functions.FirebaseFunctionsException
 
 class CommunityRecyclerViewAdapter() :
     RecyclerView.Adapter<CommunityRecyclerViewAdapter.ViewHolder>() {
+
     var contentDTOs = arrayListOf<ContentDTO>()
     var contentPosition = -1
 
@@ -41,10 +34,12 @@ class CommunityRecyclerViewAdapter() :
     private lateinit var popupReportDialog: Dialog
     private lateinit var popupDeleteCheckDialog: Dialog
     private lateinit var popupReportCheckDialog: Dialog
+    private lateinit var popupReportResultDialog: Dialog
     private lateinit var popupDeleteModifyBinding: LayoutPopupDeleteModifyBinding
     private lateinit var popupReportBinding: LayoutPopupReportBinding
     private lateinit var popupDeleteCheckBinding: LayoutPopupDeleteCheckBinding
     private lateinit var popupReportCheckBinding: LayoutPopupReportCheckBinding
+    private lateinit var popupReportResultBinding: LayoutPopupReportResultBinding
 
     var likeClickEvent: ((ContentDTO, Boolean) -> Unit)? = null
     var savedClickEvent: ((ContentDTO, Boolean) -> Unit)? = null
@@ -57,7 +52,9 @@ class CommunityRecyclerViewAdapter() :
     }
 
     fun initContents() {
+        val size = contentDTOs.size
         contentDTOs.clear()
+        notifyItemRangeRemoved(0, size)
     }
 
     private fun isLiked(likes: List<String>): Boolean {
@@ -193,7 +190,7 @@ class CommunityRecyclerViewAdapter() :
         holder.communityitem_timeago_textview.text =
             NHUtil.formatTime(holder.itemView.context, contentDTOs[position].timestamp)
         with(holder.communityitem_content_textview) {
-            if(TextUtils.isEmpty(contentDTOs[position].content)) {
+            if (TextUtils.isEmpty(contentDTOs[position].content)) {
                 this.visibility = View.GONE
             } else {
                 holder.communityitem_content_textview.text = contentDTOs[position].content
@@ -240,20 +237,27 @@ class CommunityRecyclerViewAdapter() :
         popupReportDialog = Dialog(mContext)
         popupDeleteCheckDialog = Dialog(mContext)
         popupReportCheckDialog = Dialog(mContext)
+        popupReportResultDialog = Dialog(mContext)
 
-        popupDeleteModifyBinding = LayoutPopupDeleteModifyBinding.inflate(LayoutInflater.from(mContext))
+        popupDeleteModifyBinding =
+            LayoutPopupDeleteModifyBinding.inflate(LayoutInflater.from(mContext))
         popupReportBinding = LayoutPopupReportBinding.inflate(LayoutInflater.from(mContext))
-        popupDeleteCheckBinding = LayoutPopupDeleteCheckBinding.inflate(LayoutInflater.from(mContext))
-        popupReportCheckBinding = LayoutPopupReportCheckBinding.inflate(LayoutInflater.from(mContext))
+        popupDeleteCheckBinding =
+            LayoutPopupDeleteCheckBinding.inflate(LayoutInflater.from(mContext))
+        popupReportCheckBinding =
+            LayoutPopupReportCheckBinding.inflate(LayoutInflater.from(mContext))
+        popupReportResultBinding = LayoutPopupReportResultBinding.inflate(LayoutInflater.from(mContext))
         popupDeleteModifyDialog.setContentView(popupDeleteModifyBinding.root)
         popupReportDialog.setContentView(popupReportBinding.root)
         popupDeleteCheckDialog.setContentView(popupDeleteCheckBinding.root)
         popupReportCheckDialog.setContentView(popupReportCheckBinding.root)
+        popupReportResultDialog.setContentView(popupReportResultBinding.root)
 
         popupDeleteModifyDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         popupReportDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         popupDeleteCheckDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         popupReportCheckDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupReportResultDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         addPopupListener(mContext)
     }
@@ -308,10 +312,12 @@ class CommunityRecyclerViewAdapter() :
                     val e = task.exception
                     if (e is FirebaseFunctionsException) {
                         val detail = e.details
-                        Toast.makeText(mContext, mContext.getString(R.string.report_result_success) + '(' + detail.toString() + ')', Toast.LENGTH_LONG).show()
+                        popupReportResultBinding.btnPopupResult.text = mContext.getString(R.string.report_result_fail)
+                        popupReportResultDialog.show()
                     }
                 } else {
-                    Toast.makeText(mContext, mContext.getString(R.string.report_result_success), Toast.LENGTH_LONG).show()
+                    popupReportResultBinding.btnPopupResult.text = mContext.getString(R.string.report_result_success)
+                    popupReportResultDialog.show()
                 }
             }
         }
@@ -322,7 +328,7 @@ class CommunityRecyclerViewAdapter() :
     }
 
     override fun getItemViewType(position: Int): Int {
-        return position
+         return position
     }
 
     override fun getItemId(position: Int): Long {

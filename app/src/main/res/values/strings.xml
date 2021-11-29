@@ -35,9 +35,29 @@
     <string name="cancel">취소</string>
 
     <string name="profile_edit">프로필 수정</string>
+    <string name="action_edit">수정하기</string>
+    <string name="reset">재설정</string>
+
+    <string name="age">나이</string>
+    <string name="gender">성별</string>
+
     <string name="saved_post">저장한 글</string>
     <string name="my_post">내 게시글</string>
+    <string name="notice">공지사항</string>
+    <string name="faq">자주 묻는 질문</string>
+    <string name="question">1:1 문의</string>
+
     <string name="news_detail">기사</string>
+
+    <string name="total_calorie_day">총 하루 열량</string>
+    <string name="decimal_hint">0.0</string>
+    <string name="calorie_unit">kcal</string>
+    <string name="carbohydrate">탄수화물</string>
+    <string name="nutrition_unit">g</string>
+    <string name="protein">단백질</string>
+    <string name="fat">지방</string>
+    <string name="btn_nutrition_set">저장</string>
+    <string name="btn_nutrition_cancel">취소</string>
 
     <string name="google_login">구글로 로그인</string>
     <string name="login_not_filled">이메일과 비밀번호를 입력해주세요</string>
@@ -46,11 +66,18 @@
     <string name="login_btn">로그인</string>
     <string name="logout_btn">로그아웃</string>
 
+    <string name="login_nickname_hint">이름 / 닉네임을 입력해주세요</string>
+    <string name="login_email_hint">이메일 주소를 입력해주세요</string>
+    <string name="login_password_hint">영문, 숫자 조합 최소 8~20자</string>
+    <string name="login_password_check_hint">비밀번호를 다시 입력해주세요</string>
+
     <string name="web_client_id">913031910028-prr8utnrelive27pj4klm795ek1lm86n.apps.googleusercontent.com</string>
 
     <string name="add_diary">추가하기</string>
     <string name="modify_diary">수정하기</string>
-    <string name="request_login">로그인하기</string>
+    <string name="request_login">로그인</string>
+    <string name="reqeust_logout">로그아웃</string>
+    <string name="request_withdrawal">회원탈퇴</string>
 
     <string name="diary_menu">메뉴</string>
     <string name="diary_hashtag">해시태그</string>
@@ -75,7 +102,6 @@
     <string name="popup_delete_check">해당 글을 삭제하시겠습니까?</string>
     <string name="popup_report_check">해당 글을 신고하시겠습니까?</string>
 
-    <string name="comment_hint">댓글 달기</string>
     <string name="comment_empty">댓글을 입력해주세요</string>
 
     <string name="popup_delete">삭제하기</string>
@@ -92,16 +118,24 @@
     <string name="time_month_before">달 전</string>
     <string name="time_year_before">년 전</string>
     <string name="msg_sign_up">이메일로 회원가입</string>
+    <string name="msg_find_password">비밀번호 찾기</string>
+
+    <string name="kakaotalk">카카오톡</string>
+    <string name="naver">네이버</string>
+    <string name="google">구글</string>
 
     <string name="nick_name">이름 / 닉네임</string>
-    <string name="request_sign_up">가입하기</string>
+    <string name="request_sign_up">회원가입</string>
     <string name="signup_not_filled">아직 입력이 완료되지 않았어요</string>
     <string name="signup_failed">가입에 실패했어요. 잠시 후에 다시 시도해주세요</string>
     <string name="update_profile">프로필 수정</string>
 
-    <string name="notice">공지사항</string>
-    <string name="faq">자주 묻는 질문</string>
-    <string name="application_setting">어플리케이션 설정</string>
+    <string name="setting">설정</string>
+    <string name="user_setting">사용자 설정</string>
+    <string name="notification_setting">알림 설정</string>
+    <string name="etc">기타</string>
+    <string name="launguage_setting">언어 설정</string>
+    <string name="late_version_update">최신버전 업데이트</string> 
 
     <string name="chat_bot_hint">키워드를 입력해보세요</string>
     <string name="chat_empty_input">내용을 입력해주세요</string>
@@ -111,4 +145,6 @@
     <string name="channel_name">PN</string>
     <string name="channel_description">PushNotification</string>
 
+    <string name="korean">한국</string>
+    <string name="current_version">1.0</string>
 </resources>

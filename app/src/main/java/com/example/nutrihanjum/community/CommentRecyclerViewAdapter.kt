@@ -90,12 +90,12 @@ class CommentRecyclerViewAdapter : RecyclerView.Adapter<CommentRecyclerViewAdapt
         holder.comment_content_textview.text = commentDTOs[position].comment
 
         if(commentDTOs[position].uid == uid){
-            holder.btn_swipe_imageview.setImageResource(R.drawable.ic_trash)
+            holder.btn_swipe_imageview.setImageResource(R.drawable.ic_trash_white)
             holder.btn_swipe_task.setOnClickListener {
                 commentPosition = position
                 popupDeleteCheckDialog.show() }
         } else {
-            holder.btn_swipe_imageview.setImageResource(R.drawable.ic_report)
+            holder.btn_swipe_imageview.setImageResource(R.drawable.ic_report_white)
             holder.btn_swipe_task.setOnClickListener {
                 commentPosition = position
                 popupReportCheckDialog.show() }

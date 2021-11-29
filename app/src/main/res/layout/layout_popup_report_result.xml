@@ -7,13 +7,12 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/btn_popup_report"
+        android:id="@+id/btn_popup_result"
         android:layout_width="360dp"
         android:layout_height="40dp"
         android:fontFamily="@font/apple_gothic_neo_b"
         android:gravity="center"
-        android:text="@string/popup_report"
-        android:textColor="@color/red"
+        android:textColor="@color/black"
         android:textSize="15dp" />
 
 </RelativeLayout>

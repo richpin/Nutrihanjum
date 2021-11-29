@@ -42,29 +42,37 @@
         <entry key="app/src/main/res/drawable/box_rounded_chatbot.xml" value="0.3546875" />
         <entry key="app/src/main/res/drawable/box_rounded_white.xml" value="0.35052083333333334" />
         <entry key="app/src/main/res/drawable/comment_box_rounded.xml" value="0.3546875" />
+        <entry key="app/src/main/res/drawable/edittext_underline.xml" value="0.25076923076923074" />
         <entry key="app/src/main/res/drawable/ic_account_circle.xml" value="0.15416666666666667" />
         <entry key="app/src/main/res/drawable/ic_baseline_add.xml" value="0.3546875" />
         <entry key="app/src/main/res/drawable/ic_bookmark_reverse.xml" value="0.25384615384615383" />
         <entry key="app/src/main/res/drawable/ic_check_circle.xml" value="0.15416666666666667" />
         <entry key="app/src/main/res/drawable/ic_comment.xml" value="0.13958333333333334" />
+        <entry key="app/src/main/res/drawable/ic_notification.xml" value="0.10052083333333334" />
         <entry key="app/src/main/res/drawable/public_option_thumb.xml" value="0.3546875" />
         <entry key="app/src/main/res/layout/activity_add_diary.xml" value="0.21875" />
         <entry key="app/src/main/res/layout/activity_comment.xml" value="0.18802083333333333" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.20652173913043478" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.45" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.25102880658436216" />
         <entry key="app/src/main/res/layout/activity_my_post.xml" value="0.334375" />
+        <entry key="app/src/main/res/layout/activity_notice.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_pop_up.xml" value="0.334375" />
         <entry key="app/src/main/res/layout/activity_post.xml" value="0.240625" />
         <entry key="app/src/main/res/layout/activity_saved_post.xml" value="0.12135416666666667" />
-        <entry key="app/src/main/res/layout/activity_update_profile.xml" value="0.13802083333333334" />
+        <entry key="app/src/main/res/layout/activity_setting.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_update_profile.xml" value="0.335" />
         <entry key="app/src/main/res/layout/chatbot_fragment.xml" value="0.2617753623188406" />
         <entry key="app/src/main/res/layout/community_fragment.xml" value="0.2617753623188406" />
-        <entry key="app/src/main/res/layout/fragment_login.xml" value="0.20652173913043478" />
+        <entry key="app/src/main/res/layout/community_recycler_header.xml" value="0.240625" />
+        <entry key="app/src/main/res/layout/fragment_login.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/fragment_sign_up.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/item_banner.xml" value="0.17753623188405798" />
         <entry key="app/src/main/res/layout/item_chatbot.xml" value="0.335" />
         <entry key="app/src/main/res/layout/item_comment.xml" value="0.24479166666666666" />
         <entry key="app/src/main/res/layout/item_community.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_diary.xml" value="0.18697916666666667" />
         <entry key="app/src/main/res/layout/item_news.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/item_notice.xml" value="0.18931159420289856" />
         <entry key="app/src/main/res/layout/layout_pop_up.xml" value="0.240625" />
         <entry key="app/src/main/res/layout/layout_pop_up_delete.xml" value="0.335" />
         <entry key="app/src/main/res/layout/layout_pop_up_other.xml" value="0.1234375" />
@@ -74,6 +82,8 @@
         <entry key="app/src/main/res/layout/layout_popup_my.xml" value="0.7576219512195121" />
         <entry key="app/src/main/res/layout/layout_popup_report.xml" value="0.24166666666666667" />
         <entry key="app/src/main/res/layout/layout_popup_report_check.xml" value="0.20652173913043478" />
+        <entry key="app/src/main/res/layout/layout_popup_report_result.xml" value="0.23854166666666668" />
+        <entry key="app/src/main/res/layout/layout_popup_report_success.xml" value="0.10989583333333333" />
         <entry key="app/src/main/res/layout/news_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/user_fragment.xml" value="0.23135058156024405" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.24479166666666666" />
@@ -82,6 +92,9 @@
         <entry key="app/src/main/res/menu/toolbar_menu.xml" value="0.3385416666666667" />
       </map>
     </option>
+  </component>
+  <component name="ProjectPlainTextFileTypeManager">
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_account_circle.xml" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
 </project>

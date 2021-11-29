@@ -93,7 +93,7 @@ class MyPostActivity : AppCompatActivity() {
     }
 
     private fun addViewListener() {
-        binding.MyPostActivityBackButton.setOnClickListener { onBackPressed() }
+        binding.myPostActivityBackButton.setOnClickListener { onBackPressed() }
 
         recyclerViewAdapter.likeClickEvent =
             { first, second -> communityViewModel.eventLikes(first, second) }

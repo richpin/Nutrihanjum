@@ -120,5 +120,7 @@ class UpdateProfileActivity : AppCompatActivity() {
 
             it.isClickable = false
         }
+
+        binding.updateprofileActivityBackButton.setOnClickListener { onBackPressed() }
     }
 }

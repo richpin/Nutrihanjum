@@ -8,7 +8,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="yellow_200">#FFDE52</color>
     <color name="yellow_300">#FFED9F</color>
-    <color name="google_red">#EA4335</color>
+    <color name="kakaotalk"> #fbe304</color>
+    <color name="naver">#03c75a</color>
+    <color name="google">#568ee4</color>
+    <color name="google_red">#EA4435</color>
     <color name="green">#98bf5a</color>
     <color name="red">#E8291B</color>
     <color name="orange">#FFAD36</color>

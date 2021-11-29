@@ -10,14 +10,14 @@
     <RelativeLayout
         android:id="@+id/savedPostActivity_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="60dp">
+        android:layout_height="80dp">
 
         <ImageView
             android:id="@+id/savedPostActivity_back_button"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_centerVertical="true"
-            android:layout_marginStart="15dp"
+            android:layout_marginStart="10dp"
             android:src="@drawable/ic_arrow_back" />
 
         <TextView
@@ -27,17 +27,9 @@
             android:fontFamily="@font/apple_gothic_neo_b"
             android:text="@string/saved_post"
             android:textColor="@color/black"
-            android:textSize="20dp" />
+            android:textSize="17sp" />
 
     </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorDivision"
-        android:orientation="horizontal">
-
-    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/savedPostActivity_recyclerview"

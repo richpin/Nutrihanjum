@@ -1,6 +1,9 @@
 package com.example.nutrihanjum.community
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.app.Activity
+import android.net.Uri
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
@@ -9,9 +12,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.ViewCompat
+import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.nutrihanjum.databinding.CommunityFragmentBinding
 import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.diary.DiaryViewModel
@@ -54,13 +60,10 @@ class CommunityFragment : Fragment() {
         diaryViewModel = ViewModelProvider(requireActivity()).get(DiaryViewModel::class.java)
 
         recyclerViewAdapter.initDialog(requireActivity())
+        setRecyclerview()
         addViewListener()
 
-        binding.communityfragmentRecylerview.layoutManager = LinearLayoutManager(activity)
-        binding.communityfragmentRecylerview.setHasFixedSize(true)
-
-        binding.communityfragmentRecylerview.adapter = recyclerViewAdapter
-
+        viewModel.loadBannerImage()
         viewModel.loadContentsInit()
 
         return binding.root
@@ -69,6 +72,19 @@ class CommunityFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addLiveDataObserver()
+    }
+
+    private fun setRecyclerview() {
+        with(recyclerViewAdapter){
+            likeClickEvent = { first, second -> viewModel.eventLikes(first, second) }
+            savedClickEvent = { first, second -> viewModel.eventSaved(first, second) }
+            deleteContentEvent = { first, second -> diaryViewModel.deleteDiary(first, second) }
+        }
+
+        with(binding.communityfragmentRecylerview) {
+            layoutManager = LinearLayoutManager(activity)
+            adapter = recyclerViewAdapter
+        }
     }
 
     private fun makeLauncher(adapter: CommunityRecyclerViewAdapter) {
@@ -115,20 +131,9 @@ class CommunityFragment : Fragment() {
             }
         })
 
-        userViewModel.signed.observe(viewLifecycleOwner) {
-            if (it) {
-                recyclerViewAdapter.likeClickEvent =
-                    { first, second -> viewModel.eventLikes(first, second) }
-                recyclerViewAdapter.savedClickEvent =
-                    { first, second -> viewModel.eventSaved(first, second) }
-                recyclerViewAdapter.deleteContentEvent =
-                    { first, second -> diaryViewModel.deleteDiary(first, second) }
-            } else {
-                recyclerViewAdapter.likeClickEvent = null
-                recyclerViewAdapter.savedClickEvent = null
-                recyclerViewAdapter.deleteContentEvent = null
-            }
-        }
+        viewModel.bannerUri.observe(viewLifecycleOwner, Observer {
+            Glide.with(this).load(it).into(binding.communityfragmentBanner)
+        })
     }
 
     private fun addViewListener() {
@@ -138,7 +143,6 @@ class CommunityFragment : Fragment() {
                 super.onScrollStateChanged(recyclerView, newState)
 
                 if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    Log.wtf("Gang", "more")
                     page++
                     viewModel.loadContentsMore()
                 }

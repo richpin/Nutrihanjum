@@ -1,10 +1,12 @@
 package com.example.nutrihanjum
 
 import android.content.Intent
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +17,7 @@ import com.example.nutrihanjum.databinding.ActivityMainBinding
 import com.example.nutrihanjum.diary.DiaryFragment
 import com.example.nutrihanjum.news.NewsFragment
 import com.example.nutrihanjum.repository.UserRepository
+import com.example.nutrihanjum.user.SettingActivity
 import com.example.nutrihanjum.user.UserFragment
 import com.example.nutrihanjum.util.NHFirebaseMessagingService
 import com.google.android.gms.common.GoogleApiAvailability
@@ -27,8 +30,13 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var userViewModel: UserViewModel
 
+    lateinit var settingLauncher: ActivityResultLauncher<Intent>
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.Theme_Nutrihanjum)
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -81,12 +89,7 @@ class MainActivity : AppCompatActivity() {
                     binding.topBarTextview.text = getString(R.string.home_category)
                     binding.topBarActionImageview.setImageResource(R.drawable.ic_notification)
                     binding.topBarActionLayout.setOnClickListener {
-                        startActivity(
-                            Intent(
-                                this,
-                                NoticeActivity::class.java
-                            )
-                        )
+                        startActivity(Intent(this, NoticeActivity::class.java))
                     }
                     return@setOnItemSelectedListener true
                 }
@@ -96,12 +99,7 @@ class MainActivity : AppCompatActivity() {
                     binding.topBarTextview.text = getString(R.string.chatbot_category)
                     binding.topBarActionImageview.setImageResource(R.drawable.ic_notification)
                     binding.topBarActionLayout.setOnClickListener {
-                        startActivity(
-                            Intent(
-                                this,
-                                NoticeActivity::class.java
-                            )
-                        )
+                        startActivity(Intent(this, NoticeActivity::class.java))
                     }
                     return@setOnItemSelectedListener true
                 }
@@ -111,12 +109,7 @@ class MainActivity : AppCompatActivity() {
                     binding.topBarTextview.text = getString(R.string.diary_category)
                     binding.topBarActionImageview.setImageResource(R.drawable.ic_notification)
                     binding.topBarActionLayout.setOnClickListener {
-                        startActivity(
-                            Intent(
-                                this,
-                                NoticeActivity::class.java
-                            )
-                        )
+                        startActivity(Intent(this, NoticeActivity::class.java))
                     }
                     return@setOnItemSelectedListener true
                 }
@@ -126,12 +119,7 @@ class MainActivity : AppCompatActivity() {
                     binding.topBarTextview.text = getString(R.string.news_category)
                     binding.topBarActionImageview.setImageResource(R.drawable.ic_notification)
                     binding.topBarActionLayout.setOnClickListener {
-                        startActivity(
-                            Intent(
-                                this,
-                                NoticeActivity::class.java
-                            )
-                        )
+                        startActivity(Intent(this, NoticeActivity::class.java))
                     }
                     return@setOnItemSelectedListener true
                 }
@@ -139,8 +127,10 @@ class MainActivity : AppCompatActivity() {
                     transaction.show(UserFragment.getInstance()).commit()
                     curFragment = UserFragment.getInstance()
                     binding.topBarTextview.text = getString(R.string.user_category)
-                    binding.topBarActionImageview.setImageResource(R.drawable.ic_notification)
-                    binding.topBarActionLayout.setOnClickListener { }
+                    binding.topBarActionImageview.setImageResource(R.drawable.ic_settings)
+                    binding.topBarActionLayout.setOnClickListener {
+                        settingLauncher.launch(Intent(this, SettingActivity::class.java))
+                    }
                     return@setOnItemSelectedListener true
                 }
                 else -> { return@setOnItemSelectedListener false }

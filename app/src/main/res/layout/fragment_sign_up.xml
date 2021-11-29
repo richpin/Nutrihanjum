@@ -1,183 +1,210 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:scrollbars="none"
+    android:orientation="vertical"
     tools:context=".user.login.SignUpFragment">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/signupfragment_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/yellow_200"
-        android:orientation="vertical">
+        android:layout_height="60dp">
+
+        <ImageView
+            android:id="@+id/signupfragment_back_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_arrow_back" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginVertical="50dp"
-            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/apple_gothic_neo_b"
             android:text="@string/request_sign_up"
-            android:textColor="@color/white"
-            android:textSize="50sp"
-            android:fontFamily="@font/apple_gothic_neo_b"/>
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+    </RelativeLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/layout_sign_up"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:paddingTop="30dp"
-            android:background="@drawable/top_rounded_box"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingBottom="30dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="20dp"
-                android:orientation="vertical">
+                android:layout_height="200dp"
+                android:gravity="center">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <ImageView
+                    android:id="@+id/imageview_app_logo"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:fontFamily="@font/apple_gothic_neo_b"
-                    android:gravity="center"
-                    android:text="@string/nick_name"
-                    android:textColor="@color/orange"
-                    android:textSize="20sp" />
-
-                <EditText
-                    android:id="@+id/edittext_user_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="5dp"
-                    android:inputType="textPersonName"
-                    android:background="@drawable/edittext_underline"
-                    android:paddingHorizontal="3dp"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="5dp" />
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/app_logo" />
 
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/layout_sign_up"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginHorizontal="15dp"
                 android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:fontFamily="@font/apple_gothic_neo_b"
-                    android:gravity="center"
-                    android:text="@string/login_email"
-                    android:textColor="@color/orange"
-                    android:textSize="20sp" />
-
-                <EditText
-                    android:id="@+id/edittext_email"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="5dp"
-                    android:inputType="textEmailAddress"
-                    android:background="@drawable/edittext_underline"
-                    android:paddingHorizontal="3dp"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="5dp" />
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/apple_gothic_neo_b"
+                        android:paddingStart="4dp"
+                        android:text="@string/nick_name"
+                        android:textColor="@color/black"
+                        android:textSize="13sp" />
+
+                    <EditText
+                        android:id="@+id/edittext_user_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:backgroundTint="@color/gray"
+                        android:fontFamily="@font/apple_gothic_neo_r"
+                        android:hint="@string/login_nickname_hint"
+                        android:inputType="textPersonName"
+                        android:paddingBottom="16dp"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/apple_gothic_neo_b"
+                        android:paddingStart="4dp"
+                        android:text="@string/login_email"
+                        android:textColor="@color/black"
+                        android:textSize="13sp" />
+
+                    <EditText
+                        android:id="@+id/edittext_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:backgroundTint="@color/gray"
+                        android:fontFamily="@font/apple_gothic_neo_r"
+                        android:hint="@string/login_email_hint"
+                        android:inputType="textEmailAddress"
+                        android:paddingBottom="16dp"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/apple_gothic_neo_b"
+                        android:paddingStart="4dp"
+                        android:text="@string/login_password"
+                        android:textColor="@color/black"
+                        android:textSize="13sp" />
+
+                    <EditText
+                        android:id="@+id/edittext_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:backgroundTint="@color/gray"
+                        android:fontFamily="@font/apple_gothic_neo_r"
+                        android:hint="@string/login_password_hint"
+                        android:inputType="textPassword"
+                        android:paddingBottom="16dp"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/apple_gothic_neo_b"
+                        android:paddingStart="4dp"
+                        android:text="@string/password_check"
+                        android:textColor="@color/black"
+                        android:textSize="13sp" />
+
+                    <EditText
+                        android:id="@+id/edittext_check_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:backgroundTint="@color/gray"
+                        android:fontFamily="@font/apple_gothic_neo_r"
+                        android:hint="@string/login_password_check_hint"
+                        android:inputType="textPassword"
+                        android:paddingBottom="16dp"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="20dp"
-                android:orientation="vertical">
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginTop="70dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:fontFamily="@font/apple_gothic_neo_b"
-                    android:gravity="center"
-                    android:text="@string/login_password"
-                    android:textColor="@color/orange"
-                    android:textSize="20sp" />
-
-                <EditText
-                    android:id="@+id/edittext_password"
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_sign_up"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="5dp"
-                    android:inputType="textPassword"
-                    android:background="@drawable/edittext_underline"
-                    android:paddingHorizontal="3dp"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="5dp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="20dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
+                    android:background="@color/orange"
                     android:fontFamily="@font/apple_gothic_neo_b"
-                    android:gravity="center"
-                    android:text="@string/password_check"
-                    android:textColor="@color/orange"
-                    android:textSize="20sp" />
+                    android:text="@string/request_sign_up"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
 
-                <EditText
-                    android:id="@+id/edittext_check_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="5dp"
-                    android:inputType="textPassword"
-                    android:background="@drawable/edittext_underline"
-                    android:paddingHorizontal="3dp"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="5dp" />
+            </androidx.cardview.widget.CardView>
 
-            </LinearLayout>
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_sign_up"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="40dp"
-                android:layout_marginEnd="20dp"
-                android:background="@android:color/transparent"
-                android:fontFamily="@font/apple_gothic_neo_b"
-                android:text="@string/request_sign_up"
-                android:textColor="@color/orange"
-                android:textSize="17sp" />
 
         </LinearLayout>
 
-    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 
-</ScrollView>
+</LinearLayout>

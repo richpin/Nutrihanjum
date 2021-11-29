@@ -1,24 +1,16 @@
 package com.example.nutrihanjum.diary
 
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.os.Bundle
-import android.util.DisplayMetrics
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.animation.doOnEnd
-import androidx.core.animation.doOnStart
-import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,12 +21,10 @@ import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.diary.viewcontainer.CalendarDayBinder
 import com.example.nutrihanjum.diary.viewcontainer.CalendarHeaderBinder
-import com.example.nutrihanjum.util.OnSwipeTouchListener
 import com.kizitonwose.calendarview.CalendarView
 import com.kizitonwose.calendarview.model.InDateStyle
 import com.kizitonwose.calendarview.utils.yearMonth
 import java.time.DayOfWeek
-import java.time.LocalDate
 import java.time.YearMonth
 
 class DiaryFragment: Fragment() {

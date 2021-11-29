@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.nutrihanjum">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -18,9 +19,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Nutrihanjum">
         <activity
-            android:name=".community.NoticeActivity"
-            android:parentActivityName=".MainActivity"
+            android:name=".user.SettingActivity"
             android:exported="false" />
+        <activity
+            android:name=".community.NoticeActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".news.NewsDetailActivity"
             android:exported="false" />
@@ -29,8 +33,7 @@
             android:exported="true" />
         <activity
             android:name=".user.MyPostActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"/>
         <activity
             android:name=".user.SavedPostActivity"
             android:exported="true" />
@@ -68,24 +71,33 @@
             android:exported="true" />
         <activity
             android:name=".user.login.LoginActivity"
-            android:exported="true" />
-        <activity
-            android:name=".MainActivity"
+            android:configChanges="screenSize|orientation"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/SplashTheme"
-            android:launchMode="singleTop">
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="screenSize|orientation"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Nutrihanjum"
+            tools:ignore="LockedOrientationActivity">
+        </activity>
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/app_logo"/>
+            android:resource="@drawable/app_logo" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/orange" />
+
         <service
             android:name=".util.NHFirebaseMessagingService"
             android:exported="false">

@@ -1,6 +1,10 @@
 package com.example.nutrihanjum.util
 
+import android.animation.AnimatorSet
+import android.animation.ValueAnimator
 import android.content.Context
+import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import com.example.nutrihanjum.R
 
 object NHUtil {
@@ -31,5 +35,10 @@ object NHUtil {
         }
 
         return msg
+    }
+
+    enum class Setting{
+        LOG_OUT,
+        PROFILE_EDIT
     }
 }

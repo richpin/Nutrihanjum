@@ -11,10 +11,15 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
+import com.example.nutrihanjum.MainActivity
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.databinding.UserFragmentBinding
+import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.user.login.LoginActivity
+import com.example.nutrihanjum.util.NHUtil
+import com.example.nutrihanjum.util.NHUtil.Setting.LOG_OUT
+import com.example.nutrihanjum.util.NHUtil.Setting.PROFILE_EDIT
 
 class UserFragment: Fragment() {
     companion object {
@@ -31,9 +36,6 @@ class UserFragment: Fragment() {
 
     private lateinit var userViewModel : UserViewModel
 
-    private lateinit var loginLauncher: ActivityResultLauncher<Intent>
-    private lateinit var profileLauncher: ActivityResultLauncher<Intent>
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,101 +43,49 @@ class UserFragment: Fragment() {
         _binding = UserFragmentBinding.inflate(layoutInflater)
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
 
-        makeActivityLauncher()
+        setActivityLauncher()
+        setProfile()
         addViewListener()
-        addLiveDataObserver()
 
         return binding.root
     }
 
-
-    private fun makeActivityLauncher() {
-        loginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                userViewModel.notifyUserSigned()
-
-            }
-        }
-
-        profileLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                userViewModel.photoUrl?.let {
-                    Glide.with(this)
-                        .load(it)
-                        .circleCrop()
-                        .into(binding.imageviewUserPhoto)
-                }
-                binding.textviewUserId.text = userViewModel.userName
-            }
-        }
-    }
-
-
-    private fun addViewListener() {
-        binding.btnLogout.setOnClickListener {
-            userViewModel.signOut(requireContext())
-            userViewModel.notifyUserSignedOut()
-        }
-
-        binding.layoutProfileSignedOut.setOnClickListener {
-            loginLauncher.launch(Intent(activity, LoginActivity::class.java))
-        }
-
-        binding.profileEditLayout.setOnClickListener {
-            profileLauncher.launch(Intent(activity, UpdateProfileActivity::class.java))
-        }
-
-        binding.savedPostLayout.setOnClickListener {
-            startActivity(Intent(activity, SavedPostActivity::class.java))
-        }
-
-        binding.myPostLayout.setOnClickListener {
-            startActivity(Intent(activity, MyPostActivity::class.java))
-        }
-    }
-
-
-    private fun addLiveDataObserver() {
-        userViewModel.signed.observe(viewLifecycleOwner) { signed ->
-            if (signed) {
-                updateForSignIn()
-            }
-            else {
-                updateForSignOut()
-            }
-        }
-    }
-
-
-
-
-    private fun updateForSignIn() {
-        binding.textviewUserId.text = userViewModel.userName
-
+    private fun setProfile(){
         userViewModel.photoUrl?.let {
             Glide.with(this)
-                .load(userViewModel.photoUrl)
+                .load(it)
                 .circleCrop()
                 .into(binding.imageviewUserPhoto)
         }
 
-        binding.layoutProfileSigned.visibility = View.VISIBLE
-        binding.layoutProfileSignedOut.visibility = View.GONE
-        binding.layoutSetting.visibility = View.VISIBLE
+        binding.textviewUserId.text = userViewModel.userName
     }
 
+    private fun setActivityLauncher() {
+        (activity as MainActivity).settingLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val action = result.data?.getSerializableExtra("setting") as NHUtil.Setting
 
-    private fun updateForSignOut() {
-        binding.textviewUserId.text = getString(R.string.request_login)
-
-        binding.layoutProfileSigned.visibility = View.GONE
-        binding.layoutProfileSignedOut.visibility = View.VISIBLE
-        binding.layoutSetting.visibility = View.GONE
+                when(action){
+                    PROFILE_EDIT -> {
+                        setProfile()
+                    }
+                    LOG_OUT -> {
+                        startActivity(Intent(requireContext(), LoginActivity::class.java))
+                        requireActivity().finish()
+                    }
+                }
+            }
+        }
     }
 
+    private fun addViewListener() {
+        binding.btnUserSavedPost.setOnClickListener {
+            startActivity(Intent(activity, SavedPostActivity::class.java))
+        }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        binding.btnUserMyPost.setOnClickListener {
+            startActivity(Intent(activity, MyPostActivity::class.java))
+        }
     }
 }

@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -67,11 +68,13 @@ class NewsFragment : Fragment() {
 
     private fun addLiveDataObserver() {
         viewModel.news.observe(viewLifecycleOwner, Observer {
-            recyclerViewAdapter.updateNews(it)
-            recyclerViewAdapter.notifyItemRangeInserted(
-                ((page - 1) * boardLimit).toInt(),
-                boardLimit.toInt()
-            )
+            if (recyclerViewAdapter.itemCount == 0) {
+                recyclerViewAdapter.updateNews(it)
+                recyclerViewAdapter.notifyItemRangeInserted(
+                    ((page - 1) * boardLimit).toInt(),
+                    boardLimit.toInt()
+                )
+            }
         })
 
         viewModel.headNews.observe(viewLifecycleOwner, Observer {
@@ -81,14 +84,17 @@ class NewsFragment : Fragment() {
     }
 
     private fun addViewListener() {
-        binding.newsfragmentScrollview.viewTreeObserver.addOnScrollChangedListener {
-            if (binding.newsfragmentScrollview.getChildAt(binding.newsfragmentScrollview.childCount - 1).bottom
-                <= (binding.newsfragmentScrollview.height + binding.newsfragmentScrollview.scrollY)
-            ) {
-                page++
-                viewModel.loadNewsMore()
+        binding.newsfragmentRecylerview.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    page++
+                    viewModel.loadNewsMore()
+                }
             }
-        }
+        })
     }
 
     private fun addHeadListener(headNews: NewsDTO) {
