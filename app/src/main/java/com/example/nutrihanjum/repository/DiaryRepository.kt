@@ -25,6 +25,22 @@ object DiaryRepository {
     val userPhoto get() = auth.currentUser?.photoUrl
 
 
+    fun loadAllDiary() = callbackFlow {
+        store.collection("posts")
+            .whereEqualTo("uid", uid)
+            .get()
+            .addOnSuccessListener {
+                trySend(it.toObjects(ContentDTO::class.java))
+                close()
+            }
+            .addOnFailureListener {
+                close()
+            }
+
+        awaitClose()
+    }
+
+
     fun loadAllDiaryAtDate(date: String) = callbackFlow {
         store.collection("posts")
             .whereEqualTo("date", date)
@@ -48,7 +64,9 @@ object DiaryRepository {
             .update(
                 "content", content.content,
                 "mealTime", content.mealTime,
-                "public", content.isPublic
+                "public", content.isPublic,
+                "foods", content.foods,
+                "nutritionInfo", content.nutritionInfo
             )
             .continueWith {
                 if (it.isSuccessful) {
@@ -78,7 +96,9 @@ object DiaryRepository {
                     "content", content.content,
                     "mealTime", content.mealTime,
                     "public", content.isPublic,
-                    "imageUrl", content.imageUrl
+                    "imageUrl", content.imageUrl,
+                    "foods", content.foods,
+                    "nutritionInfo", content.nutritionInfo
                 )
             }
             .continueWith { result ->
@@ -165,10 +185,10 @@ object DiaryRepository {
                 Log.wtf(this@DiaryRepository.javaClass.simpleName, it.documents.size.toString())
                 trySend(it.documents.map { doc -> FoodDTO(
                     doc["name"].toString(),
-                    doc["calorie"].toString(),
-                    doc["carbohydrate"].toString(),
-                    doc["protein"].toString(),
-                    doc["fat"].toString()
+                    doc["calorie"].toString().toFloatOrNull() ?: 0f,
+                    doc["carbohydrate"].toString().toFloatOrNull() ?: 0f,
+                    doc["protein"].toString().toFloatOrNull() ?: 0f,
+                    doc["fat"].toString().toFloatOrNull() ?: 0f
                 )})
 
                 close()

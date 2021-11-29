@@ -6,7 +6,8 @@ data class ContentDTO(
     var id: String = "",
     var content: String = "",
     var imageUrl: String = "",
-    //var foods: MutableList<String> = mutableListOf(),
+    var foods: MutableList<FoodDTO> = mutableListOf(),
+    var nutritionInfo: NutritionInfo = NutritionInfo(),
     var uid: String = "",
     var profileName: String = "",
     var profileUrl: String = "",
@@ -25,3 +26,11 @@ data class ContentDTO(
         var timeStamp: Long = 0
     )
 }
+
+
+data class NutritionInfo(
+    var calorie: Float = 0f,
+    var carbohydrate: Float = 0f,
+    var protein: Float = 0f,
+    var fat: Float = 0f,
+): Serializable

@@ -1,16 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
+    android:orientation="vertical"
     tools:context=".diary.AddDiaryActivity">
 
+    <RelativeLayout
+        android:id="@+id/noticeActivity_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="80dp">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_arrow_back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/apple_gothic_neo_b"
+            android:text="작성하기"
+            android:textColor="@color/black"
+            android:textSize="17sp" />
+
+    </RelativeLayout>
+
     <androidx.core.widget.NestedScrollView
-        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:overScrollMode="never"
         android:scrollbars="none">
 
         <LinearLayout
@@ -40,7 +64,7 @@
                         android:id="@+id/imageview_preview"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/black"
+                        android:background="@color/handmade_gray"
                         android:src="@drawable/ic_baseline_add_a_photo"/>
 
                 </androidx.cardview.widget.CardView>
@@ -67,25 +91,123 @@
                         android:id="@+id/switch_public"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
-                        app:trackTint="@drawable/public_option_track"
-                        app:thumbTint="@drawable/public_option_thumb"/>
+                        app:track="@drawable/selector_public_option_track"
+                        android:thumb="@drawable/selector_public_option_thumb"/>
 
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:fontFamily="@font/apple_gothic_neo_b"
+                    android:text="@string/diary_meal_time"
+                    android:textColor="@color/black"
+                    android:textSize="17sp" />
+
+                <HorizontalScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:overScrollMode="never"
+                    android:scrollbars="none">
+
+                    <RadioGroup
+                        android:id="@+id/radio_group_meal_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/radio_btn_breakfast"
+                            android:layout_width="70dp"
+                            android:layout_height="27dp"
+                            android:layout_marginEnd="7dp"
+                            android:background="@drawable/selector_meal_time_radio_button"
+                            android:button="@null"
+                            android:fontFamily="@font/apple_gothic_neo_r"
+                            android:text="@string/meal_time_breakfast"
+                            android:textAlignment="center"
+                            android:textColor="@drawable/selector_meal_time_radio_text"
+                            android:textSize="15sp" />
+
+                        <RadioButton
+                            android:id="@+id/radio_btn_lunch"
+                            android:layout_width="70dp"
+                            android:layout_height="27dp"
+                            android:layout_marginEnd="7dp"
+                            android:background="@drawable/selector_meal_time_radio_button"
+                            android:button="@null"
+                            android:fontFamily="@font/apple_gothic_neo_r"
+                            android:text="@string/meal_time_lunch"
+                            android:textAlignment="center"
+                            android:textColor="@drawable/selector_meal_time_radio_text"
+                            android:textSize="15sp" />
+
+                        <RadioButton
+                            android:id="@+id/radio_btn_dinner"
+                            android:layout_width="70dp"
+                            android:layout_height="27dp"
+                            android:layout_marginEnd="7dp"
+                            android:background="@drawable/selector_meal_time_radio_button"
+                            android:button="@null"
+                            android:fontFamily="@font/apple_gothic_neo_r"
+                            android:text="@string/meal_time_dinner"
+                            android:textAlignment="center"
+                            android:textColor="@drawable/selector_meal_time_radio_text"
+                            android:textSize="15sp" />
+
+                        <RadioButton
+                            android:id="@+id/radio_btn_snack"
+                            android:layout_width="70dp"
+                            android:layout_height="27dp"
+                            android:layout_marginEnd="7dp"
+                            android:background="@drawable/selector_meal_time_radio_button"
+                            android:button="@null"
+                            android:fontFamily="@font/apple_gothic_neo_r"
+                            android:text="@string/meal_time_snack"
+                            android:textAlignment="center"
+                            android:textColor="@drawable/selector_meal_time_radio_text"
+                            android:textSize="15sp" />
+
+                        <RadioButton
+                            android:id="@+id/radio_btn_midnight"
+                            android:layout_width="70dp"
+                            android:layout_height="27dp"
+                            android:layout_marginEnd="7dp"
+                            android:background="@drawable/selector_meal_time_radio_button"
+                            android:button="@null"
+                            android:fontFamily="@font/apple_gothic_neo_r"
+                            android:text="@string/meal_time_midnight_snack"
+                            android:textAlignment="center"
+                            android:textColor="@drawable/selector_meal_time_radio_text"
+                            android:textSize="15sp" />
+
+                    </RadioGroup>
+                </HorizontalScrollView>
+
+            </LinearLayout>
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_margin="10dp">
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="15dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="10dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -94,7 +216,7 @@
                         android:fontFamily="@font/apple_gothic_neo_b"
                         android:text="@string/diary_menu"
                         android:textColor="@color/black"
-                        android:textSize="25sp" />
+                        android:textSize="17sp"/>
 
                 </LinearLayout>
 
@@ -102,7 +224,7 @@
                     android:id="@+id/recyclerview_foods"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="5dp"/>
+                    android:overScrollMode="never"/>
 
                 <AutoCompleteTextView
                     android:id="@+id/auto_complete_text_food"
@@ -110,8 +232,10 @@
                     android:layout_height="wrap_content"
                     android:paddingVertical="5dp"
                     android:background="@drawable/edittext_underline"
+                    android:backgroundTint="@color/handmade_gray"
                     android:hint="@string/edittext_food_name_hint"
-                    android:textSize="16sp"
+                    android:textColorHint="@color/handmade_gray"
+                    android:textSize="15sp"
                     android:imeOptions="actionDone"
                     android:inputType="text"/>
 
@@ -120,154 +244,71 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    layout="@layout/layout_food_detail"/>
+                    layout="@layout/layout_nutrition_info_black"/>
 
             </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_margin="10dp">
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/apple_gothic_neo_b"
-                    android:text="@string/diary_hashtag"
-                    android:textColor="@color/black"
-                    android:textSize="25sp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_margin="10dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/apple_gothic_neo_b"
-                    android:text="@string/diary_meal_time"
-                    android:textColor="@color/black"
-                    android:textSize="25sp" />
-
-               <HorizontalScrollView
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:scrollbars="none">
-
-                   <RadioGroup
-                       android:id="@+id/radio_group_meal_time"
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:orientation="horizontal"
-                       android:layout_marginTop="7dp">
-
-                       <RadioButton
-                           android:id="@+id/radio_btn_breakfast"
-                           android:layout_width="70dp"
-                           android:layout_height="27dp"
-                           android:layout_marginStart="7dp"
-                           android:background="@drawable/selector_meal_time_radio_button"
-                           android:button="@null"
-                           android:fontFamily="@font/apple_gothic_neo_b"
-                           android:text="@string/meal_time_breakfast"
-                           android:textAlignment="center"
-                           android:textColor="@drawable/selector_meal_time_radio_text"
-                           android:textSize="15sp" />
-
-                       <RadioButton
-                           android:id="@+id/radio_btn_lunch"
-                           android:layout_width="70dp"
-                           android:layout_height="27dp"
-                           android:layout_marginStart="7dp"
-                           android:background="@drawable/selector_meal_time_radio_button"
-                           android:button="@null"
-                           android:fontFamily="@font/apple_gothic_neo_b"
-                           android:text="@string/meal_time_lunch"
-                           android:textAlignment="center"
-                           android:textColor="@drawable/selector_meal_time_radio_text"
-                           android:textSize="15sp" />
-
-                       <RadioButton
-                           android:id="@+id/radio_btn_dinner"
-                           android:layout_width="70dp"
-                           android:layout_height="27dp"
-                           android:layout_marginStart="7dp"
-                           android:background="@drawable/selector_meal_time_radio_button"
-                           android:button="@null"
-                           android:fontFamily="@font/apple_gothic_neo_b"
-                           android:text="@string/meal_time_dinner"
-                           android:textAlignment="center"
-                           android:textColor="@drawable/selector_meal_time_radio_text"
-                           android:textSize="15sp" />
-
-                       <RadioButton
-                           android:id="@+id/radio_btn_snack"
-                           android:layout_width="70dp"
-                           android:layout_height="27dp"
-                           android:layout_marginStart="7dp"
-                           android:background="@drawable/selector_meal_time_radio_button"
-                           android:button="@null"
-                           android:fontFamily="@font/apple_gothic_neo_b"
-                           android:text="@string/meal_time_snack"
-                           android:textAlignment="center"
-                           android:textColor="@drawable/selector_meal_time_radio_text"
-                           android:textSize="15sp" />
-
-                       <RadioButton
-                           android:id="@+id/radio_btn_midnight"
-                           android:layout_width="70dp"
-                           android:layout_height="27dp"
-                           android:layout_marginStart="7dp"
-                           android:background="@drawable/selector_meal_time_radio_button"
-                           android:button="@null"
-                           android:fontFamily="@font/apple_gothic_neo_b"
-                           android:text="@string/meal_time_midnight_snack"
-                           android:textAlignment="center"
-                           android:textColor="@drawable/selector_meal_time_radio_text"
-                           android:textSize="15sp" />
-
-                   </RadioGroup>
-               </HorizontalScrollView>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_margin="6dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
                     android:fontFamily="@font/apple_gothic_neo_b"
                     android:text="@string/diary_memo"
                     android:textColor="@color/black"
-                    android:textSize="20sp" />
+                    android:textSize="17sp" />
 
                 <EditText
                     android:id="@+id/edittext_diary_memo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="10dp"
                     android:inputType="textMultiLine"
-                    android:background="@drawable/box_rounded_boarder_yellow"
-                    android:padding="7dp"
+                    android:background="@drawable/box_rounded_boarder_orange"
+                    android:backgroundTint="@color/handmade_gray"
+                    android:hint="@string/edittext_memo_hint"
+                    android:textColorHint="@color/handmade_gray"
+                    android:textSize="14sp"
+                    android:padding="10dp"
                     android:gravity="top"
-                    android:minLines="3" />
+                    android:minLines="6" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:fontFamily="@font/apple_gothic_neo_b"
+                    android:text="@string/diary_hashtag"
+                    android:textColor="@color/black"
+                    android:textSize="17sp" />
+
+                <EditText
+                    android:id="@+id/edittext_hashtag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="5dp"
+                    android:background="@drawable/edittext_underline"
+                    android:backgroundTint="@color/handmade_gray"
+                    android:hint="@string/hash_tag_hint"
+                    android:textColorHint="@color/handmade_gray"
+                    android:textSize="15sp"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"/>
 
             </LinearLayout>
 
@@ -278,15 +319,16 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="25dp"
                 android:layout_marginBottom="20dp"
-                android:background="@color/yellow_200"
+                android:background="@drawable/box_rounded_yellow"
+                android:backgroundTint="@color/orange"
                 android:fontFamily="@font/apple_gothic_neo_b"
                 android:text="@string/add_diary"
-                android:textColor="@color/black"
-                android:textSize="17sp" />
+                android:textColor="@color/white"
+                android:textSize="16sp" />
 
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-</RelativeLayout>
+</LinearLayout>
 

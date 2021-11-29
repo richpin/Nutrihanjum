@@ -16,6 +16,17 @@ class UpdateProfileViewModel: ViewModel() {
     val userEmail get() = UserRepository.userEmail
     val userPhoto get() = UserRepository.userPhoto
 
+
+    private val _reAuthResult = MutableLiveData<Boolean>()
+    val reAuthResult: LiveData<Boolean> = _reAuthResult
+
+    fun reAuthenticate(password: String) = viewModelScope.launch {
+        UserRepository.reAuthenticate(password).collect {
+            _reAuthResult.postValue(it)
+        }
+    }
+
+
     private val photoUpdated = MutableLiveData(false)
     private val nameUpdated = MutableLiveData(false)
     private val emailUpdated = MutableLiveData(false)

@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="10dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/textview_meal_time"
+            android:layout_centerVertical="true">
+
+            <TextView
+                android:id="@+id/edittext_food_name"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:ellipsize="end"
+                android:fontFamily="@font/apple_gothic_neo_b"
+                android:hint="@string/edittext_food_name_hint"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textSize="15sp"
+                android:maxLines="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_max="wrap"
+                app:layout_constraintWidth_percent="0.8"
+                app:layout_constraintHorizontal_bias="0"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <TextView
+            android:id="@+id/textview_meal_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/box_rounded_boarder_orange"
+            android:fontFamily="@font/apple_gothic_neo_b"
+            android:paddingHorizontal="15dp"
+            android:paddingVertical="5dp"
+            android:textColor="@color/orange"
+            android:textSize="15sp" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_calorie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/edittext_calorie"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="5dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/apple_gothic_neo_b"
+            android:hint="@string/decimal_hint"
+            android:gravity="end"
+            android:textColorHint="@color/white"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/textview_calorie_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/apple_gothic_neo_b"
+            android:text="@string/calorie_unit"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="10dp">
+
+            <TextView
+                android:id="@+id/textview_carbohydrate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/apple_gothic_neo_r"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:text="@string/carbohydrate"/>
+
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progress_bar_carbohydrate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="70dp"
+                android:layout_toStartOf="@id/edittext_carbohydrate"
+                android:background="@android:color/transparent"
+                android:max="1005"
+                android:progress="60"
+                app:indicatorColor="@color/yellow_200"
+                app:trackColor="@android:color/transparent"
+                app:trackCornerRadius="2dp" />
+
+            <TextView
+                android:id="@+id/edittext_carbohydrate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_toStartOf="@id/textview_carbohydrate_unit"
+                android:layout_centerVertical="true"
+                android:hint="@string/decimal_hint"
+                android:gravity="end"
+                android:textColorHint="@color/white"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/apple_gothic_neo_r"
+                android:textColor="@color/white"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/textview_carbohydrate_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/apple_gothic_neo_r"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:text="@string/nutrition_unit"/>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginHorizontal="10dp">
+
+            <TextView
+                android:id="@+id/textview_protein"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/apple_gothic_neo_r"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:text="@string/protein"/>
+
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progress_bar_protein"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="70dp"
+                android:layout_toStartOf="@id/edittext_protein"
+                android:background="@android:color/transparent"
+                android:max="1005"
+                android:progress="40"
+                app:indicatorColor="@color/green"
+                app:trackColor="@android:color/transparent"
+                app:trackCornerRadius="2dp" />
+
+            <TextView
+                android:id="@+id/edittext_protein"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="5dp"
+                android:layout_toStartOf="@id/textview_protein_unit"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/apple_gothic_neo_r"
+                android:hint="@string/decimal_hint"
+                android:gravity="end"
+                android:textColorHint="@color/white"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/textview_protein_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/apple_gothic_neo_r"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:text="@string/nutrition_unit"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginHorizontal="10dp">
+
+            <TextView
+                android:id="@+id/textview_fat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/apple_gothic_neo_r"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:text="@string/fat"/>
+
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progress_bar_fat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="70dp"
+                android:layout_toStartOf="@id/edittext_fat"
+                android:background="@android:color/transparent"
+                android:max="1005"
+                android:progress="20"
+                app:indicatorColor="@color/orange"
+                app:trackColor="@android:color/transparent"
+                app:trackCornerRadius="2dp" />
+
+            <TextView
+                android:id="@+id/edittext_fat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="5dp"
+                android:layout_toStartOf="@id/textview_fat_unit"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/apple_gothic_neo_r"
+                android:hint="@string/decimal_hint"
+                android:gravity="end"
+                android:textColorHint="@color/white"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/textview_fat_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/apple_gothic_neo_r"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:text="@string/nutrition_unit"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

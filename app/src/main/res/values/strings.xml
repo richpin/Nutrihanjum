@@ -50,9 +50,9 @@
     <string name="modify_diary">수정하기</string>
     <string name="request_login">로그인하기</string>
 
-    <string name="diary_menu">메뉴</string>
+    <string name="diary_menu">식사 메뉴</string>
     <string name="diary_hashtag">해시태그</string>
-    <string name="diary_meal_time">식사</string>
+    <string name="diary_meal_time">식사 시간</string>
     <string name="diary_public_option">공개여부</string>
     <string name="diary_memo">메모</string>
 
@@ -103,10 +103,21 @@
 
     <string name="chat_bot_hint">키워드를 입력해보세요</string>
     <string name="chat_empty_input">내용을 입력해주세요</string>
-    <string name="edittext_food_name_hint">음식이름을 입력해주세요.</string>
+    <string name="edittext_food_name_hint">메뉴를 입력해주세요.</string>
 
     <string name="default_notification_channel_id">927born</string>
     <string name="channel_name">PN</string>
     <string name="channel_description">PushNotification</string>
+    <string name="total_calorie_day">총 하루 열량</string>
+    <string name="decimal_hint">0.0</string>
+    <string name="calorie_unit">kcal</string>
+    <string name="carbohydrate">탄수화물</string>
+    <string name="nutrition_unit">g</string>
+    <string name="protein">단백질</string>
+    <string name="fat">지방</string>
+    <string name="btn_nutrition_set">저장</string>
+    <string name="btn_nutrition_cancel">취소</string>
+    <string name="edittext_memo_hint">내용을 입력해주세요.</string>
+    <string name="hash_tag_hint">#키워드를 입력해주세요.</string>
 
 </resources>

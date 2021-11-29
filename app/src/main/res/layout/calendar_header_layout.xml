@@ -19,7 +19,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="일"
-            android:textColor="@color/black"
+            android:textColor="@color/gray"
             android:textSize="14sp" />
 
         <TextView
@@ -28,7 +28,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="월"
-            android:textColor="@color/black"
+            android:textColor="@color/gray"
             android:textSize="14sp" />
 
         <TextView
@@ -37,7 +37,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="화"
-            android:textColor="@color/black"
+            android:textColor="@color/gray"
             android:textSize="14sp" />
 
         <TextView
@@ -46,7 +46,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="수"
-            android:textColor="@color/black"
+            android:textColor="@color/gray"
             android:textSize="14sp" />
 
         <TextView
@@ -55,7 +55,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="목"
-            android:textColor="@color/black"
+            android:textColor="@color/gray"
             android:textSize="14sp" />
 
         <TextView
@@ -64,7 +64,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="금"
-            android:textColor="@color/black"
+            android:textColor="@color/gray"
             android:textSize="14sp" />
 
         <TextView
@@ -73,7 +73,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="토"
-            android:textColor="@color/black"
+            android:textColor="@color/gray"
             android:textSize="14sp" />
 
     </LinearLayout>
