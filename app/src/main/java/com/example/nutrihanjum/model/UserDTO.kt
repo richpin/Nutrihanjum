@@ -8,7 +8,7 @@ data class UserDTO(
     var userID: String = "",
     var profileUrl: String = "",
     var token: String = "",
-    var getNotice: Boolean = true,
+    var noticeFlag: Boolean = true,
     var saved: List<String> = listOf(),
     var posts: List<String> = listOf()
 ) : Serializable {

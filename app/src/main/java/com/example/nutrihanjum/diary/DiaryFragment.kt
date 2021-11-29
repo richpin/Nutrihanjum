@@ -1,5 +1,6 @@
 package com.example.nutrihanjum.diary
 
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
@@ -25,6 +26,7 @@ import com.kizitonwose.calendarview.CalendarView
 import com.kizitonwose.calendarview.model.InDateStyle
 import com.kizitonwose.calendarview.utils.yearMonth
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.YearMonth
 
 class DiaryFragment: Fragment() {

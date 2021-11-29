@@ -101,7 +101,6 @@
 
     <string name="popup_delete_check">해당 글을 삭제하시겠습니까?</string>
     <string name="popup_report_check">해당 글을 신고하시겠습니까?</string>
-
     <string name="comment_empty">댓글을 입력해주세요</string>
 
     <string name="popup_delete">삭제하기</string>
@@ -132,7 +131,7 @@
 
     <string name="setting">설정</string>
     <string name="user_setting">사용자 설정</string>
-    <string name="notification_setting">알림 설정</string>
+    <string name="notification_setting">푸시 알림 설정</string>
     <string name="etc">기타</string>
     <string name="launguage_setting">언어 설정</string>
     <string name="late_version_update">최신버전 업데이트</string> 
@@ -144,15 +143,6 @@
     <string name="default_notification_channel_id">927born</string>
     <string name="channel_name">PN</string>
     <string name="channel_description">PushNotification</string>
-    <string name="total_calorie_day">총 하루 열량</string>
-    <string name="decimal_hint">0.0</string>
-    <string name="calorie_unit">kcal</string>
-    <string name="carbohydrate">탄수화물</string>
-    <string name="nutrition_unit">g</string>
-    <string name="protein">단백질</string>
-    <string name="fat">지방</string>
-    <string name="btn_nutrition_set">저장</string>
-    <string name="btn_nutrition_cancel">취소</string>
     <string name="edittext_memo_hint">내용을 입력해주세요.</string>
     <string name="hash_tag_hint">#키워드를 입력해주세요.</string>
 

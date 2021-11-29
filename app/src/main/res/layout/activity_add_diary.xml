@@ -65,7 +65,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@color/handmade_gray"
-                        android:src="@drawable/ic_baseline_add_a_photo"/>
+                        android:src="@drawable/ic_add_a_photo"/>
 
                 </androidx.cardview.widget.CardView>
 
