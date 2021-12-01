@@ -15,7 +15,7 @@ import java.time.YearMonth
 
 class CalendarDayBinder(
     val calendarView: CalendarView,
-    val diaryList: Map<String, ArrayList<ContentDTO>>
+    val diaryList: Map<Int, ArrayList<ContentDTO>>
 ): DayBinder<CalendarDayBinder.DayViewContainer> {
 
     var selectedDate: LocalDate = LocalDate.now()
@@ -91,5 +91,9 @@ class CalendarDayBinder(
             }
         }
     }
-    private fun getFormattedDate(date: LocalDate) = "${date.year}_${date.monthValue}_${date.dayOfMonth}"
+
+
+    private fun getFormattedDate(date: LocalDate) : Int {
+        return date.year * 10000 + date.monthValue * 100 + date.dayOfMonth
+    }
 }

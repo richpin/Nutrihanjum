@@ -2,9 +2,17 @@ package com.example.nutrihanjum.diary
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.Spannable
+import android.text.Spanned
+import android.text.TextWatcher
+import android.text.style.ForegroundColorSpan
+import android.util.Log
+import android.view.KeyEvent
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import com.example.nutrihanjum.databinding.ActivityAddDiaryBinding
@@ -44,7 +52,6 @@ class AddDiaryActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initCommonView()
-
         if (intent.hasExtra("date")) {
             initForAddDiary()
             getPhoto()
@@ -55,7 +62,7 @@ class AddDiaryActivity : AppCompatActivity() {
 
 
     private fun initForAddDiary() {
-        val date = intent.getStringExtra("date")!!
+        val date = intent.getIntExtra("date", 0)
 
         binding.btnRegisterDiary.text = getString(R.string.add_diary)
 
@@ -64,7 +71,7 @@ class AddDiaryActivity : AppCompatActivity() {
     }
 
 
-    private fun addListenerForAddDairy(date: String) {
+    private fun addListenerForAddDairy(date: Int) {
         binding.btnRegisterDiary.setOnClickListener {
             val selectedMealTime = mapMealTimeIdToString(binding.radioGroupMealTime.checkedRadioButtonId)
 
@@ -92,6 +99,7 @@ class AddDiaryActivity : AppCompatActivity() {
                         content.nutritionInfo.protein += it.protein
                         content.nutritionInfo.fat += it.fat
                     }
+                    content.hashTagList = binding.edittextHashtag.hashTagList
 
                     viewModel.addDiary(content, photoURI.toString())
                 }
@@ -117,17 +125,20 @@ class AddDiaryActivity : AppCompatActivity() {
 
 
     private fun initForModifyDiary() {
-       val content = intent.getSerializableExtra("content") as ContentDTO
+        val content = intent.getSerializableExtra("content") as ContentDTO
 
         with(binding) {
             btnRegisterDiary.text = getString(R.string.modify_diary)
             edittextDiaryMemo.setText(content.content)
             radioGroupMealTime.check(mapMealTimeStringToId(content.mealTime))
             switchPublic.isChecked = content.isPublic
+
             Glide.with(this@AddDiaryActivity)
                 .load(content.imageUrl)
                 .into(imageviewPreview)
+
             viewModel.foodList.addAll(content.foods)
+            edittextHashtag.hashTagList = content.hashTagList
         }
 
         addListenerForModifyDairy(content)
@@ -154,6 +165,7 @@ class AddDiaryActivity : AppCompatActivity() {
                     nutritionInfo.protein += it.protein
                     nutritionInfo.fat += it.fat
                 }
+                content.hashTagList = binding.edittextHashtag.hashTagList
 
                 viewModel.modifyDiary(
                     this,
@@ -287,6 +299,7 @@ class AddDiaryActivity : AppCompatActivity() {
     }
 
 
+
     private var isAnimated = true
 
     private fun initFoodRecyclerView() {
@@ -397,5 +410,4 @@ class AddDiaryActivity : AppCompatActivity() {
         getString(R.string.meal_time_midnight_snack) -> R.id.radio_btn_midnight
         else -> View.NO_ID
     }
-
 }

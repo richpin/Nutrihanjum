@@ -1,15 +1,13 @@
 package com.example.nutrihanjum.user
 
 import android.net.Uri
-import android.util.Patterns
 import androidx.lifecycle.*
 import com.example.nutrihanjum.repository.UserRepository
-import com.google.firebase.firestore.auth.User
+import com.example.nutrihanjum.util.NHPatternUtil
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.regex.Pattern
 
 class UpdateProfileViewModel: ViewModel() {
     val userName get() = UserRepository.userName
@@ -51,7 +49,7 @@ class UpdateProfileViewModel: ViewModel() {
     fun checkUserNameValid(name: String) = synchronized(userNameLock) {
         userNameValidJob?.cancel()
 
-        if (!UserDataPattern.USER_NAME.matcher(name).matches()) {
+        if (!NHPatternUtil.USER_NAME.matcher(name).matches()) {
             _userNameValid.value = false
             return@synchronized
         }
@@ -75,7 +73,7 @@ class UpdateProfileViewModel: ViewModel() {
         emailValidJob?.cancel()
         emailValidJob = null
 
-        if (!UserDataPattern.EMAIL.matcher(email).matches()) {
+        if (!NHPatternUtil.EMAIL.matcher(email).matches()) {
             _emailValid.value = false
             return@synchronized
         }

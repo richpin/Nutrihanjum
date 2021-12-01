@@ -297,7 +297,7 @@
                     android:textColor="@color/black"
                     android:textSize="17sp" />
 
-                <EditText
+                <com.example.nutrihanjum.util.HashTagEditTextView
                     android:id="@+id/edittext_hashtag"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -307,8 +307,11 @@
                     android:hint="@string/hash_tag_hint"
                     android:textColorHint="@color/handmade_gray"
                     android:textSize="15sp"
+                    android:textColor="@color/orange"
                     android:imeOptions="actionDone"
-                    android:inputType="text"/>
+                    android:inputType="textMultiLine|textNoSuggestions"
+                    android:maxLines="5"
+                    android:maxLength="200"/>
 
             </LinearLayout>
 

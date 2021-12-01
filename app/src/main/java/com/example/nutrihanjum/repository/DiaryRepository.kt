@@ -25,15 +25,17 @@ object DiaryRepository {
     val userPhoto get() = auth.currentUser?.photoUrl
 
 
-    fun loadAllDiary() = callbackFlow {
+    fun loadAllDiary(date: Int) = callbackFlow {
         store.collection("posts")
             .whereEqualTo("uid", uid)
+            .whereGreaterThanOrEqualTo("date", date)
             .get()
             .addOnSuccessListener {
                 trySend(it.toObjects(ContentDTO::class.java))
                 close()
             }
             .addOnFailureListener {
+                Log.wtf("dsfa", it.stackTraceToString())
                 close()
             }
 
@@ -41,7 +43,22 @@ object DiaryRepository {
     }
 
 
-    fun loadAllDiaryAtDate(date: String) = callbackFlow {
+    fun loadDiaryById(docId: String) = callbackFlow {
+        store.collection("posts").document(docId).get()
+            .addOnSuccessListener {
+                trySend(it.toObject(ContentDTO::class.java))
+                close()
+            }
+            .addOnFailureListener {
+                trySend(null)
+                close()
+            }
+
+        awaitClose()
+    }
+
+
+    fun loadAllDiaryAtDate(date: Int) = callbackFlow {
         store.collection("posts")
             .whereEqualTo("date", date)
             .whereEqualTo("uid", uid)
@@ -66,7 +83,8 @@ object DiaryRepository {
                 "mealTime", content.mealTime,
                 "public", content.isPublic,
                 "foods", content.foods,
-                "nutritionInfo", content.nutritionInfo
+                "nutritionInfo", content.nutritionInfo,
+                "hashTagList", content.hashTagList
             )
             .continueWith {
                 if (it.isSuccessful) {
@@ -98,7 +116,8 @@ object DiaryRepository {
                     "public", content.isPublic,
                     "imageUrl", content.imageUrl,
                     "foods", content.foods,
-                    "nutritionInfo", content.nutritionInfo
+                    "nutritionInfo", content.nutritionInfo,
+                    "hashTagList", content.hashTagList
                 )
             }
             .continueWith { result ->
@@ -116,14 +135,13 @@ object DiaryRepository {
 
     fun deleteDiary(documentId: String, imageUrl: String) = callbackFlow {
         storage.getReferenceFromUrl(imageUrl).delete().onSuccessTask {
-            store.collection("posts").document(documentId).delete()
             store.runBatch { batch ->
-                batch.delete(store.collection("posts").document(documentId))
                 batch.update(
                     store.collection("users").document(uid!!),
                     "posts",
                     FieldValue.arrayRemove(documentId)
                 )
+                batch.delete(store.collection("posts").document(documentId))
             }
         }.continueWith {
             if (it.isSuccessful) {

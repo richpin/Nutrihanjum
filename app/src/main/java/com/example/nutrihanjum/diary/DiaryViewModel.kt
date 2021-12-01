@@ -7,11 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.model.FoodDTO
 import com.example.nutrihanjum.repository.DiaryRepository
+import com.example.nutrihanjum.util.NHPatternUtil
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlin.collections.ArrayList
 
 class DiaryViewModel : ViewModel() {
+
 
     // for add diary activity
     private val _diary = MutableLiveData<ContentDTO>()
@@ -61,9 +63,17 @@ class DiaryViewModel : ViewModel() {
     }
 
 
+
+    fun loadDiaryById(docId: String) = viewModelScope.launch {
+        DiaryRepository.loadDiaryById(docId).collect {
+            _diary.postValue(it)
+        }
+    }
+
+
     // for diary fragment
-    private val _diaryMap = MutableLiveData<MutableMap<String,ArrayList<ContentDTO>>>(hashMapOf())
-    val diaryMap: LiveData<MutableMap<String,ArrayList<ContentDTO>>> get() = _diaryMap
+    private val _diaryMap = MutableLiveData<MutableMap<Int,ArrayList<ContentDTO>>>(hashMapOf())
+    val diaryMap: LiveData<MutableMap<Int,ArrayList<ContentDTO>>> get() = _diaryMap
 
     private val _diaryDeleteResult = MutableLiveData<Boolean>()
     val diaryDeleteResult: LiveData<Boolean> = _diaryDeleteResult
@@ -75,7 +85,7 @@ class DiaryViewModel : ViewModel() {
     }
 
 
-    fun loadAllDiaryAtDate(date: String) = viewModelScope.launch {
+    fun loadAllDiaryAtDate(date: Int) = viewModelScope.launch {
         val diaryMap = _diaryMap.value!!
         diaryMap[date] = arrayListOf()
 
@@ -87,8 +97,8 @@ class DiaryViewModel : ViewModel() {
     }
 
 
-    fun loadAllDiary() = viewModelScope.launch {
-        DiaryRepository.loadAllDiary().collect {
+    fun loadAllDiary(date: Int) = viewModelScope.launch {
+        DiaryRepository.loadAllDiary(date).collect {
             it.forEach { content ->
                 addToMap(content)
             }
@@ -112,7 +122,7 @@ class DiaryViewModel : ViewModel() {
     }
 
 
-    fun getDiaryList(date: String): ArrayList<ContentDTO> {
+    fun getDiaryList(date: Int): ArrayList<ContentDTO> {
         if (!_diaryMap.value!!.contains(date)) {
             _diaryMap.value!![date] = arrayListOf()
         }

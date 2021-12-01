@@ -1,19 +1,15 @@
 package com.example.nutrihanjum.user.login
 
-import android.net.Uri
-import android.util.Log
-import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nutrihanjum.repository.UserRepository
-import com.example.nutrihanjum.user.UserDataPattern
+import com.example.nutrihanjum.util.NHPatternUtil
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.regex.Pattern
 
 class SingUpViewModel: ViewModel() {
 
@@ -46,7 +42,7 @@ class SingUpViewModel: ViewModel() {
     fun checkUserNameValid(name: String) = synchronized(userNameLock) {
         userNameValidJob?.cancel()
 
-        if (!UserDataPattern.USER_NAME.matcher(name).matches()) {
+        if (!NHPatternUtil.USER_NAME.matcher(name).matches()) {
             _userNameValid.value = false
             return@synchronized
         }
@@ -64,7 +60,7 @@ class SingUpViewModel: ViewModel() {
         emailValidJob?.cancel()
         emailValidJob = null
 
-        if (!UserDataPattern.EMAIL.matcher(email).matches()) {
+        if (!NHPatternUtil.EMAIL.matcher(email).matches()) {
             _emailValid.value = false
             return@synchronized
         }
@@ -79,7 +75,7 @@ class SingUpViewModel: ViewModel() {
 
     fun checkPasswordValid(password: String) {
         _passwordValid.value =
-            UserDataPattern.PASSWORD.matcher(password).matches()
+            NHPatternUtil.PASSWORD.matcher(password).matches()
     }
 
 

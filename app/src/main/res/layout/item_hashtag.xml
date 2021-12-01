@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="10dp"
+    android:layout_marginBottom="10dp"
+    android:paddingVertical="5dp"
+    android:paddingHorizontal="15dp"
+    android:background="@drawable/box_rounded_boarder_orange">
+
+    <TextView
+        android:id="@+id/textview_hashtag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/apple_gothic_neo_r"
+        android:textSize="14sp"
+        android:textColor="@color/orange"/>
+
+</RelativeLayout>

@@ -110,7 +110,7 @@
         app:borderWidth="0dp"
         app:fabCustomSize="65dp"
         app:maxImageSize="50dp"
-        android:elevation="6dp"/>
+        android:elevation="1dp"/>
 
 
 

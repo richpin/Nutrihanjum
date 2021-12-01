@@ -96,6 +96,7 @@
 
     <string name="msg_mealtime_not_selected">식사를 언제 했는지 입력해주세요</string>
     <string name="msg_photo_not_selected">식단 사진을 올려주세요</string>
+    <string name="msg_hash_tag_invalidate">해시태그는 하나당 최대 20글자, 최대 10개까지만 가능합니다</string>
 
     <string name="failed_to_upload">잠시 후에 다시 시도해주세요</string>
 
@@ -144,7 +145,7 @@
     <string name="channel_name">PN</string>
     <string name="channel_description">PushNotification</string>
     <string name="edittext_memo_hint">내용을 입력해주세요.</string>
-    <string name="hash_tag_hint">#키워드를 입력해주세요.</string>
+    <string name="hash_tag_hint">#해쉬태그를 입력해주세요(최대 10개).</string>
 
     <string name="korean">한국</string>
     <string name="current_version">1.0</string>

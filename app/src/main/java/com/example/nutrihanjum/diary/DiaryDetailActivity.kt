@@ -7,18 +7,21 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.InputType
+import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.databinding.ActivityDiaryDetailBinding
 import com.example.nutrihanjum.databinding.LayoutPopupDeleteCheckBinding
 import com.example.nutrihanjum.databinding.LayoutPopupDeleteModifyBinding
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.util.ProgressBarAnimationUtil.setProgressWithNoAnimation
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
 import kotlin.math.max
 
 class DiaryDetailActivity : AppCompatActivity() {
@@ -39,10 +42,10 @@ class DiaryDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDiaryDetailBinding.inflate(layoutInflater)
         viewModel = ViewModelProvider(this).get(DiaryViewModel::class.java)
-        diary = intent.getSerializableExtra("data") as ContentDTO
+        diary = intent.getSerializableExtra("content") as ContentDTO
 
-        initDialog()
         initView()
+        viewModel.loadDiaryById(diary.id)
 
         addDiaryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.data?.hasExtra("modifiedContent") == true) {
@@ -51,7 +54,20 @@ class DiaryDetailActivity : AppCompatActivity() {
                 val mIntent = Intent()
                 mIntent.putExtra("modifiedContent", diary)
                 setResult(Activity.RESULT_OK, mIntent)
-                initView()
+                setView()
+            }
+        }
+
+        viewModel.diary.observe(this) {
+            if (it != null && diary != it) {
+                diary = it
+                Log.wtf("asdf", "asdf")
+
+                setView()
+
+                val mIntent = Intent()
+                mIntent.putExtra("modifiedContent", diary)
+                setResult(Activity.RESULT_OK, mIntent)
             }
         }
 
@@ -94,7 +110,8 @@ class DiaryDetailActivity : AppCompatActivity() {
 
 
     private fun initView() {
-        initNutritionInfo()
+        initHashTag()
+        initDialog()
 
         binding.layoutFoodDetail.edittextFoodName.isFocusable = false
         binding.layoutFoodDetail.edittextCalorie.isFocusable = false
@@ -108,12 +125,7 @@ class DiaryDetailActivity : AppCompatActivity() {
         binding.layoutFoodDetail.edittextProtein.setSelectAllOnFocus(false)
         binding.layoutFoodDetail.edittextFat.setSelectAllOnFocus(false)
 
-        Glide.with(this)
-            .load(diary.imageUrl)
-            .into(binding.imageviewPreview)
-
-        binding.textviewMealTime.text = diary.mealTime
-        binding.textviewMemo.text = diary.content
+        binding.layoutFoodDetail.lineDivision.visibility = View.GONE
 
         binding.btnBack.setOnClickListener { onBackPressed() }
         binding.btnMore.setOnClickListener {
@@ -131,10 +143,25 @@ class DiaryDetailActivity : AppCompatActivity() {
                 Toast.makeText(this, "네트워크 상태를 확인해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
+
+        setView()
     }
 
 
-    private fun initNutritionInfo() {
+    private fun setView() {
+        Glide.with(this)
+            .load(diary.imageUrl)
+            .into(binding.imageviewPreview)
+
+        binding.textviewMealTime.text = diary.mealTime
+        binding.textviewMemo.text = diary.content
+
+        setHashTag()
+        setNutritionInfo()
+    }
+
+
+    private fun setNutritionInfo() {
         val carbohydrate = diary.nutritionInfo.carbohydrate
         val protein = diary.nutritionInfo.protein
         val fat = diary.nutritionInfo.fat
@@ -158,5 +185,17 @@ class DiaryDetailActivity : AppCompatActivity() {
         if (foodName.isNotEmpty()) foodName = foodName.dropLast(2)
 
         binding.layoutFoodDetail.edittextFoodName.setText(foodName)
+    }
+
+
+    private fun initHashTag() {
+        binding.recyclerviewHashtag.adapter = HashTagAdapter()
+        binding.recyclerviewHashtag.layoutManager = FlexboxLayoutManager(this, FlexDirection.ROW, FlexWrap.WRAP)
+        setHashTag()
+    }
+
+
+    private fun setHashTag() {
+        (binding.recyclerviewHashtag.adapter as HashTagAdapter).updateHashTag(diary.hashTagList)
     }
 }

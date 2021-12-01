@@ -51,7 +51,7 @@ class DiaryFragment: Fragment() {
     private lateinit var detailDiaryLauncher: ActivityResultLauncher<Intent>
 
     private var updatePosition = RecyclerView.NO_POSITION
-    private var updateDate: String = ""
+    private var updateDate: Int = 0
 
     private lateinit var dayBinder: CalendarDayBinder
     private lateinit var headerBinder: CalendarHeaderBinder
@@ -139,7 +139,7 @@ class DiaryFragment: Fragment() {
 
 
     private fun updateForSignIn() {
-        viewModel.loadAllDiary()
+        viewModel.loadAllDiary(getFormattedDate(YearMonth.now().minusMonths(10).atDay(1)))
         binding.btnAddDiary.isClickable = true
 
         dayBinder.onDaySelectedListener = {
@@ -287,14 +287,16 @@ class DiaryFragment: Fragment() {
 
     private fun CalendarView.isWeekMode() = maxRowCount == 1
 
-    private fun getFormattedDate(date: LocalDate) = "${date.year}_${date.monthValue}_${date.dayOfMonth}"
+    private fun getFormattedDate(date: LocalDate) : Int {
+        return date.year * 10000 + date.monthValue * 100 + date.dayOfMonth
+    }
 
     private val diaryClickListener = { item: ContentDTO, pos: Int ->
         updateDate = item.date
         updatePosition = pos
 
         val mIntent = Intent(activity, DiaryDetailActivity::class.java)
-        mIntent.putExtra("data", item)
+        mIntent.putExtra("content", item)
         detailDiaryLauncher.launch(mIntent)
     }
 

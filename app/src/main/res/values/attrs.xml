@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="HashTagEditTextView">
+        <attr name="itemMaxLength" format="integer"/>
+        <attr name="itemMaxCount" format="integer"/>
+        <attr name="autoPoundSign" format="boolean"/>
+        <attr name="hasTagMaxCountAlert" format="string"/>
+        <attr name="hashTagMaxLengthAlert" format="string"/>
+        <attr name="hashTagNotAllowedCharAlert" format="string"/>
+    </declare-styleable>
+</resources>
