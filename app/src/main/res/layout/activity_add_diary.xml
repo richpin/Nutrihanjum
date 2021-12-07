@@ -235,6 +235,7 @@
                     android:backgroundTint="@color/handmade_gray"
                     android:hint="@string/edittext_food_name_hint"
                     android:textColorHint="@color/handmade_gray"
+                    android:maxLength="30"
                     android:textSize="15sp"
                     android:imeOptions="actionDone"
                     android:inputType="text"/>
@@ -277,7 +278,8 @@
                     android:textSize="14sp"
                     android:padding="10dp"
                     android:gravity="top"
-                    android:minLines="6" />
+                    android:lines="6"
+                    android:maxLength="300"/>
 
             </LinearLayout>
 
@@ -311,7 +313,12 @@
                     android:imeOptions="actionDone"
                     android:inputType="textMultiLine|textNoSuggestions"
                     android:maxLines="5"
-                    android:maxLength="200"/>
+                    android:maxLength="200"
+                    app:itemMaxCount="10"
+                    app:itemMaxLength="10"
+                    app:hashTagMaxLengthWarning="최대 10자까지 입력가능합니다."
+                    app:hasTagMaxCountWarning="해시태그는 최대 10개까지 등록가능합니다."
+                    app:hashTagNotAllowedCharWarning="영문자, 한글, 숫자만 입력가능합니다."/>
 
             </LinearLayout>
 

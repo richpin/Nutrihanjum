@@ -3,9 +3,9 @@
     <declare-styleable name="HashTagEditTextView">
         <attr name="itemMaxLength" format="integer"/>
         <attr name="itemMaxCount" format="integer"/>
-        <attr name="autoPoundSign" format="boolean"/>
-        <attr name="hasTagMaxCountAlert" format="string"/>
-        <attr name="hashTagMaxLengthAlert" format="string"/>
-        <attr name="hashTagNotAllowedCharAlert" format="string"/>
+        <attr name="autoPoundSign" format="string"/>
+        <attr name="hasTagMaxCountWarning" format="string"/>
+        <attr name="hashTagMaxLengthWarning" format="string"/>
+        <attr name="hashTagNotAllowedCharWarning" format="string"/>
     </declare-styleable>
 </resources>

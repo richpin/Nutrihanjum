@@ -10,14 +10,19 @@ import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.chatbot.model.BotData
+import com.example.nutrihanjum.chatbot.model.ChatBotDTO
 import com.example.nutrihanjum.chatbot.model.ChatData
 import com.example.nutrihanjum.chatbot.model.UserData
 import com.example.nutrihanjum.databinding.ItemChatBotBinding
 import com.example.nutrihanjum.databinding.ItemChatUserBinding
 import com.example.nutrihanjum.databinding.ItemQuickReplyBinding
+import com.example.nutrihanjum.model.UserDTO
 
-class ChatRecyclerViewAdapter(private val chatList: ArrayList<ChatData>)
-    : RecyclerView.Adapter<ChatRecyclerViewAdapter.ViewHolder>() {
+class ChatRecyclerViewAdapter(
+    private val chatList: ArrayList<ChatData>,
+    private val chatBot: ChatBotDTO,
+    private val user: UserDTO
+) : RecyclerView.Adapter<ChatRecyclerViewAdapter.ViewHolder>() {
 
     var quickReplyListener: ((String, String) -> Unit)? = null
 
@@ -25,14 +30,32 @@ class ChatRecyclerViewAdapter(private val chatList: ArrayList<ChatData>)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return if (viewType == ChatData.BOT) {
-            BotViewHolder(ItemChatBotBinding.inflate(
+            val binding = ItemChatBotBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false)
-            )
+
+            binding.textviewBotName.text = chatBot.profileName
+
+            Glide.with(binding.root.context)
+                .load(chatBot.profileUrl)
+                .circleCrop()
+                .into(binding.imageviewBotProfile)
+
+            BotViewHolder(binding)
 
         } else {
-            UserViewHolder(ItemChatUserBinding.inflate(
+            val binding = ItemChatUserBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false)
-            )
+
+            if (user.profileUrl.isNotEmpty()) {
+                Glide.with(binding.root.context)
+                    .load(user.profileUrl)
+                    .circleCrop()
+                    .into(binding.imageviewUserProfile)
+            }
+
+            binding.textviewUserName.text = user.name
+
+            UserViewHolder(binding)
         }
     }
 
@@ -42,26 +65,43 @@ class ChatRecyclerViewAdapter(private val chatList: ArrayList<ChatData>)
             val data = item as BotData
             val pos = bindingAdapterPosition
 
-            Glide.with(binding.root.context)
-                .load(data.profileUrl)
-                .circleCrop()
-                .into(binding.imageviewBotProfile)
+            if (data.imageUrl.isNotEmpty()) {
+                Glide.with(binding.root.context)
+                    .load(data.imageUrl)
+                    .into(binding.imageviewReplyImage)
 
-            binding.textviewBotName.text = data.name
-            binding.textviewChat.text = data.message
-
-            binding.layoutQuickReplies.removeAllViews()
+                binding.layoutImageReply.visibility = View.VISIBLE
+                binding.layoutTextReply.visibility = View.GONE
+            }
+            else {
+                binding.layoutImageReply.visibility = View.GONE
+                binding.layoutTextReply.visibility = View.VISIBLE
+                binding.textviewChat.text = data.message
+            }
 
             data.quickReplies.forEachIndexed { index, quickReply ->
-                val quickReplyBinding = ItemQuickReplyBinding.inflate(
-                    LayoutInflater.from(binding.layoutQuickReplies.context),
-                    binding.layoutQuickReplies,
-                    false
-                )
+                val quickReplyBinding = if (binding.layoutQuickReplies.childCount <= index) {
+                    val replyBinding = ItemQuickReplyBinding.inflate(
+                        LayoutInflater.from(binding.layoutQuickReplies.context),
+                        binding.layoutQuickReplies,
+                        false
+                    )
+
+                    binding.layoutQuickReplies.addView(replyBinding.root)
+
+                    replyBinding
+                }
+                else {
+                    ItemQuickReplyBinding.bind(binding.layoutQuickReplies.getChildAt(index))
+                }
 
                 quickReplyBinding.btnAction.text = quickReply.text
+                quickReplyBinding.root.visibility = View.VISIBLE
 
                 if (pos == itemCount - 1) {
+                    quickReplyBinding.btnAction.isEnabled = true
+                    quickReplyBinding.btnAction.isChecked = false
+
                     quickReplyBinding.btnAction.setOnClickListener { btn ->
                         btn.isSelected = true
                         data.quickReplies[index].isSelected = true
@@ -75,7 +115,10 @@ class ChatRecyclerViewAdapter(private val chatList: ArrayList<ChatData>)
                     quickReplyBinding.btnAction.isEnabled = false
                     quickReplyBinding.btnAction.isChecked = quickReply.isSelected
                 }
-                binding.layoutQuickReplies.addView(quickReplyBinding.root)
+            }
+
+            for (index in data.quickReplies.size until binding.layoutQuickReplies.childCount) {
+                binding.layoutQuickReplies.getChildAt(index).visibility = View.GONE
             }
         }
     }
@@ -85,12 +128,6 @@ class ChatRecyclerViewAdapter(private val chatList: ArrayList<ChatData>)
         override fun bind(item: ChatData) {
             val data = item as UserData
 
-            Glide.with(binding.root.context)
-                .load(data.profileUrl)
-                .circleCrop()
-                .into(binding.imageviewUserProfile)
-
-            binding.textviewUserName.text = data.name
             binding.textviewChat.text = data.message
         }
     }

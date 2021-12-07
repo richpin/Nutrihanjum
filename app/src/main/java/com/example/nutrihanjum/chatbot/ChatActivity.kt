@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.chatbot.model.ChatBotDTO
 import com.example.nutrihanjum.databinding.ActivityChatBinding
+import com.example.nutrihanjum.model.UserDTO
 
 class ChatActivity : AppCompatActivity() {
 
@@ -44,7 +45,13 @@ class ChatActivity : AppCompatActivity() {
     private fun initView() {
         binding.textviewChatBotName.text = viewModel.chatBot.profileName
 
-        val adapter = ChatRecyclerViewAdapter(viewModel.chatList.value!!)
+        val adapter = ChatRecyclerViewAdapter(
+            viewModel.chatList.value!!, viewModel.chatBot,
+            UserDTO(
+                name = viewModel.userName!!,
+                profileUrl = if (viewModel.userPhoto == null) "" else viewModel.userPhoto.toString()
+            )
+        )
 
         binding.recyclerviewChat.adapter = adapter
         binding.recyclerviewChat.layoutManager = LinearLayoutManager(this)

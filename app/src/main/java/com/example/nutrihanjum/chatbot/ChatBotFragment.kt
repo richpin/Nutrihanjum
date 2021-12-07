@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.databinding.ChatbotFragmentBinding
@@ -55,7 +56,7 @@ class ChatBotFragment : Fragment() {
 
         binding.recyclerviewChatBot.adapter = adapter
         binding.recyclerviewChatBot.setHasFixedSize(true)
-        binding.recyclerviewChatBot.layoutManager = LinearLayoutManager(activity)
+        binding.recyclerviewChatBot.layoutManager = GridLayoutManager(activity, 2)
 
         viewModel.chatBotList.observe(viewLifecycleOwner) {
             adapter.updateDataSet(it)

@@ -92,14 +92,16 @@ class DiaryFragment: Fragment() {
             addDiaryLauncher.launch(mIntent)
         }
 
-        binding.layoutCalendarMonth.setOnClickListener {
+        binding.calendarModeController.setOnClickListener {
             if (binding.calendarView.isWeekMode()) {
                 expandCalendar()
             } else {
                 collapseCalendar()
             }
         }
+
     }
+
 
 
     private fun addActivityLauncher() {
@@ -139,7 +141,7 @@ class DiaryFragment: Fragment() {
 
 
     private fun updateForSignIn() {
-        viewModel.loadAllDiary(getFormattedDate(YearMonth.now().minusMonths(10).atDay(1)))
+        viewModel.loadAllDiary(getFormattedDate(lastMonth.atDay(1)))
         binding.btnAddDiary.isClickable = true
 
         dayBinder.onDaySelectedListener = {
@@ -162,6 +164,10 @@ class DiaryFragment: Fragment() {
 
 
 
+    private lateinit var firstMonth: YearMonth
+    private lateinit var lastMonth: YearMonth
+    private val currentMonth = YearMonth.now()
+
     private fun initCalendar() {
         dayBinder = CalendarDayBinder(binding.calendarView, viewModel.diaryMap.value!!)
         binding.calendarView.dayBinder = dayBinder
@@ -173,13 +179,13 @@ class DiaryFragment: Fragment() {
             (binding.calendarView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
-        val currentMonth = YearMonth.now()
-        val firstDayOfWeek = DayOfWeek.SUNDAY
+        firstMonth = currentMonth
+        lastMonth = firstMonth.minusMonths(10)
 
         binding.calendarView.setup(
-            currentMonth.minusMonths(10),
-            currentMonth,
-            firstDayOfWeek
+            firstMonth,
+            lastMonth,
+            DayOfWeek.SUNDAY
         )
 
         binding.calendarView.scrollToDate(dayBinder.selectedDate)

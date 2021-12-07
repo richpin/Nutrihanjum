@@ -11,8 +11,7 @@ interface ChatData {
 data class BotData(
     var message: String = "",
     override val type: Int = ChatData.BOT,
-    var name: String = "",
-    var profileUrl: String = "",
+    var imageUrl: String = "",
     var quickReplies: ArrayList<QuickReplyOption> = arrayListOf()
 ): ChatData {
 }
@@ -27,8 +26,6 @@ data class QuickReplyOption(
 data class UserData(
     var message: String = "",
     override val type: Int = ChatData.USER,
-    var name: String = "",
-    var profileUrl: String = ""
 ): ChatData {
 
 }

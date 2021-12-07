@@ -5,17 +5,9 @@ import android.graphics.Rect
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.util.Log
-import android.view.ActionMode
-import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatEditText
 import com.example.nutrihanjum.R
-import java.lang.Exception
-import java.util.ArrayList
-import java.util.regex.Pattern
 
 class HashTagEditTextView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null) : AppCompatEditText(context, attrs) {
@@ -23,22 +15,38 @@ class HashTagEditTextView @JvmOverloads constructor(
     private val TAG = javaClass.simpleName
     private var hashTagMaxLength = 0
     private var hashTagMaxCount = 0
-    private var mAutoPoundSign = false
-    private var hashTagMaxLengthAlert: String? = null
-    private var hashTagMaxCountAlert : String? = null
-    private var hashTagNotAllowedCharAlert: String? = null
+    private var hashTagPrefix = "#"
+    private var hashTagMaxLengthWarning: String? = null
+    private var hashTagMaxCountWarning : String? = null
+    private var hashTagNotAllowedCharWarning: String? = null
 
 
     private fun initView() {
-        if (hashTagMaxLengthAlert.isNullOrEmpty()) {
-            hashTagMaxLengthAlert = "태그 최대길이 초과"
+        if (hashTagMaxLengthWarning.isNullOrEmpty()) {
+            hashTagMaxLengthWarning = "태그 최대길이 초과"
         }
-        if (hashTagMaxCountAlert.isNullOrEmpty()) {
-            hashTagMaxCountAlert = "태그 최대개수 초과"
+        if (hashTagMaxCountWarning.isNullOrEmpty()) {
+            hashTagMaxCountWarning = "태그 최대개수 초과"
         }
-        if (hashTagNotAllowedCharAlert.isNullOrEmpty()) {
-            hashTagNotAllowedCharAlert = "허용되지 않은 입력"
+        if (hashTagNotAllowedCharWarning.isNullOrEmpty()) {
+            hashTagNotAllowedCharWarning = "허용되지 않은 입력"
         }
+    }
+
+    override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
+
+        if (focused && text.isNullOrEmpty()) {
+            isUserInput = false
+            text?.insert(0, hashTagPrefix)
+            isUserInput = true
+        }
+        else if (!focused && text.contentEquals(hashTagPrefix)) {
+            isUserInput = false
+            text?.clear()
+            isUserInput = true
+        }
+
+        super.onFocusChanged(focused, direction, previouslyFocusedRect)
     }
 
 
@@ -46,17 +54,36 @@ class HashTagEditTextView @JvmOverloads constructor(
 
     var hashTagList: List<String>
         get() {
-            return text?.split(" ", "#", "\n")
-                ?.map { it.trim().take(10).replace(NHPatternUtil.HASHTAG, "") }
-                ?.filter { it.isNotEmpty() }
-                ?.take(10)
-                ?: listOf()
+            val result = text?.split(" ", hashTagPrefix, "\n")
+                ?.map {
+                    var sanitized = it.trim()
+
+                    if (sanitized.length > hashTagMaxLength) {
+                        Toast.makeText(context, hashTagMaxLengthWarning, Toast.LENGTH_SHORT).show()
+                    }
+
+                    sanitized = sanitized.take(hashTagMaxLength)
+
+                    if (sanitized.contains(NHPatternUtil.HASHTAG_NOT_ALLOWED)) {
+                        Toast.makeText(context, hashTagNotAllowedCharWarning, Toast.LENGTH_SHORT).show()
+                    }
+
+                    sanitized.replace(NHPatternUtil.HASHTAG_NOT_ALLOWED, "")
+                }
+                ?.filter { it.isNotEmpty() } ?: listOf()
+
+            if (result.size > hashTagMaxCount) {
+                Toast.makeText(context, hashTagMaxCountWarning, Toast.LENGTH_SHORT).show()
+
+            }
+
+            return result.take(hashTagMaxCount)
         }
         set(hashTag) {
             var hashTagText = ""
 
             hashTag.forEach {
-                hashTagText += "#$it "
+                hashTagText += "$hashTagPrefix$it "
             }
 
             isUserInput = false
@@ -69,10 +96,10 @@ class HashTagEditTextView @JvmOverloads constructor(
             try {
                 hashTagMaxLength = getInt(R.styleable.HashTagEditTextView_itemMaxLength, 5)
                 hashTagMaxCount = getInt(R.styleable.HashTagEditTextView_itemMaxCount, 5)
-                mAutoPoundSign = getBoolean(R.styleable.HashTagEditTextView_autoPoundSign, true)
-                hashTagMaxLengthAlert = getString(R.styleable.HashTagEditTextView_hashTagMaxLengthAlert)
-                hashTagMaxCountAlert = getString(R.styleable.HashTagEditTextView_hasTagMaxCountAlert)
-                hashTagNotAllowedCharAlert = getString(R.styleable.HashTagEditTextView_hashTagNotAllowedCharAlert)
+                hashTagPrefix = getString(R.styleable.HashTagEditTextView_autoPoundSign) ?: "#"
+                hashTagMaxLengthWarning = getString(R.styleable.HashTagEditTextView_hashTagMaxLengthWarning)
+                hashTagMaxCountWarning = getString(R.styleable.HashTagEditTextView_hasTagMaxCountWarning)
+                hashTagNotAllowedCharWarning = getString(R.styleable.HashTagEditTextView_hashTagNotAllowedCharWarning)
             }
             finally {
                 recycle()
@@ -93,15 +120,19 @@ class HashTagEditTextView @JvmOverloads constructor(
                             var hashTagText = ""
 
                             hashTagList.forEach {
-                                hashTagText += "#$it "
+                                hashTagText += "$hashTagPrefix$it "
                             }
 
                             isUserInput = false
                             editable?.replace(0, editable.trimEnd().length, hashTagText.trim())
                             isUserInput = true
                         }
+                        else if (editable.isNullOrEmpty() && isUserInput && hasFocus()) {
+                            isUserInput = false
+                            append(hashTagPrefix)
+                            isUserInput = true
+                        }
                     }
-
                 })
             }
         }

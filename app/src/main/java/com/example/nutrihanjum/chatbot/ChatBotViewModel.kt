@@ -6,10 +6,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nutrihanjum.chatbot.model.*
 import com.example.nutrihanjum.repository.ChatBotRepository
+import com.example.nutrihanjum.repository.UserRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ChatBotViewModel : ViewModel() {
+
+
+    val userName get() = UserRepository.userName
+    val userPhoto get() = UserRepository.userPhoto
 
     private val _chatBotList = MutableLiveData<ArrayList<ChatBotDTO>>()
     val chatBotList: LiveData<ArrayList<ChatBotDTO>> get() = _chatBotList
@@ -23,8 +29,6 @@ class ChatBotViewModel : ViewModel() {
 
     private val REPLY_FAILED by lazy {
         val temp = BotData()
-        temp.name = chatBot.profileName
-        temp.profileUrl = chatBot.profileUrl
         temp.quickReplies.add(QuickReplyOption("다시 시도하기", ""))
         temp.quickReplies.add(QuickReplyOption("처음으로", "event_welcome"))
         temp
@@ -54,9 +58,7 @@ class ChatBotViewModel : ViewModel() {
             return
         }
 
-        requestToBot("event_welcome", "event").invokeOnCompletion {
-            _initialized.value = true
-        }
+        requestToBot("event_welcome", "event")
     }
 
 
@@ -82,8 +84,15 @@ class ChatBotViewModel : ViewModel() {
 
         ChatBotRepository.sendMessage(message, type, chatBot).collect {
             if (it != null) {
-                _chatList.value!!.add(makeBotData(it))
-                _chatList.postValue(_chatList.value)
+                if (_initialized.value == null || _initialized.value == false) {
+                    _initialized.postValue(true)
+                }
+
+                makeBotData(it).forEach { data ->
+                    _chatList.value!!.add(data)
+                    _chatList.postValue(_chatList.value)
+                    delay(1200)
+                }
             } else {
                 _chatList.value!!.add(REPLY_FAILED)
                 _chatList.postValue(_chatList.value)
@@ -92,14 +101,20 @@ class ChatBotViewModel : ViewModel() {
     }
 
 
-    private fun makeBotData(response: ChatBotResponseDTO): BotData {
-        val data = BotData()
+    private fun makeBotData(response: ChatBotResponseDTO): ArrayList<BotData> {
+        val data = ArrayList<BotData>()
 
-        data.name = chatBot.profileName
-        data.profileUrl = chatBot.profileUrl
-        data.message = response.text
+        response.text.split("\n").map { it.trim() }.filter { it.isNotEmpty() }.forEach {
+            data.add(BotData(message = it))
+        }
 
-        data.quickReplies = response.quickReplies
+        if (response.imageUrl.isNotEmpty()) {
+            data.add(BotData(imageUrl = response.imageUrl))
+        }
+
+        if (data.isNotEmpty()) {
+            data.last().quickReplies = response.quickReplies
+        }
 
         return data
     }
@@ -108,8 +123,6 @@ class ChatBotViewModel : ViewModel() {
     private fun makeUserData(message: String): UserData {
         val data = UserData()
 
-        data.name = ChatBotRepository.userName ?: "익명"
-        data.profileUrl = ChatBotRepository.userPhoto.toString()
         data.message = message
 
         return data

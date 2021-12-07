@@ -10,7 +10,8 @@
         android:id="@+id/recyclerview_chat_bot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="5dp">
+        android:layout_marginEnd="15dp"
+        android:overScrollMode="never">
     </androidx.recyclerview.widget.RecyclerView>
 
 </LinearLayout>

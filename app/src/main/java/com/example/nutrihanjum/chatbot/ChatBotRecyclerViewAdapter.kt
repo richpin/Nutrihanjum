@@ -50,7 +50,6 @@ class ChatBotRecyclerViewAdapter(private var chatBotDTOs: ArrayList<ChatBotDTO>)
 
             Glide.with(itemView.context)
                 .load(chatBotDTOs[pos].profileUrl)
-                .circleCrop()
                 .into(binding.imageviewChatBotProfile)
 
             binding.textviewChatBotProfile.text = chatBotDTOs[pos].profileName

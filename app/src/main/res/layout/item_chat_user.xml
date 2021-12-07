@@ -1,44 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="10dp">
 
     <ImageView
         android:id="@+id/imageview_user_profile"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:src="@drawable/ic_account_circle"/>
     <TextView
         android:id="@+id/textview_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@id/imageview_user_profile"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/imageview_user_profile"
         android:layout_marginEnd="10dp"
         android:fontFamily="@font/apple_gothic_neo_b"
+        android:textColor="@color/black"
         android:textSize="17dp"
         android:text="유저"/>
 
-    <TextView
-        android:id="@+id/textview_chat"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="63dp"
-        android:layout_below="@id/textview_user_name"
+        app:layout_constraintTop_toBottomOf="@id/textview_user_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_max="250dp"
+        app:layout_constraintWidth_min="50dp"
         android:layout_alignParentEnd="true"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="7dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="38dp"
-        android:paddingVertical="10dp"
-        android:paddingStart="19dp"
-        android:paddingEnd="35dp"
-        android:background="@drawable/chat_bubble_user"
-        android:textSize="15sp"
-        android:textColor="@color/black"/>
+        android:layout_marginEnd="30dp"
+        android:background="@drawable/chat_bubble_user">
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/textview_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:paddingEnd="25dp"
+            android:paddingStart="15dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/apple_gothic_neo_r"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

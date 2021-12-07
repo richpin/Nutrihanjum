@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -10,49 +10,77 @@
         android:id="@+id/imageview_bot_profile"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:src="@mipmap/ic_launcher"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:src="@mipmap/ic_launcher" />
     <TextView
         android:id="@+id/textview_bot_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/imageview_bot_profile"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@id/imageview_bot_profile"
         android:layout_marginStart="10dp"
         android:fontFamily="@font/apple_gothic_neo_b"
+        android:textColor="@color/black"
         android:textSize="17dp"
         android:text="챗봇"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textview_bot_name"
-        android:layout_alignParentStart="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textview_bot_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintWidth_max="250dp"
         android:layout_marginStart="38dp"
         android:layout_marginTop="7dp"
-        android:layout_marginEnd="20dp"
-        android:orientation="vertical"
-        >
+        android:layout_marginEnd="50dp"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textview_chat"
+        <LinearLayout
+            android:id="@+id/layout_text_reply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minWidth="62dp"
-            android:paddingVertical="10dp"
-            android:paddingStart="35dp"
-            android:paddingEnd="19dp"
+            android:minWidth="50dp"
             android:background="@drawable/chat_bubble_bot"
-            android:textColor="@color/black"
-            android:textSize="15sp" />
+            android:paddingVertical="10dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="25dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textview_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:fontFamily="@font/apple_gothic_neo_r"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/layout_image_reply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="10dp">
+
+            <ImageView
+                android:id="@+id/imageview_reply_image"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"/>
+
+        </androidx.cardview.widget.CardView>
 
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/layout_quick_replies"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:layout_marginStart="15dp"
             app:flexDirection="row"
             app:flexWrap="wrap"/>
 
@@ -60,4 +88,4 @@
 
 
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

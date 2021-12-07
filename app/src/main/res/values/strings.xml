@@ -145,8 +145,9 @@
     <string name="channel_name">PN</string>
     <string name="channel_description">PushNotification</string>
     <string name="edittext_memo_hint">내용을 입력해주세요.</string>
-    <string name="hash_tag_hint">#해쉬태그를 입력해주세요(최대 10개).</string>
+    <string name="hash_tag_hint">#해쉬태그를 입력해주세요.</string>
 
     <string name="korean">한국</string>
     <string name="current_version">1.0</string>
+    <string name="textview_chat_bot_start">대화하기</string>
 </resources>
