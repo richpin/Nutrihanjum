@@ -3,27 +3,32 @@ package com.example.nutrihanjum.user.login
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.FragmentLoginBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.functions.ktx.functions
+import com.google.firebase.ktx.Firebase
+import com.nhn.android.naverlogin.OAuthLogin
+import com.nhn.android.naverlogin.OAuthLoginHandler
 
-class                                                              LoginFragment : Fragment() {
-
+class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var viewModel: LoginViewModel
-    private lateinit var googleLoginLauncher : ActivityResultLauncher<Intent>
+    private lateinit var googleLoginLauncher: ActivityResultLauncher<Intent>
+
+    private val mOAuthLoginModule get() = OAuthLogin.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +43,6 @@ class                                                              LoginFragment
         return binding.root
     }
 
-
     private fun googleLogin() {
         val gso = GoogleSignInOptions
             .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -50,22 +54,55 @@ class                                                              LoginFragment
         googleLoginLauncher.launch(client.signInIntent)
     }
 
-    private fun setLoginListener() {
-
-        googleLoginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-
-            try {
-                val credential = GoogleAuthProvider.getCredential(task.result.idToken, null)
-                viewModel.authWithCredential(credential)
-            }
-            catch(e: Exception) {
-                Log.wtf(activity?.localClassName, e.message)
+    private val mOAuthLoginHandler: OAuthLoginHandler = object: OAuthLoginHandler() {
+        override fun run(success: Boolean) {
+            if (success) {
+                val accessToken = mOAuthLoginModule.getAccessToken(requireContext())
+                Log.wtf("로그인 성공", accessToken)
+                viewModel.signInWithNaver(accessToken, requireContext())
+            } else {
+                val errorCode = mOAuthLoginModule.getLastErrorCode(requireContext()).code
+                val errorDesc = mOAuthLoginModule.getLastErrorDesc(requireContext())
+                Log.wtf("로그인 실패", "errorCode:" + errorCode
+                            + ", errorDesc:" + errorDesc)
             }
         }
+    }
+
+    private fun naverLogin() {
+        mOAuthLoginModule.init(
+            context,
+            requireContext().getString(R.string.naver_client_id),
+            requireContext().getString(R.string.naver_client_secret),
+            requireContext().getString(R.string.app_name)
+        )
+
+        mOAuthLoginModule.startOauthLoginActivity(requireActivity(), mOAuthLoginHandler)
+    }
+
+    private fun setLoginListener() {
+        googleLoginLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+
+                try {
+                    val credential = GoogleAuthProvider.getCredential(task.result.idToken, null)
+                    viewModel.authWithCredential(credential)
+                } catch (e: Exception) {
+                    Log.wtf(activity?.localClassName, e.message)
+                }
+            }
 
         binding.btnGoogleLogin.setOnClickListener {
             googleLogin()
+        }
+
+        binding.btnKakaotalkLogin.setOnClickListener {
+            viewModel.signInWithKakaotalk(requireContext())
+        }
+
+        binding.btnNaverLogin.setOnClickListener {
+            naverLogin()
         }
 
         binding.btnEmailLogin.setOnClickListener {
@@ -75,7 +112,8 @@ class                                                              LoginFragment
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 viewModel.signInWithEmail(email, password)
             } else {
-                Toast.makeText(activity, getString(R.string.login_not_filled), Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, getString(R.string.login_not_filled), Toast.LENGTH_SHORT)
+                    .show()
             }
         }
 
@@ -88,7 +126,6 @@ class                                                              LoginFragment
             }
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

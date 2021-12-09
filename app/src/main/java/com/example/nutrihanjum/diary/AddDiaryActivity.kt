@@ -55,7 +55,7 @@ class AddDiaryActivity : AppCompatActivity() {
 
 
     private fun initForAddDiary() {
-        val date = intent.getStringExtra("date")!!
+        val date = intent.getIntExtra("date", 0)
 
         binding.btnRegisterDiary.text = getString(R.string.add_diary)
 
@@ -64,7 +64,7 @@ class AddDiaryActivity : AppCompatActivity() {
     }
 
 
-    private fun addListenerForAddDairy(date: String) {
+    private fun addListenerForAddDairy(date: Int) {
         binding.btnRegisterDiary.setOnClickListener {
             val selectedMealTime = mapMealTimeIdToString(binding.radioGroupMealTime.checkedRadioButtonId)
 

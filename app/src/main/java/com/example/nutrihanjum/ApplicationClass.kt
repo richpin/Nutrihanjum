@@ -5,10 +5,7 @@ import android.app.NotificationManager
 import android.os.Build
 import androidx.multidex.MultiDexApplication
 import com.google.firebase.FirebaseApp
-
-import com.google.firebase.FirebaseOptions
-
-
+import com.kakao.sdk.common.KakaoSdk
 
 
 class ApplicationClass : MultiDexApplication() {
@@ -16,6 +13,8 @@ class ApplicationClass : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
+        FirebaseApp.initializeApp(this)
+        KakaoSdk.init(this, getString(R.string.kakao_app_key))
 
         CHANNEL_ID = getString(R.string.default_notification_channel_id)
 
@@ -29,5 +28,4 @@ class ApplicationClass : MultiDexApplication() {
             notificationManager.createNotificationChannel(mChannel)
         }
     }
-
 }

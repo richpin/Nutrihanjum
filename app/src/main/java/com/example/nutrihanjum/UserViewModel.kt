@@ -2,6 +2,7 @@ package com.example.nutrihanjum
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,6 +20,9 @@ class UserViewModel : ViewModel() {
     private val _signed = MutableLiveData<Boolean>()
     val signed : LiveData<Boolean> get() = _signed
 
+    private val _noticeFlag = MutableLiveData<Boolean>()
+    val noticeFlag : LiveData<Boolean> get() = _noticeFlag
+
     fun isSigned() = UserRepository.isSigned()
 
     fun signOut(context: Context) {
@@ -31,5 +35,17 @@ class UserViewModel : ViewModel() {
 
     fun notifyUserSignedOut() {
         _signed.value = false
+    }
+
+    fun getNoticeFlag() = viewModelScope.launch {
+        UserRepository.getNoticeFlag().collect() { flag ->
+            _noticeFlag.postValue(flag)
+        }
+    }
+
+    fun updateNoticeFlag(isChecked: Boolean) = viewModelScope.launch {
+        UserRepository.updateNoticeFlag(isChecked).collect {
+            if (!it) Log.wtf("NoticeFlag", "Update Failed")
+        }
     }
 }

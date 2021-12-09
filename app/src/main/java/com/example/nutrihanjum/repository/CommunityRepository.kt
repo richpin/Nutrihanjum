@@ -153,16 +153,18 @@ object CommunityRepository {
             batch.set(ptref.collection("comments").document(commentDTO.id), commentDTO)
             batch.update(ptref, "commentCount", FieldValue.increment(1))
 
-            val newNotice = UserDTO.NoticeDTO()
-            newNotice.kind = 1
-            newNotice.timestamp = System.currentTimeMillis()
-            newNotice.uid = contentDTO.uid
-            newNotice.senderName = userName!!
-            newNotice.content = '"' + commentDTO.comment + '"'
-            newNotice.contentId = contentDTO.id
-            newNotice.contentUrl = contentDTO.imageUrl
+            if (contentDTO.uid != uid) {
+                val newNotice = UserDTO.NoticeDTO()
+                newNotice.kind = 1
+                newNotice.timestamp = System.currentTimeMillis()
+                newNotice.uid = contentDTO.uid
+                newNotice.senderName = userName!!
+                newNotice.content = '"' + commentDTO.comment + '"'
+                newNotice.contentId = contentDTO.id
+                newNotice.contentUrl = contentDTO.imageUrl
 
-            batch.set(ntref, newNotice)
+                batch.set(ntref, newNotice)
+            }
         }.continueWith {
             if (it.isSuccessful) {
                 trySend(true)
@@ -204,15 +206,17 @@ object CommunityRepository {
             } else {
                 batch.update(ptref, "likes", FieldValue.arrayUnion(uid))
 
-                val newNotice = UserDTO.NoticeDTO()
-                newNotice.kind = 0
-                newNotice.timestamp = System.currentTimeMillis()
-                newNotice.uid = contentDTO.uid
-                newNotice.senderName = userName!!
-                newNotice.contentId = contentDTO.id
-                newNotice.contentUrl = contentDTO.imageUrl
+                if (contentDTO.uid != uid) {
+                    val newNotice = UserDTO.NoticeDTO()
+                    newNotice.kind = 0
+                    newNotice.timestamp = System.currentTimeMillis()
+                    newNotice.uid = contentDTO.uid
+                    newNotice.senderName = userName!!
+                    newNotice.contentId = contentDTO.id
+                    newNotice.contentUrl = contentDTO.imageUrl
 
-                batch.set(ntref, newNotice)
+                    batch.set(ntref, newNotice)
+                }
             }
         }.continueWith {
             if (it.isSuccessful) {
@@ -319,7 +323,7 @@ object CommunityRepository {
 
     fun loadBannerImage() = callbackFlow {
         storage.reference.child("banner/banner.png").downloadUrl.continueWith {
-            if(it.isSuccessful){
+            if (it.isSuccessful) {
                 trySend(it.result)
             } else {
                 Log.wtf("Repository", it.exception?.message)
@@ -329,7 +333,11 @@ object CommunityRepository {
         awaitClose()
     }
 
-    fun sendReportMail(type: Int, contentId: String, commentId: String? = null): Task<HttpsCallableResult> {
+    fun sendReportMail(
+        type: Int,
+        contentId: String,
+        commentId: String? = null
+    ): Task<HttpsCallableResult> {
         val data = hashMapOf(
             "type" to type,
             "contentId" to contentId,

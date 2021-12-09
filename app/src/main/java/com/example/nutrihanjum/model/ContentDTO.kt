@@ -12,7 +12,7 @@ data class ContentDTO(
     var profileName: String = "",
     var profileUrl: String = "",
     var timestamp: Long = 0,
-    var date: String = "",
+    var date: Int = 0,
     var likes: MutableList<String> = mutableListOf(),
     var commentCount: Int = 0,
     var saved: MutableList<String> = mutableListOf(),

@@ -7,7 +7,7 @@ data class UserDTO(
     var name: String = "",
     var userID: String = "",
     var profileUrl: String = "",
-    var token: String = "",
+    var tokens: List<String> = listOf(),
     var noticeFlag: Boolean = true,
     var saved: List<String> = listOf(),
     var posts: List<String> = listOf()

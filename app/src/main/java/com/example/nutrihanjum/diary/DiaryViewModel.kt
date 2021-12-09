@@ -62,8 +62,8 @@ class DiaryViewModel : ViewModel() {
 
 
     // for diary fragment
-    private val _diaryMap = MutableLiveData<MutableMap<String,ArrayList<ContentDTO>>>(hashMapOf())
-    val diaryMap: LiveData<MutableMap<String,ArrayList<ContentDTO>>> get() = _diaryMap
+    private val _diaryMap = MutableLiveData<MutableMap<Int,ArrayList<ContentDTO>>>(hashMapOf())
+    val diaryMap: LiveData<MutableMap<Int,ArrayList<ContentDTO>>> get() = _diaryMap
 
     private val _diaryDeleteResult = MutableLiveData<Boolean>()
     val diaryDeleteResult: LiveData<Boolean> = _diaryDeleteResult
@@ -75,7 +75,7 @@ class DiaryViewModel : ViewModel() {
     }
 
 
-    fun loadAllDiaryAtDate(date: String) = viewModelScope.launch {
+    fun loadAllDiaryAtDate(date: Int) = viewModelScope.launch {
         val diaryMap = _diaryMap.value!!
         diaryMap[date] = arrayListOf()
 
@@ -87,8 +87,8 @@ class DiaryViewModel : ViewModel() {
     }
 
 
-    fun loadAllDiary() = viewModelScope.launch {
-        DiaryRepository.loadAllDiary().collect {
+    fun loadAllDiary(date: Int) = viewModelScope.launch {
+        DiaryRepository.loadAllDiary(date).collect {
             it.forEach { content ->
                 addToMap(content)
             }
@@ -112,7 +112,7 @@ class DiaryViewModel : ViewModel() {
     }
 
 
-    fun getDiaryList(date: String): ArrayList<ContentDTO> {
+    fun getDiaryList(date: Int): ArrayList<ContentDTO> {
         if (!_diaryMap.value!!.contains(date)) {
             _diaryMap.value!![date] = arrayListOf()
         }

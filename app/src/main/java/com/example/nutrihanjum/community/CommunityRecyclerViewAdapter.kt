@@ -81,6 +81,8 @@ class CommunityRecyclerViewAdapter() :
         val communityitem_content_textview: TextView
         val communityitem_lccount_textview: TextView
         val communityitem_timeago_textview: TextView
+        val communityitem_content_layout: LinearLayout
+        val communityitem_content_viewmore: TextView
         val press_like_layout: LinearLayout
         val press_comment_layout: LinearLayout
         val press_save_layout: LinearLayout
@@ -97,12 +99,19 @@ class CommunityRecyclerViewAdapter() :
             communityitem_content_textview = view.findViewById(R.id.communityitem_content_textview)
             communityitem_lccount_textview = view.findViewById(R.id.communityitem_lccount_textview)
             communityitem_timeago_textview = view.findViewById(R.id.communityitem_timeago_textview)
+            communityitem_content_layout = view.findViewById(R.id.communityitem_content_layout)
+            communityitem_content_viewmore = view.findViewById(R.id.communityitem_content_viewmore)
             press_like_layout = view.findViewById(R.id.press_like_layout)
             press_comment_layout = view.findViewById(R.id.press_comment_layout)
             press_save_layout = view.findViewById(R.id.press_save_layout)
             press_save_imageview = view.findViewById(R.id.press_save_imageview)
             press_like_imageview = view.findViewById(R.id.press_like_imageview)
             press_etc_imageview = view.findViewById(R.id.press_etc_imageview)
+
+            communityitem_content_viewmore.setOnClickListener {
+                communityitem_content_textview.maxLines = Int.MAX_VALUE
+                communityitem_content_viewmore.visibility = View.GONE
+            }
 
             addListener()
         }
@@ -189,13 +198,13 @@ class CommunityRecyclerViewAdapter() :
             )
         holder.communityitem_timeago_textview.text =
             NHUtil.formatTime(holder.itemView.context, contentDTOs[position].timestamp)
-        with(holder.communityitem_content_textview) {
             if (TextUtils.isEmpty(contentDTOs[position].content)) {
-                this.visibility = View.GONE
+                holder.communityitem_content_layout.visibility = View.GONE
             } else {
                 holder.communityitem_content_textview.text = contentDTOs[position].content
+                setViewMore(holder.communityitem_content_textview,
+                holder.communityitem_content_viewmore)
             }
-        }
 
         with(holder.press_like_imageview) {
             if (isLiked(contentDTOs[position].likes)) {
@@ -209,6 +218,19 @@ class CommunityRecyclerViewAdapter() :
                 setImageResource(R.drawable.ic_bookmark)
             } else {
                 setImageResource(R.drawable.ic_bookmark_border)
+            }
+        }
+    }
+
+    private fun setViewMore(contentTextView: TextView, viewMoreTextView: TextView) {
+        contentTextView.post {
+            val lineCount = contentTextView.layout.lineCount
+            if (lineCount > 0) {
+                if (contentTextView.layout.getEllipsisCount(lineCount - 1) > 0) {
+                    viewMoreTextView.visibility = View.VISIBLE
+                }
+            } else {
+                viewMoreTextView.visibility = View.GONE
             }
         }
     }
@@ -311,7 +333,6 @@ class CommunityRecyclerViewAdapter() :
                 if (!task.isSuccessful) {
                     val e = task.exception
                     if (e is FirebaseFunctionsException) {
-                        val detail = e.details
                         popupReportResultBinding.btnPopupResult.text = mContext.getString(R.string.report_result_fail)
                         popupReportResultDialog.show()
                     }

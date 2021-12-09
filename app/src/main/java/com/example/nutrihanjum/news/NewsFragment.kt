@@ -48,12 +48,14 @@ class NewsFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(NewsViewModel::class.java)
 
-        addViewListener()
-
+        recyclerViewAdapter.initNews()
+        recyclerViewAdapter.notifyDataSetChanged()
         binding.newsfragmentRecylerview.layoutManager = LinearLayoutManager(activity)
         binding.newsfragmentRecylerview.setHasFixedSize(true)
-
         binding.newsfragmentRecylerview.adapter = recyclerViewAdapter
+
+        addLiveDataObserver()
+        addViewListener()
 
         viewModel.loadHeadNews()
         viewModel.loadNewsInit()
@@ -68,13 +70,11 @@ class NewsFragment : Fragment() {
 
     private fun addLiveDataObserver() {
         viewModel.news.observe(viewLifecycleOwner, Observer {
-            if (recyclerViewAdapter.itemCount == 0) {
-                recyclerViewAdapter.updateNews(it)
-                recyclerViewAdapter.notifyItemRangeInserted(
-                    ((page - 1) * boardLimit).toInt(),
-                    boardLimit.toInt()
-                )
-            }
+            recyclerViewAdapter.updateNews(it)
+            recyclerViewAdapter.notifyItemRangeInserted(
+                ((page - 1) * boardLimit).toInt(),
+                boardLimit.toInt()
+            )
         })
 
         viewModel.headNews.observe(viewLifecycleOwner, Observer {

@@ -74,6 +74,15 @@
                     android:textColor="@color/black"
                     android:textSize="14sp" />
 
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_notice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:thumb="@drawable/selector_public_option_thumb"
+                    app:track="@drawable/selector_public_option_track" />
+
             </RelativeLayout>
 
             <LinearLayout

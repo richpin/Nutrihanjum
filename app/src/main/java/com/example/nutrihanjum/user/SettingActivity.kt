@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.MainActivity
@@ -28,9 +29,17 @@ class SettingActivity : AppCompatActivity() {
         userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
 
         makeActivityLauncher()
+        addLiveDataObserver()
         addViewListener()
 
+        userViewModel.getNoticeFlag()
         setContentView(binding.root)
+    }
+
+    private fun addLiveDataObserver() {
+        userViewModel.noticeFlag.observe(this, Observer {
+            binding.switchNotice.isChecked = it
+        })
     }
 
     private fun makeActivityLauncher() {
@@ -57,5 +66,9 @@ class SettingActivity : AppCompatActivity() {
         }
 
         binding.settingActivityBackButton.setOnClickListener { onBackPressed() }
+
+        binding.switchNotice.setOnCheckedChangeListener { _, isChecked ->
+            userViewModel.updateNoticeFlag(isChecked)
+        }
     }
 }
