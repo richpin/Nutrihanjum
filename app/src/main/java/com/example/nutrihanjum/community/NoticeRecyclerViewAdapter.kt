@@ -1,6 +1,7 @@
 package com.example.nutrihanjum.community
 
 import android.content.Intent
+import android.text.TextUtils.isEmpty
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +28,7 @@ class NoticeRecyclerViewAdapter() : RecyclerView.Adapter<NoticeRecyclerViewAdapt
     fun initNotices() {
         val size = noticeDTOs.size
         noticeDTOs.clear()
-        notifyDataSetChanged()
+        notifyItemRangeRemoved(0, size)
     }
 
     fun isUserEmpty(uid: String): Boolean {
@@ -68,9 +69,10 @@ class NoticeRecyclerViewAdapter() : RecyclerView.Adapter<NoticeRecyclerViewAdapt
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Glide.with(holder.itemView.context).load(users[noticeDTOs[position].uid]!!.second)
+        if(!isEmpty(users[noticeDTOs[position].senderId]!!.second))
+        Glide.with(holder.itemView.context).load(users[noticeDTOs[position].senderId]!!.second)
             .circleCrop().into(holder.notice_profile_imageview)
-        holder.notice_name_textview.text = users[noticeDTOs[position].uid]!!.first
+        holder.notice_name_textview.text = users[noticeDTOs[position].senderId]!!.first
         with(holder.notice_comment_textview) {
             if (noticeDTOs[position].content.isEmpty()) visibility = View.GONE
             else text = noticeDTOs[position].content

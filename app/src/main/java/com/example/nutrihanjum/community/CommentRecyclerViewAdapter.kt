@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.text.TextUtils.isEmpty
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -80,6 +81,7 @@ class CommentRecyclerViewAdapter : RecyclerView.Adapter<CommentRecyclerViewAdapt
     }
 
     override fun onBindViewHolder(holder: CommentRecyclerViewAdapter.ViewHolder, position: Int) {
+        if(!isEmpty(users[commentDTOs[position].uid]!!.second))
         Glide.with(holder.itemView.context).load(users[commentDTOs[position].uid]!!.second).circleCrop()
             .into(holder.comment_profile_imageview)
         holder.comment_profile_textview.text = users[commentDTOs[position].uid]!!.first

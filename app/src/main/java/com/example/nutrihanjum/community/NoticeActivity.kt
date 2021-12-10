@@ -7,10 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nutrihanjum.databinding.ActivityNoticeBinding
-import com.example.nutrihanjum.repository.CommunityRepository
 import com.example.nutrihanjum.repository.CommunityRepository.boardLimit
-import com.example.nutrihanjum.repository.UserRepository
-import com.example.nutrihanjum.repository.UserRepository.uid
 
 class NoticeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNoticeBinding
@@ -31,6 +28,7 @@ class NoticeActivity : AppCompatActivity() {
         addViewListener()
         addLiveDataObserver()
 
+        recyclerViewAdapter.initNotices()
         binding.noticeActivityRecyclerview.adapter = recyclerViewAdapter
 
         communityViewModel.loadNoticesInit()
@@ -66,8 +64,8 @@ class NoticeActivity : AppCompatActivity() {
             recyclerViewAdapter.updateNotices(it)
 
             it.forEach { notice ->
-                if (recyclerViewAdapter.isUserEmpty(notice.uid)) {
-                    communityViewModel.loadUserInfo(notice.uid)
+                if (recyclerViewAdapter.isUserEmpty(notice.senderId)) {
+                    communityViewModel.loadUserInfo(notice.senderId)
                 }
             }
         })

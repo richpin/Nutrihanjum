@@ -15,6 +15,7 @@ data class UserDTO(
     data class NoticeDTO(
         var uid: String = "",
         var senderName: String = "",
+        var senderId: String = "",
         var contentId: String = "",
         var contentUrl: String = "",
         var content:String = "",

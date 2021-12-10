@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.TextUtils
+import android.text.TextUtils.isEmpty
 import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -54,7 +55,7 @@ class CommunityRecyclerViewAdapter() :
     fun initContents() {
         val size = contentDTOs.size
         contentDTOs.clear()
-        notifyDataSetChanged()
+        notifyItemRangeRemoved(0, size)
     }
 
     private fun isLiked(likes: List<String>): Boolean {
@@ -185,7 +186,8 @@ class CommunityRecyclerViewAdapter() :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Glide.with(holder.itemView.context).load(contentDTOs[position].profileUrl)
+        if(contentDTOs[position].profileUrl != "null")
+            Glide.with(holder.itemView.context).load(contentDTOs[position].profileUrl)
             .circleCrop().into(holder.communityitem_profile_imageview)
         holder.communityitem_profile_textview.text = contentDTOs[position].profileName
         Glide.with(holder.itemView.context).load(contentDTOs[position].imageUrl)
@@ -233,7 +235,6 @@ class CommunityRecyclerViewAdapter() :
                 viewMoreTextView.visibility = View.GONE
             }
         }
-
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {

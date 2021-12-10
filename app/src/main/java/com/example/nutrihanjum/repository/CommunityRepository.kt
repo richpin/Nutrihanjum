@@ -158,7 +158,7 @@ object CommunityRepository {
                 newNotice.kind = 1
                 newNotice.timestamp = System.currentTimeMillis()
                 newNotice.uid = contentDTO.uid
-                newNotice.senderName = userName!!
+                newNotice.senderId = uid!!
                 newNotice.content = '"' + commentDTO.comment + '"'
                 newNotice.contentId = contentDTO.id
                 newNotice.contentUrl = contentDTO.imageUrl
@@ -212,6 +212,7 @@ object CommunityRepository {
                     newNotice.timestamp = System.currentTimeMillis()
                     newNotice.uid = contentDTO.uid
                     newNotice.senderName = userName!!
+                    newNotice.senderId = uid!!
                     newNotice.contentId = contentDTO.id
                     newNotice.contentUrl = contentDTO.imageUrl
 

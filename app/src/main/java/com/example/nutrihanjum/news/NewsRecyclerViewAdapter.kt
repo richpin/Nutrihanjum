@@ -19,7 +19,7 @@ class NewsRecyclerViewAdapter: RecyclerView.Adapter<NewsRecyclerViewAdapter.View
     fun initNews() {
         val size = newsDTOs.size
         newsDTOs.clear()
-        notifyDataSetChanged()
+        notifyItemRangeRemoved(0, size)
     }
 
     fun updateNews(data: ArrayList<NewsDTO>) {
