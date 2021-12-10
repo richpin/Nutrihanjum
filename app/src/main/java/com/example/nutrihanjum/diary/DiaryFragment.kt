@@ -3,8 +3,12 @@ package com.example.nutrihanjum.diary
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +24,7 @@ import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.DiaryFragmentBinding
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.UserViewModel
+import com.example.nutrihanjum.databinding.LayoutPopupYearMonthPickerBinding
 import com.example.nutrihanjum.diary.viewcontainer.CalendarDayBinder
 import com.example.nutrihanjum.diary.viewcontainer.CalendarHeaderBinder
 import com.kizitonwose.calendarview.CalendarView
@@ -28,6 +33,7 @@ import com.kizitonwose.calendarview.utils.yearMonth
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
+import kotlin.math.min
 
 class DiaryFragment: Fragment() {
 
@@ -45,7 +51,6 @@ class DiaryFragment: Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: DiaryViewModel
-    private lateinit var userViewModel: UserViewModel
 
     private lateinit var addDiaryLauncher: ActivityResultLauncher<Intent>
     private lateinit var detailDiaryLauncher: ActivityResultLauncher<Intent>
@@ -62,12 +67,15 @@ class DiaryFragment: Fragment() {
     ): View {
         _binding = DiaryFragmentBinding.inflate(layoutInflater)
         viewModel = ViewModelProvider(this).get(DiaryViewModel::class.java)
-        userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
 
-        initCommonView()
+        if (savedInstanceState == null) {
+            viewModel.loadAllDiary(getFormattedDate(viewModel.firstMonth.atDay(1)), getFormattedDate(viewModel.lastMonth.atEndOfMonth()))
+        }
+
         initCalendar()
-        addLiveDataObserver()
+        initCommonView()
         addActivityLauncher()
+        addLiveDataObserver()
 
         return binding.root
     }
@@ -85,21 +93,103 @@ class DiaryFragment: Fragment() {
             it.isClickable = false
             val mIntent = Intent(activity, AddDiaryActivity::class.java)
 
-            dayBinder.selectedDate.let { date ->
+            viewModel.selectedDate.let { date ->
                 mIntent.putExtra("date", getFormattedDate(date))
             }
-            updateDate = getFormattedDate(dayBinder.selectedDate)
+            updateDate = getFormattedDate(viewModel.selectedDate)
             addDiaryLauncher.launch(mIntent)
         }
 
         binding.calendarModeController.setOnClickListener {
-            if (binding.calendarView.isWeekMode()) {
+            if (viewModel.isWeekMode) {
                 expandCalendar()
             } else {
                 collapseCalendar()
             }
         }
 
+        initYearMonthPicker()
+    }
+
+
+    private fun initYearMonthPicker() {
+        val yearMonthPicker = Dialog(requireContext())
+        val pickerBinding = LayoutPopupYearMonthPickerBinding.inflate(layoutInflater)
+
+        yearMonthPicker.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        yearMonthPicker.setContentView(pickerBinding.root)
+
+        with(pickerBinding) {
+            pickerYear.minValue = viewModel.signedDate.year
+            pickerYear.maxValue = viewModel.today.year
+            pickerYear.displayedValues = (pickerYear.minValue..viewModel.today.year).map { "${it}년" }.toTypedArray()
+            pickerYear.setOnValueChangedListener { _, oldVal, newVal ->
+                if (oldVal == newVal) return@setOnValueChangedListener
+
+                pickerMonth.value = min(viewModel.today.monthValue, pickerMonth.value)
+                pickerMonth.minValue = if (newVal == viewModel.signedDate.year) viewModel.signedDate.monthValue else 1
+                pickerMonth.maxValue = if (newVal == viewModel.lastMonth.year) viewModel.lastMonth.monthValue else 12
+                pickerMonth.displayedValues = (pickerMonth.minValue..pickerMonth.maxValue).map { "${it}월" }.toTypedArray()
+            }
+        }
+
+        setDatePickerListener(yearMonthPicker, pickerBinding)
+    }
+
+
+
+    private fun setDatePickerListener(picker: Dialog, pickerBinding: LayoutPopupYearMonthPickerBinding) {
+        binding.textviewCalendarMonth.setOnClickListener {
+            with(pickerBinding) {
+                val currentMonth = viewModel.currentDate.monthValue
+                val currentYear = viewModel.currentDate.year
+
+                pickerMonth.minValue = if (currentYear == viewModel.signedDate.year) viewModel.signedDate.monthValue else 1
+                pickerMonth.maxValue = if (currentYear == viewModel.today.year) viewModel.today.monthValue else 12
+                pickerMonth.displayedValues = (pickerMonth.minValue..pickerMonth.maxValue).map { "${it}월" }.toTypedArray()
+
+                pickerMonth.value = currentMonth
+                pickerYear.value = currentYear
+            }
+
+            picker.show()
+        }
+
+        pickerBinding.btnPickYearMonth.setOnClickListener {
+            scrollToPickedMonth(YearMonth.of(pickerBinding.pickerYear.value, pickerBinding.pickerMonth.value))
+            picker.dismiss()
+        }
+
+        pickerBinding.btnCancelPick.setOnClickListener {
+            picker.dismiss()
+        }
+    }
+
+
+
+    private fun scrollToPickedMonth(yearMonth: YearMonth) {
+        val destDate = if (yearMonth == viewModel.signedDate.yearMonth) {
+            viewModel.signedDate
+        } else {
+            yearMonth.atDay(1)
+        }
+
+        if (yearMonth.isBefore(viewModel.firstMonth)) {
+            val endMonth = viewModel.firstMonth.minusMonths(1)
+
+            viewModel.firstMonth = yearMonth.minusMonths(5)
+            binding.calendarView.setup(viewModel.firstMonth, viewModel.lastMonth, DayOfWeek.SUNDAY)
+            binding.calendarView.scrollToDate(destDate)
+
+            viewModel.loadAllDiary(
+                getFormattedDate(viewModel.firstVisibleDate),
+                getFormattedDate(endMonth.atEndOfMonth())
+            )
+
+        }
+        else {
+            binding.calendarView.scrollToDate(destDate)
+        }
     }
 
 
@@ -112,7 +202,7 @@ class DiaryFragment: Fragment() {
                     viewModel.addToMap(data)
                     binding.recyclerviewDiary.adapter?.notifyItemChanged(0)
                     binding.recyclerviewDiary.adapter?.notifyItemInserted(viewModel.diaryMap.value!![updateDate]!!.size)
-                    binding.calendarView.notifyDateChanged(dayBinder.selectedDate)
+                    binding.calendarView.notifyDateChanged(viewModel.selectedDate)
                 }
             }
 
@@ -126,50 +216,23 @@ class DiaryFragment: Fragment() {
                 viewModel.diaryMap.value!![data.date]!![updatePosition] = data
                 binding.recyclerviewDiary.adapter?.notifyItemChanged(0)
                 binding.recyclerviewDiary.adapter?.notifyItemChanged(updatePosition + 1)
-                binding.calendarView.notifyDateChanged(dayBinder.selectedDate)
+                binding.calendarView.notifyDateChanged(viewModel.selectedDate)
                 updatePosition = RecyclerView.NO_POSITION
             }
             else if (it.data?.hasExtra("deletedContent") == true) {
                 viewModel.diaryMap.value!![updateDate]!!.removeAt(updatePosition)
                 binding.recyclerviewDiary.adapter?.notifyItemChanged(0)
                 binding.recyclerviewDiary.adapter?.notifyItemRemoved(updatePosition + 1)
-                binding.calendarView.notifyDateChanged(dayBinder.selectedDate)
+                binding.calendarView.notifyDateChanged(viewModel.selectedDate)
                 updatePosition = RecyclerView.NO_POSITION
             }
         }
     }
 
 
-    private fun updateForSignIn() {
-        viewModel.loadAllDiary(getFormattedDate(lastMonth.atDay(1)))
-        binding.btnAddDiary.isClickable = true
-
-        dayBinder.onDaySelectedListener = {
-            val data = viewModel.getDiaryList(getFormattedDate(it))
-
-            (binding.recyclerviewDiary.adapter as DiaryRecyclerViewAdapter).updateDiary(data)
-        }
-
-        binding.recyclerviewDiary.visibility = View.VISIBLE
-    }
-
-
-    private fun updateForSignOut() {
-        binding.btnAddDiary.isClickable = false
-        binding.recyclerviewDiary.visibility = View.GONE
-        (binding.calendarView.dayBinder as CalendarDayBinder).onDaySelectedListener = null
-        viewModel.clearDairyForSignOut()
-        binding.calendarView.notifyCalendarChanged()
-    }
-
-
-
-    private lateinit var firstMonth: YearMonth
-    private lateinit var lastMonth: YearMonth
-    private val currentMonth = YearMonth.now()
 
     private fun initCalendar() {
-        dayBinder = CalendarDayBinder(binding.calendarView, viewModel.diaryMap.value!!)
+        dayBinder = CalendarDayBinder(binding.calendarView, viewModel)
         binding.calendarView.dayBinder = dayBinder
 
         headerBinder = CalendarHeaderBinder()
@@ -179,48 +242,59 @@ class DiaryFragment: Fragment() {
             (binding.calendarView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
-        firstMonth = currentMonth
-        lastMonth = firstMonth.minusMonths(10)
-
         binding.calendarView.setup(
-            firstMonth,
-            lastMonth,
+            viewModel.firstMonth,
+            viewModel.lastMonth,
             DayOfWeek.SUNDAY
         )
 
-        binding.calendarView.scrollToDate(dayBinder.selectedDate)
+        setCalendarListener()
+
+        if (viewModel.isWeekMode) {
+            collapseCalendar()
+        }
+        else {
+            expandCalendar()
+        }
+
+        binding.calendarView.scrollToDate(viewModel.currentDate)
+    }
+
+
+
+    private fun setCalendarListener() {
+        dayBinder.onDaySelectedListener = {
+            val data = viewModel.getDiaryList(getFormattedDate(it))
+
+            (binding.recyclerviewDiary.adapter as DiaryRecyclerViewAdapter).updateDiary(data)
+        }
 
         @SuppressLint("SetTextI18n")
         binding.calendarView.monthScrollListener = {
-            binding.calendarView.notifyDateChanged(dayBinder.selectedDate)
-
-            if (!binding.calendarView.isWeekMode()) {
+            if (!viewModel.isWeekMode) {
                 binding.textviewCalendarMonth.text = "${it.year}년 ${it.month}월"
-            } else {
-                val lastDate = it.weekDays.last().last().date
-                val yearMonth = if (currentMonth.isBefore(lastDate.yearMonth)) currentMonth else lastDate.yearMonth
+                viewModel.currentDate = it.yearMonth.atDay(1)
+            }
+            else {
+                viewModel.currentDate = it.weekDays.last().last().date
+                val yearMonth = viewModel.currentDate.yearMonth
+                Log.wtf("TEST", viewModel.currentDate.toString())
+
                 binding.textviewCalendarMonth.text = "${yearMonth.year}년 ${yearMonth.monthValue}월"
             }
         }
     }
 
 
+
+
     private fun addLiveDataObserver() {
         viewModel.diaryMap.observe(viewLifecycleOwner) {
             binding.calendarView.notifyCalendarChanged()
 
-            val data = viewModel.getDiaryList(getFormattedDate(dayBinder.selectedDate))
+            val data = viewModel.getDiaryList(getFormattedDate(viewModel.selectedDate))
 
             (binding.recyclerviewDiary.adapter as DiaryRecyclerViewAdapter).updateDiary(data)
-        }
-
-        userViewModel.signed.observe(viewLifecycleOwner) {
-            if (it) {
-                updateForSignIn()
-            }
-            else {
-                updateForSignOut()
-            }
         }
     }
 
@@ -235,14 +309,14 @@ class DiaryFragment: Fragment() {
     }
 
     private fun expandCalendar() {
-        if (!binding.calendarView.isWeekMode()) return
+        if (!viewModel.isWeekMode) return
 
-        val firstDate = binding.calendarView.findFirstVisibleDay()?.date ?: return
-        val lastDate = minOf( dayBinder.lastDate,
-            binding.calendarView.findLastVisibleDay()?.date ?: return)
+        val firstDate = maxOf(viewModel.firstVisibleDate,
+            binding.calendarView.findFirstVisibleDay()?.date ?: return)
+        val lastDate = viewModel.currentDate
 
-        val dest = if (dayBinder.selectedDate in firstDate..lastDate) {
-            dayBinder.selectedDate.yearMonth
+        val dest = if (viewModel.selectedDate in firstDate..lastDate) {
+            viewModel.selectedDate.yearMonth
         } else {
             lastDate.yearMonth
         }
@@ -255,7 +329,9 @@ class DiaryFragment: Fragment() {
 
         binding.calendarView.scrollToMonth(dest)
         expandAnimator.start()
+        viewModel.isWeekMode = false
     }
+
 
 
     private val collapseAnimator: ValueAnimator by lazy {
@@ -269,10 +345,7 @@ class DiaryFragment: Fragment() {
 
 
     private fun collapseCalendar() {
-        if (binding.calendarView.isWeekMode()) return
-
-        val firstDate = binding.calendarView.findFirstVisibleDay()?.date ?: return
-        val lastDate = binding.calendarView.findLastVisibleDay()?.date ?: return
+        if (viewModel.isWeekMode) return
 
 
         binding.calendarView.updateMonthConfiguration(
@@ -281,17 +354,18 @@ class DiaryFragment: Fragment() {
             hasBoundaries = false
         )
 
-        if (dayBinder.selectedDate in firstDate..lastDate) {
-            binding.calendarView.scrollToDate(dayBinder.selectedDate)
-        } else {
-            binding.calendarView.scrollToDate(firstDate)
+        if (viewModel.selectedDate.yearMonth == viewModel.currentDate.yearMonth) {
+            binding.calendarView.scrollToDate(viewModel.selectedDate)
+        }
+        else {
+            binding.calendarView.scrollToDate(viewModel.currentDate)
         }
 
         collapseAnimator.start()
+        viewModel.isWeekMode = true
     }
 
 
-    private fun CalendarView.isWeekMode() = maxRowCount == 1
 
     private fun getFormattedDate(date: LocalDate) : Int {
         return date.year * 10000 + date.monthValue * 100 + date.dayOfMonth

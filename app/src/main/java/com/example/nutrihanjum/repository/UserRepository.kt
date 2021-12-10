@@ -29,6 +29,7 @@ object UserRepository {
     val userEmail get() = auth.currentUser?.email
     val userName get() = auth.currentUser?.displayName
     val userPhoto get() = auth.currentUser?.photoUrl
+    val signedDate get() = auth.currentUser?.metadata?.creationTimestamp
 
 
     fun reAuthenticate(password: String) = callbackFlow {

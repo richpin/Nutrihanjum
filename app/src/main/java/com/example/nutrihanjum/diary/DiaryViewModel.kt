@@ -1,18 +1,20 @@
 package com.example.nutrihanjum.diary
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.util.Log
+import androidx.lifecycle.*
 import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.model.FoodDTO
 import com.example.nutrihanjum.repository.DiaryRepository
+import com.example.nutrihanjum.repository.UserRepository
 import com.example.nutrihanjum.util.NHPatternUtil
+import com.kizitonwose.calendarview.utils.yearMonth
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.time.*
 import kotlin.collections.ArrayList
 
-class DiaryViewModel : ViewModel() {
+class DiaryViewModel: ViewModel() {
 
 
     // for add diary activity
@@ -85,6 +87,42 @@ class DiaryViewModel : ViewModel() {
     }
 
 
+    var selectedDate: LocalDate = LocalDate.now()
+        set(value) {
+            currentDate = value
+            field = value
+        }
+    var currentDate: LocalDate = LocalDate.now()
+        set(value) {
+            field = if (value.isBefore(signedDate)) signedDate
+            else if (value.isAfter(today)) today
+            else value
+        }
+
+    val lastVisibleDate: LocalDate = YearMonth.now().atEndOfMonth()
+    var firstVisibleDate: LocalDate = YearMonth.now().minusMonths(10).atDay(1)
+    val today: LocalDate = LocalDate.now()
+
+    var firstMonth: YearMonth = YearMonth.now()
+        set(value) {
+            field = if (value.isBefore(signedDate.yearMonth)) {
+                firstVisibleDate = signedDate.yearMonth.atDay(1)
+                signedDate.yearMonth
+            } else {
+                firstVisibleDate = value.atDay(1)
+                value
+            }
+        }
+
+    var lastMonth: YearMonth = YearMonth.now()
+    val signedDate: LocalDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(UserRepository.signedDate!!), ZoneId.systemDefault()).toLocalDate()
+
+    init {
+        firstMonth = YearMonth.now().minusMonths(10)
+    }
+
+    var isWeekMode = true
+
     fun loadAllDiaryAtDate(date: Int) = viewModelScope.launch {
         val diaryMap = _diaryMap.value!!
         diaryMap[date] = arrayListOf()
@@ -97,8 +135,8 @@ class DiaryViewModel : ViewModel() {
     }
 
 
-    fun loadAllDiary(date: Int) = viewModelScope.launch {
-        DiaryRepository.loadAllDiary(date).collect {
+    fun loadAllDiary(start: Int, end: Int) = viewModelScope.launch {
+        DiaryRepository.loadAllDiary(start, end).collect {
             it.forEach { content ->
                 addToMap(content)
             }
@@ -107,10 +145,6 @@ class DiaryViewModel : ViewModel() {
         _diaryMap.postValue(_diaryMap.value)
     }
 
-
-    fun clearDairyForSignOut() {
-        _diaryMap.value!!.clear()
-    }
 
 
     fun addToMap(content: ContentDTO) {

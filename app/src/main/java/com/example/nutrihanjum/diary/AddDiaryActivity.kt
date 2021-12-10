@@ -32,6 +32,7 @@ import com.example.nutrihanjum.util.ProgressBarAnimationUtil.setProgressWithAnim
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
+import kotlin.collections.ArrayList
 import kotlin.math.max
 
 class AddDiaryActivity : AppCompatActivity() {
@@ -52,12 +53,14 @@ class AddDiaryActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initCommonView()
+
         if (intent.hasExtra("date")) {
             initForAddDiary()
             getPhoto()
         } else {
             initForModifyDiary()
         }
+
     }
 
 
@@ -137,7 +140,9 @@ class AddDiaryActivity : AppCompatActivity() {
                 .load(content.imageUrl)
                 .into(imageviewPreview)
 
+            viewModel.foodList.clear()
             viewModel.foodList.addAll(content.foods)
+            binding.recyclerviewFoods.adapter?.notifyDataSetChanged()
             edittextHashtag.hashTagList = content.hashTagList
         }
 
@@ -387,6 +392,7 @@ class AddDiaryActivity : AppCompatActivity() {
             options {
                 setGuidelines(CropImageView.Guidelines.ON)
                 setAspectRatio(1,1)
+                setActivityMenuIconColor(Color.BLACK)
                 setFixAspectRatio(true)
             }
         )

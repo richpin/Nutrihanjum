@@ -156,6 +156,7 @@ class UpdateProfileActivity : AppCompatActivity() {
                 setGuidelines(CropImageView.Guidelines.ON)
                 setCropShape(CropImageView.CropShape.OVAL)
                 setAspectRatio(1,1)
+                setActivityMenuIconColor(Color.BLACK)
                 setFixAspectRatio(true)
             })
         }

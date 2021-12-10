@@ -4,45 +4,44 @@ import android.graphics.Color
 import android.view.View
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.CalendarDayLayoutBinding
+import com.example.nutrihanjum.diary.DiaryViewModel
 import com.example.nutrihanjum.model.ContentDTO
 import com.kizitonwose.calendarview.CalendarView
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.DayOwner
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
+import com.kizitonwose.calendarview.utils.yearMonth
 import java.time.LocalDate
 import java.time.YearMonth
 
 class CalendarDayBinder(
     val calendarView: CalendarView,
-    val diaryList: Map<Int, ArrayList<ContentDTO>>
+    private val viewModel: DiaryViewModel
 ): DayBinder<CalendarDayBinder.DayViewContainer> {
 
-    var selectedDate: LocalDate = LocalDate.now()
     var onDaySelectedListener: ((day: LocalDate) -> Unit)? = null
 
-    val lastDate = YearMonth.now().atEndOfMonth()
-    val today = LocalDate.now()
 
     override fun bind(container: DayViewContainer, day: CalendarDay) {
 
-        if (day.date.isAfter(lastDate)) {
+        if (day.date.isAfter(viewModel.lastVisibleDate) || day.date.isBefore(viewModel.firstVisibleDate)) {
             container.binding.root.visibility = View.INVISIBLE
         }
         else {
             container.binding.textviewCalendarDay.text = day.date.dayOfMonth.toString()
             container.day = day
 
-            if (day.owner == DayOwner.THIS_MONTH && !day.date.isAfter(today)) {
+            if (day.owner == DayOwner.THIS_MONTH && !day.date.isAfter(viewModel.today) && !day.date.isBefore(viewModel.signedDate)) {
                 container.binding.textviewCalendarDay.setTextColor(Color.BLACK)
-                if (day.date == selectedDate) {
+                if (day.date == viewModel.selectedDate) {
                     container.binding.textviewCalendarDay.setBackgroundResource(R.drawable.calendar_selected_date_background)
                 }
                 else {
                     container.binding.textviewCalendarDay.background = null
                 }
 
-                if (diaryList[getFormattedDate(day.date)].isNullOrEmpty()) {
+                if (viewModel.diaryMap.value!![getFormattedDate(day.date)].isNullOrEmpty()) {
                     container.binding.indicatorDiaryExist.visibility = View.GONE
                 }
                 else {
@@ -54,7 +53,7 @@ class CalendarDayBinder(
                 container.binding.textviewCalendarDay.setTextColor(Color.LTGRAY)
                 container.binding.textviewCalendarDay.background = null
 
-                if (diaryList[getFormattedDate(day.date)].isNullOrEmpty()) {
+                if (viewModel.diaryMap.value!![getFormattedDate(day.date)].isNullOrEmpty()) {
                     container.binding.indicatorDiaryExist.visibility = View.GONE
                 }
                 else {
@@ -74,17 +73,17 @@ class CalendarDayBinder(
         init {
             view.setOnClickListener {
                 day?.let {
-                    if (it.date.isAfter(today)) return@let
+                    if (it.date.isAfter(viewModel.today) || it.date.isBefore(viewModel.signedDate)) return@let
+                    if (it.owner != DayOwner.THIS_MONTH) {
+                        calendarView.smoothScrollToDate(it.date)
+                        return@setOnClickListener
+                    }
 
-                    val prevSelection = selectedDate
-                    selectedDate = it.date
+                    val prevSelection = viewModel.selectedDate
+                    viewModel.selectedDate = it.date
 
                     calendarView.notifyDateChanged(prevSelection)
                     calendarView.notifyDayChanged(it)
-
-                    if (it.owner != DayOwner.THIS_MONTH) {
-                        calendarView.scrollToMonth(YearMonth.from(it.date))
-                    }
 
                     onDaySelectedListener?.invoke(it.date)
                 }

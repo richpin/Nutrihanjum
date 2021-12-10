@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/box_rounded_white"
+    android:layout_margin="20dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.shawnlin.numberpicker.NumberPicker
+        android:id="@+id/picker_year"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/picker_month"
+        app:layout_constraintBottom_toTopOf="@id/layout_set_btn"
+        app:np_dividerColor="@color/orange"
+        app:np_textSize="15sp"
+        app:np_selectedTextSize="15sp"/>
+
+    <com.shawnlin.numberpicker.NumberPicker
+        android:id="@+id/picker_month"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintStart_toEndOf="@id/picker_year"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/layout_set_btn"
+        app:np_dividerColor="@color/orange"
+        app:np_textSize="15sp"
+        app:np_selectedTextSize="15sp"/>
+
+    <LinearLayout
+        android:id="@+id/layout_set_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/btn_cancel_pick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="0dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/apple_gothic_neo_b"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:text="@string/btn_nutrition_cancel"/>
+
+        <RelativeLayout
+            android:id="@+id/layout_vertical_division"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="8dp"
+            android:background="@color/colorDivision"/>
+
+        <Button
+            android:id="@+id/btn_pick_year_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="0dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/apple_gothic_neo_b"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:text="이동"/>
+
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

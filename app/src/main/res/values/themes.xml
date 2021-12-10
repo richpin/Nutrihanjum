@@ -20,34 +20,13 @@
         <item name="fontFamily">@font/apple_gothic_neo_b</item>
     </style>
 
-    <style name="CalendarTitleAppearance" parent="TextAppearance.AppCompat.Medium">
-        <item name="android:textColor">@color/black</item>
-        <item name="android:fontFamily">@font/apple_gothic_neo_b</item>
-        <item name="android:textSize">20sp</item>
-    </style>
-
-    <style name="CalendarWeekDayAppearance" parent="TextAppearance.AppCompat.Medium">
-        <item name="android:textColor">@color/black</item>
-        <item name="android:fontFamily">@font/apple_gothic_neo_r</item>
-        <item name="android:textSize">16sp</item>
-    </style>
-
-    <style name="CalendarDateAppearance" parent="TextAppearance.AppCompat.Medium">
-        <item name="android:textColor">@color/mcv_date_selector</item>
-        <item name="android:fontFamily">@font/apple_gothic_neo_b</item>
-        <item name="android:textSize">16sp</item>
-    </style>
-
-    <style name="CalendarSundayAppearance" parent="TextAppearance.AppCompat.Medium">
-        <item name="android:textColor">@color/mcv_sunday_selector</item>
-        <item name="android:fontFamily">@font/apple_gothic_neo_b</item>
-        <item name="android:textSize">16sp</item>
-    </style>
-
-    <style name="CalendarSaturdayAppearance" parent="TextAppearance.AppCompat.Medium">
-        <item name="android:textColor">@color/mcv_saturday_selector</item>
-        <item name="android:fontFamily">@font/apple_gothic_neo_b</item>
-        <item name="android:textSize">16sp</item>
+    <style name="CropImageViewTheme" parent="@style/Theme.AppCompat">
+        <item name="colorPrimary">@color/white</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="actionMenuTextColor">@color/black</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:windowBackground">@color/light_gray</item>
+        <item name="fontFamily">@font/apple_gothic_neo_b</item>
     </style>
 
 </resources>

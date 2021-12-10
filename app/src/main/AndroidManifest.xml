@@ -68,7 +68,7 @@
 
         <activity
             android:name="com.canhub.cropper.CropImageActivity"
-            android:theme="@style/Theme.AppCompat.Light" />
+            android:theme="@style/CropImageViewTheme" />
         <activity
             android:name=".diary.AddDiaryActivity"
             android:exported="true" />

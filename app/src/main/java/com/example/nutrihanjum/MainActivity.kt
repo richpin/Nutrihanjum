@@ -47,34 +47,24 @@ class MainActivity : AppCompatActivity() {
         setBottomNavItemListener()
 
         if (savedInstanceState?.containsKey("curFragment") == true) {
-            val id = savedInstanceState.getInt("curFragment")
+            val tag = savedInstanceState.getString("curFragment")
 
-            curFragment = getFragmentFromResId(id)
-            binding.bottomNavigation.selectedItemId = id
+            curFragment = supportFragmentManager.findFragmentByTag(tag)!!
+            binding.bottomNavigation.selectedItemId = fragmentTagToResId(tag!!)
         } else {
             curFragment = CommunityFragment.getInstance()
             binding.bottomNavigation.selectedItemId = R.id.action_home
         }
 
-        if (userViewModel.isSigned()) {
-            userViewModel.notifyUserSigned()
-        } else {
-            userViewModel.notifyUserSignedOut()
-        }
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if (it.isSuccessful) {
+                val token = it.result
 
-        userViewModel.signed.observe(this, Observer {
-            if (it) {
-                FirebaseMessaging.getInstance().token.addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        val token = it.result
+                Log.wtf("Token", token)
 
-                        Log.wtf("Token", token)
-
-                        UserRepository.updateToken(token)
-                    }
-                }
+                UserRepository.updateToken(token)
             }
-        })
+        }
     }
 
     private fun setBottomNavItemListener() {
@@ -84,8 +74,10 @@ class MainActivity : AppCompatActivity() {
 
             when (it.itemId) {
                 R.id.action_home -> {
-                    transaction.show(CommunityFragment.getInstance()).commit()
-                    curFragment = CommunityFragment.getInstance()
+                    val fragment = supportFragmentManager.findFragmentByTag("Community")!!
+
+                    transaction.show(fragment).commit()
+                    curFragment = fragment
                     binding.topBarTextview.text = getString(R.string.home_category)
                     binding.topBarActionImageview.setImageResource(R.drawable.ic_notification)
                     binding.topBarActionLayout.setOnClickListener {
@@ -94,8 +86,10 @@ class MainActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 R.id.action_chatbot -> {
-                    transaction.show(ChatBotFragment.getInstance()).commit()
-                    curFragment = ChatBotFragment.getInstance()
+                    val fragment = supportFragmentManager.findFragmentByTag("ChatBot")!!
+
+                    transaction.show(fragment).commit()
+                    curFragment = fragment
                     binding.topBarTextview.text = getString(R.string.chatbot_category)
                     binding.topBarActionImageview.setImageResource(R.drawable.ic_notification)
                     binding.topBarActionLayout.setOnClickListener {
@@ -104,8 +98,10 @@ class MainActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 R.id.action_diary -> {
-                    transaction.show(DiaryFragment.getInstance()).commit()
-                    curFragment = DiaryFragment.getInstance()
+                    val fragment = supportFragmentManager.findFragmentByTag("Diary")!!
+
+                    transaction.show(fragment).commit()
+                    curFragment = fragment
                     binding.topBarTextview.text = getString(R.string.diary_category)
                     binding.topBarActionImageview.setImageResource(R.drawable.ic_notification)
                     binding.topBarActionLayout.setOnClickListener {
@@ -114,8 +110,10 @@ class MainActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 R.id.action_news -> {
-                    transaction.show(NewsFragment.getInstance()).commit()
-                    curFragment = NewsFragment.getInstance()
+                    val fragment = supportFragmentManager.findFragmentByTag("News")!!
+
+                    transaction.show(fragment).commit()
+                    curFragment = fragment
                     binding.topBarTextview.text = getString(R.string.news_category)
                     binding.topBarActionImageview.setImageResource(R.drawable.ic_notification)
                     binding.topBarActionLayout.setOnClickListener {
@@ -124,8 +122,10 @@ class MainActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 R.id.action_user -> {
-                    transaction.show(UserFragment.getInstance()).commit()
-                    curFragment = UserFragment.getInstance()
+                    val fragment = supportFragmentManager.findFragmentByTag("User")!!
+
+                    transaction.show(fragment).commit()
+                    curFragment = fragment
                     binding.topBarTextview.text = getString(R.string.user_category)
                     binding.topBarActionImageview.setImageResource(R.drawable.ic_settings)
                     binding.topBarActionLayout.setOnClickListener {
@@ -139,43 +139,47 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initFragments() {
+
+        if (supportFragmentManager.fragments.isNotEmpty()) {
+            val transaction = supportFragmentManager.beginTransaction()
+
+            supportFragmentManager.fragments.forEach {
+                transaction.attach(it).hide(it)
+            }
+
+            transaction.commit()
+            return
+        }
+
+        supportFragmentManager.beginTransaction()
+            .add(R.id.main_content, ChatBotFragment(), "ChatBot")
+            .add(R.id.main_content, CommunityFragment(), "Community")
+            .add(R.id.main_content, DiaryFragment(), "Diary")
+            .add(R.id.main_content, NewsFragment(), "News")
+            .add(R.id.main_content, UserFragment(), "User")
+            .commitNow()
+
         val transaction = supportFragmentManager.beginTransaction()
 
         supportFragmentManager.fragments.forEach {
-            transaction.remove(it)
+            transaction.hide(it)
         }
 
-        transaction.commitNow()
-
-        supportFragmentManager.beginTransaction()
-            .add(R.id.main_content, ChatBotFragment.getInstance()).hide(ChatBotFragment.getInstance())
-            .add(R.id.main_content, CommunityFragment.getInstance()).hide(CommunityFragment.getInstance())
-            .add(R.id.main_content, DiaryFragment.getInstance()).hide(DiaryFragment.getInstance())
-            .add(R.id.main_content, NewsFragment.getInstance()).hide(NewsFragment.getInstance())
-            .add(R.id.main_content, UserFragment.getInstance()).hide(UserFragment.getInstance())
-            .commitNow()
+        transaction.commit()
     }
 
-    private fun getFragmentFromResId(id: Int) = when (id) {
-        R.id.action_home -> CommunityFragment.getInstance()
-        R.id.action_diary -> DiaryFragment.getInstance()
-        R.id.action_chatbot -> ChatBotFragment.getInstance()
-        R.id.action_news -> NewsFragment.getInstance()
-        R.id.action_user -> UserFragment.getInstance()
-        else -> CommunityFragment.getInstance()
-    }
 
-    private fun getResIdFromFragment(fragment: Fragment) = when (fragment) {
-        is CommunityFragment -> R.id.action_home
-        is DiaryFragment -> R.id.action_diary
-        is ChatBotFragment -> R.id.action_chatbot
-        is NewsFragment -> R.id.action_news
-        is UserFragment -> R.id.action_user
+    private fun fragmentTagToResId(tag: String) = when(tag) {
+        "Diary" -> R.id.action_diary
+        "ChatBot" -> R.id.action_chatbot
+        "News" -> R.id.action_news
+        "User" -> R.id.action_user
         else -> R.id.action_home
     }
 
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt("curFragment", getResIdFromFragment(curFragment))
+        outState.putString("curFragment", curFragment.tag)
     }
 }

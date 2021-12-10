@@ -25,10 +25,11 @@ object DiaryRepository {
     val userPhoto get() = auth.currentUser?.photoUrl
 
 
-    fun loadAllDiary(date: Int) = callbackFlow {
+    fun loadAllDiary(start: Int, end: Int) = callbackFlow {
         store.collection("posts")
             .whereEqualTo("uid", uid)
-            .whereGreaterThanOrEqualTo("date", date)
+            .whereGreaterThanOrEqualTo("date", start)
+            .whereLessThanOrEqualTo("date", end)
             .get()
             .addOnSuccessListener {
                 trySend(it.toObjects(ContentDTO::class.java))

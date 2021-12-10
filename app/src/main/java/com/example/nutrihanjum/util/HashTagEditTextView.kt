@@ -51,6 +51,7 @@ class HashTagEditTextView @JvmOverloads constructor(
 
 
     private var isUserInput = true
+    private var isInsideCall = false
 
     var hashTagList: List<String>
         get() {
@@ -58,13 +59,13 @@ class HashTagEditTextView @JvmOverloads constructor(
                 ?.map {
                     var sanitized = it.trim()
 
-                    if (sanitized.length > hashTagMaxLength) {
+                    if (sanitized.length > hashTagMaxLength && isInsideCall) {
                         Toast.makeText(context, hashTagMaxLengthWarning, Toast.LENGTH_SHORT).show()
                     }
 
                     sanitized = sanitized.take(hashTagMaxLength)
 
-                    if (sanitized.contains(NHPatternUtil.HASHTAG_NOT_ALLOWED)) {
+                    if (sanitized.contains(NHPatternUtil.HASHTAG_NOT_ALLOWED) && isInsideCall) {
                         Toast.makeText(context, hashTagNotAllowedCharWarning, Toast.LENGTH_SHORT).show()
                     }
 
@@ -72,7 +73,7 @@ class HashTagEditTextView @JvmOverloads constructor(
                 }
                 ?.filter { it.isNotEmpty() } ?: listOf()
 
-            if (result.size > hashTagMaxCount) {
+            if (result.size > hashTagMaxCount && isInsideCall) {
                 Toast.makeText(context, hashTagMaxCountWarning, Toast.LENGTH_SHORT).show()
 
             }
@@ -119,11 +120,14 @@ class HashTagEditTextView @JvmOverloads constructor(
                         if (formatFlag && hasFocus()) {
                             var hashTagText = ""
 
+                            isInsideCall = true
                             hashTagList.forEach {
                                 hashTagText += "$hashTagPrefix$it "
                             }
+                            isInsideCall = false
 
                             isUserInput = false
+
                             editable?.replace(0, editable.trimEnd().length, hashTagText.trim())
                             isUserInput = true
                         }
