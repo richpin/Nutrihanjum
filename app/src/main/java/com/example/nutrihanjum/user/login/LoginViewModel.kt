@@ -1,5 +1,6 @@
 package com.example.nutrihanjum.user.login
 
+import android.content.Context
 import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -25,6 +26,18 @@ class LoginViewModel : ViewModel() {
 
     fun signInWithEmail(email: String, password: String) = viewModelScope.launch {
         UserRepository.signInWithEmail(email, password).collect {
+            _loginResult.postValue(it)
+        }
+    }
+
+    fun signInWithKakaotalk(mContext: Context) = viewModelScope.launch {
+        UserRepository.signInWithKakaotalk(mContext).collect {
+            _loginResult.postValue(it)
+        }
+    }
+
+    fun signInWithNaver(accessToken: String, mContext: Context) = viewModelScope.launch {
+        UserRepository.signInWithNaver(accessToken, mContext).collect {
             _loginResult.postValue(it)
         }
     }

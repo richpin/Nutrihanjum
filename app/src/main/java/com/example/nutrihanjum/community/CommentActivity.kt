@@ -110,10 +110,8 @@ class CommentActivity : AppCompatActivity() {
             val content = binding.commentActivityCommentEdittext.text.toString()
 
             if (TextUtils.isEmpty(content)) {
-                Toast.makeText(this, R.string.comment_empty, Toast.LENGTH_SHORT).show()
-            } else if (!userViewModel.isSigned()) {
-
-            } else {
+                Toast.makeText(this, R.string.comment_empty, Toast.LENGTH_SHORT).show()}
+            else {
                 recyclerViewAdapter.users[uid!!] = Pair(userName!!, userPhoto.toString())
 
                 val newComment = ContentDTO.CommentDTO()

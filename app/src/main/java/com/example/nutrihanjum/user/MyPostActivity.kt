@@ -10,6 +10,7 @@ import com.example.nutrihanjum.community.CommunityRecyclerViewAdapter
 import com.example.nutrihanjum.community.CommunityViewModel
 import com.example.nutrihanjum.community.PostViewModel
 import com.example.nutrihanjum.databinding.ActivityMyPostBinding
+import com.example.nutrihanjum.diary.DiaryViewModel
 import com.example.nutrihanjum.model.ContentDTO
 
 class MyPostActivity : AppCompatActivity() {
@@ -17,6 +18,7 @@ class MyPostActivity : AppCompatActivity() {
 
     private lateinit var postViewModel: PostViewModel
     private lateinit var communityViewModel: CommunityViewModel
+    private lateinit var diaryViewModel: DiaryViewModel
 
     private val recyclerViewAdapter = CommunityRecyclerViewAdapter()
     private val layoutManager = LinearLayoutManager(this)
@@ -26,6 +28,7 @@ class MyPostActivity : AppCompatActivity() {
         binding = ActivityMyPostBinding.inflate(layoutInflater)
         postViewModel = ViewModelProvider(this).get(PostViewModel::class.java)
         communityViewModel= ViewModelProvider(this).get(CommunityViewModel::class.java)
+        diaryViewModel = ViewModelProvider(this).get(DiaryViewModel::class.java)
 
         binding.MyPostActivityRecyclerview.layoutManager = layoutManager
         binding.MyPostActivityRecyclerview.setHasFixedSize(true)
@@ -95,10 +98,11 @@ class MyPostActivity : AppCompatActivity() {
     private fun addViewListener() {
         binding.myPostActivityBackButton.setOnClickListener { onBackPressed() }
 
-        recyclerViewAdapter.likeClickEvent =
-            { first, second -> communityViewModel.eventLikes(first, second) }
-        recyclerViewAdapter.savedClickEvent =
-            { first, second -> communityViewModel.eventSaved(first, second) }
+        with(recyclerViewAdapter){
+            likeClickEvent = { first, second -> communityViewModel.eventLikes(first, second) }
+            savedClickEvent = { first, second -> communityViewModel.eventSaved(first, second) }
+            deleteContentEvent = { first, second -> diaryViewModel.deleteDiary(first, second)}
+        }
     }
 
     private fun modifyLayoutManager() {

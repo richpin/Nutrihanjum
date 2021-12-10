@@ -3,6 +3,7 @@ package com.example.nutrihanjum.news
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -19,13 +20,18 @@ class NewsDetailActivity : AppCompatActivity() {
 
         binding.newsDetailActivityBackButton.setOnClickListener { onBackPressed() }
 
-        binding.webview.settings.javaScriptEnabled = true
-        binding.webview.webChromeClient = WebChromeClient()
-        binding.webview.webViewClient = object: WebViewClient() {
-            override fun onPageFinished(view: WebView?, url: String?) {
-                binding.layoutLoading.visibility = View.GONE
+        with(binding.webview){
+            settings.javaScriptEnabled = true
+            webChromeClient = WebChromeClient()
+            webViewClient = object: WebViewClient() {
+                override fun onPageFinished(view: WebView?, url: String?) {
+                    binding.layoutLoading.visibility = View.GONE
+                }
             }
+            setLayerType(View.LAYER_TYPE_HARDWARE, null)
         }
+        window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+            WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
 
         intent?.let {
             val url = intent.getStringExtra("webUrl")

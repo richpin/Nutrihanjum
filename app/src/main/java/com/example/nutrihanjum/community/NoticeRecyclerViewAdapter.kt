@@ -25,7 +25,9 @@ class NoticeRecyclerViewAdapter() : RecyclerView.Adapter<NoticeRecyclerViewAdapt
     }
 
     fun initNotices() {
+        val size = noticeDTOs.size
         noticeDTOs.clear()
+        notifyDataSetChanged()
     }
 
     fun isUserEmpty(uid: String): Boolean {

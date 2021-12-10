@@ -1,9 +1,6 @@
 package com.example.nutrihanjum.community
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.app.Activity
-import android.net.Uri
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
@@ -12,8 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.view.ViewCompat
-import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -59,7 +54,11 @@ class CommunityFragment : Fragment() {
         userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         diaryViewModel = ViewModelProvider(requireActivity()).get(DiaryViewModel::class.java)
 
-        recyclerViewAdapter.initDialog(requireActivity())
+        with(recyclerViewAdapter){
+            initContents()
+            initDialog(requireActivity())
+        }
+
         setRecyclerview()
         addViewListener()
 
@@ -75,7 +74,7 @@ class CommunityFragment : Fragment() {
     }
 
     private fun setRecyclerview() {
-        with(recyclerViewAdapter){
+        with(recyclerViewAdapter) {
             likeClickEvent = { first, second -> viewModel.eventLikes(first, second) }
             savedClickEvent = { first, second -> viewModel.eventSaved(first, second) }
             deleteContentEvent = { first, second -> diaryViewModel.deleteDiary(first, second) }
@@ -122,13 +121,11 @@ class CommunityFragment : Fragment() {
 
     private fun addLiveDataObserver() {
         viewModel.contents.observe(viewLifecycleOwner, Observer {
-            if (recyclerViewAdapter.itemCount == 0) {
-                recyclerViewAdapter.updateContents(it)
-                recyclerViewAdapter.notifyItemRangeInserted(
-                    ((page - 1) * boardLimit).toInt(),
-                    boardLimit.toInt()
-                )
-            }
+            recyclerViewAdapter.updateContents(it)
+            recyclerViewAdapter.notifyItemRangeInserted(
+                ((page - 1) * boardLimit).toInt(),
+                boardLimit.toInt()
+            )
         })
 
         viewModel.bannerUri.observe(viewLifecycleOwner, Observer {

@@ -16,6 +16,12 @@ import com.example.nutrihanjum.model.NewsDTO
 class NewsRecyclerViewAdapter: RecyclerView.Adapter<NewsRecyclerViewAdapter.ViewHolder>() {
     var newsDTOs = arrayListOf<NewsDTO>()
 
+    fun initNews() {
+        val size = newsDTOs.size
+        newsDTOs.clear()
+        notifyDataSetChanged()
+    }
+
     fun updateNews(data: ArrayList<NewsDTO>) {
         newsDTOs = data
     }

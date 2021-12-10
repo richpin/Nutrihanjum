@@ -23,7 +23,7 @@
     <string name="save">저장</string>
     <string name="popup_report">신고하기</string>
     <string name="notification">알림</string>
-    <string name="read_more_word">...더보기</string>
+    <string name="read_more_word">더보기</string>
     <string name="read_more">...</string>
     <string name="recommend">추천</string>
     <string name="count">개</string>
@@ -96,7 +96,6 @@
 
     <string name="msg_mealtime_not_selected">식사를 언제 했는지 입력해주세요</string>
     <string name="msg_photo_not_selected">식단 사진을 올려주세요</string>
-    <string name="msg_hash_tag_invalidate">해시태그는 하나당 최대 20글자, 최대 10개까지만 가능합니다</string>
 
     <string name="failed_to_upload">잠시 후에 다시 시도해주세요</string>
 
@@ -146,8 +145,18 @@
     <string name="channel_description">PushNotification</string>
     <string name="edittext_memo_hint">내용을 입력해주세요.</string>
     <string name="hash_tag_hint">#해쉬태그를 입력해주세요.</string>
-
-    <string name="korean">한국</string>
-    <string name="current_version">1.0</string>
     <string name="textview_chat_bot_start">대화하기</string>
+
+    <string name="korean">한국어</string>
+    <string name="current_version">1.0</string>
+
+    <string name="kakao_provider_key">KAKAO</string>
+    <string name="kakao_app_key">2f3850b999815f9941cc44f7c047a2c6</string>
+    <string name="kakaotalk_packagename">com.kakao.talk</string>
+    <string name="kakaotalk_login_failed">카카오톡 연동에 실패하였습니다.</string>
+
+    <string name="naver_provider_key">NAVER</string>
+    <string name="naver_client_id">mxrQwyd6MdXhiw6vOWPX</string>
+    <string name="naver_client_secret">sGExIUfD7b</string>
+    <string name="naver_login_failed">네이버 연동에 실패하였습니다.</string>
 </resources>

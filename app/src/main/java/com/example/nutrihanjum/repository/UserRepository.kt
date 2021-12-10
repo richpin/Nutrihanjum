@@ -2,9 +2,14 @@ package com.example.nutrihanjum.repository
 
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
+import com.example.nutrihanjum.R
 import com.example.nutrihanjum.model.UserDTO
+import com.example.nutrihanjum.user.login.LoginFragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
@@ -14,8 +19,12 @@ import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.functions.FirebaseFunctions
+import com.google.firebase.functions.FirebaseFunctionsException
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.awaitCancellation
+import com.kakao.sdk.user.UserApiClient
+import com.nhn.android.naverlogin.OAuthLogin
+import com.nhn.android.naverlogin.OAuthLoginHandler
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 
@@ -23,6 +32,8 @@ object UserRepository {
     private val auth get() = FirebaseAuth.getInstance()
     private val store get() = FirebaseFirestore.getInstance()
     private val storage get() = FirebaseStorage.getInstance()
+    private val userClient get() = UserApiClient.instance
+    private val functions = FirebaseFunctions.getInstance("asia-northeast3")
 
     val uid get() = auth.currentUser?.uid
 
@@ -235,6 +246,95 @@ object UserRepository {
         awaitClose()
     }
 
+    fun signInWithKakaotalk(mContext: Context) = callbackFlow{
+        if (!userClient.isKakaoTalkLoginAvailable(mContext)) {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data =
+                Uri.parse("market://details?id=" + mContext.getString(R.string.kakaotalk_packagename))
+            startActivity(mContext, intent, null)
+            trySend(false)
+            close()
+        } else userClient.loginWithKakaoTalk(mContext) { token, error ->
+            if (error != null) {
+                Log.wtf("로그인 실패", error)
+                trySend(false)
+                close()
+            } else if (token != null) {
+                Log.wtf("로그인 성공", token.accessToken)
+                getKaKaoFirebaseJwt(token.accessToken).onSuccessTask { result ->
+                    auth.signInWithCustomToken(result)
+                }.continueWith {  task ->
+                    if (task.isSuccessful) {
+                        trySend(true)
+                    } else {
+                        val e = task.exception
+                        if(e is FirebaseFunctionsException){
+                            Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()
+                        } else {
+                            Toast.makeText(mContext, mContext.getString(R.string.kakaotalk_login_failed), Toast.LENGTH_LONG).show()
+                        }
+                        Log.wtf("Firebase Auth Failed with Kakaotalk", task.exception.toString())
+                        trySend(false)
+                    }
+                    close()
+                }
+            }
+        }
+        awaitClose()
+    }
+
+    private fun getKaKaoFirebaseJwt(accessToken: String): Task<String> {
+        val source = TaskCompletionSource<String>()
+
+        val data = hashMapOf(
+            "token" to accessToken
+        )
+
+        functions.getHttpsCallable("kakaoCustomAuth")
+            .call(data).continueWith { task->
+                if(task.isSuccessful) source.setResult(task.result.data as String)
+                else task.exception?.let { exception -> source.setException(exception) }
+            }
+
+        return source.task
+    }
+
+    fun signInWithNaver(accessToken: String, mContext: Context) = callbackFlow {
+        getNaverFirebaseJwt(accessToken).onSuccessTask { result ->
+            auth.signInWithCustomToken(result)
+        }.continueWith { task ->
+            if (task.isSuccessful) {
+                trySend(true)
+            } else {
+                val e = task.exception
+                if(e is FirebaseFunctionsException){
+                    Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(mContext, mContext.getString(R.string.naver_login_failed), Toast.LENGTH_LONG).show()
+                }
+                Log.wtf("Firebase Auth Failed with Naver", task.exception.toString())
+                trySend(false)
+            }
+            close()
+        }
+        awaitClose()
+    }
+
+    private fun getNaverFirebaseJwt(accessToken: String): Task<String> {
+        val source = TaskCompletionSource<String>()
+
+        val data = hashMapOf(
+            "token" to accessToken
+        )
+
+        functions.getHttpsCallable("naverCustomAuth")
+            .call(data).continueWith { task->
+                if(task.isSuccessful) source.setResult(task.result.data as String)
+                else task.exception?.let { exception -> source.setException(exception) }
+            }
+
+        return source.task
+    }
 
     fun signOut(context: Context) {
         for (provider in auth.currentUser!!.providerData) {
@@ -251,7 +351,35 @@ object UserRepository {
                 }
             }
         }
+    }
 
+    fun getNoticeFlag() = callbackFlow {
+        store.collection("users")
+            .document(uid!!)
+            .get().continueWith {
+                if(it.isSuccessful){
+                    trySend(it.result["noticeFlag"] as Boolean)
+                } else {
+                    Log.wtf("NoticeFlag", "Get Failed")
+                }
+                close()
+            }
+        awaitClose()
+    }
+
+    fun updateNoticeFlag(isChecked: Boolean) = callbackFlow {
+        store.collection("users")
+            .document(uid!!)
+            .update("noticeFlag", isChecked)
+            .continueWith {
+                if (it.isSuccessful) {
+                    trySend(true)
+                } else {
+                    trySend(false)
+                }
+                close()
+            }
+        awaitClose()
     }
 
     fun updateToken(newToken: String) {
