@@ -203,7 +203,7 @@ class CommunityRecyclerViewAdapter() :
             } else {
                 holder.communityitem_content_textview.text = contentDTOs[position].content
                 setViewMore(holder.communityitem_content_textview,
-                holder.communityitem_content_viewmore)
+                    holder.communityitem_content_viewmore)
             }
 
         with(holder.press_like_imageview) {
@@ -233,6 +233,7 @@ class CommunityRecyclerViewAdapter() :
                 viewMoreTextView.visibility = View.GONE
             }
         }
+
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {

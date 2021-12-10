@@ -37,16 +37,6 @@ import kotlin.math.min
 
 class DiaryFragment: Fragment() {
 
-    companion object {
-        @Volatile private var instance: DiaryFragment? = null
-
-        @JvmStatic fun getInstance(): DiaryFragment = instance ?: synchronized(this) {
-            instance ?: DiaryFragment().also {
-                instance = it
-            }
-        }
-    }
-
     private var _binding: DiaryFragmentBinding? = null
     private val binding get() = _binding!!
 

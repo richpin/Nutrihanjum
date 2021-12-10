@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
             curFragment = supportFragmentManager.findFragmentByTag(tag)!!
             binding.bottomNavigation.selectedItemId = fragmentTagToResId(tag!!)
         } else {
-            curFragment = CommunityFragment.getInstance()
+            curFragment = supportFragmentManager.findFragmentByTag("Community")!!
             binding.bottomNavigation.selectedItemId = R.id.action_home
         }
 

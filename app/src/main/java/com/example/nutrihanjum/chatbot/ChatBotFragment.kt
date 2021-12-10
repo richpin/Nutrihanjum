@@ -20,18 +20,6 @@ class ChatBotFragment : Fragment() {
 
     private val TAG = this.javaClass.simpleName
 
-    companion object {
-        @Volatile
-        private var instance: ChatBotFragment? = null
-
-        @JvmStatic
-        fun getInstance(): ChatBotFragment = instance ?: synchronized(this) {
-            instance ?: ChatBotFragment().also {
-                instance = it
-            }
-        }
-    }
-
     private lateinit var viewModel: ChatBotViewModel
     private lateinit var userViewModel: UserViewModel
 

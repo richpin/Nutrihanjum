@@ -24,17 +24,6 @@ class NewsFragment : Fragment() {
     private val binding get() = _binding!!
     private var page = 1
 
-    companion object {
-        @Volatile
-        private var instance: NewsFragment? = null
-
-        @JvmStatic
-        fun getInstance(): NewsFragment = instance ?: synchronized(this) {
-            instance ?: NewsFragment().also {
-                instance = it
-            }
-        }
-    }
 
     private lateinit var viewModel: NewsViewModel
 

@@ -22,15 +22,7 @@ import com.example.nutrihanjum.util.NHUtil.Setting.LOG_OUT
 import com.example.nutrihanjum.util.NHUtil.Setting.PROFILE_EDIT
 
 class UserFragment: Fragment() {
-    companion object {
-        @Volatile private var instance: UserFragment? = null
 
-        @JvmStatic fun getInstance(): UserFragment = instance ?: synchronized(this) {
-            instance ?: UserFragment().also {
-                instance = it
-            }
-        }
-    }
     private var _binding : UserFragmentBinding? = null
     private val binding get() = _binding!!
 

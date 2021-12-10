@@ -24,17 +24,6 @@ class CommunityFragment : Fragment() {
     private val binding get() = _binding!!
     private var page = 1
 
-    companion object {
-        @Volatile
-        private var instance: CommunityFragment? = null
-
-        @JvmStatic
-        fun getInstance(): CommunityFragment = instance ?: synchronized(this) {
-            instance ?: CommunityFragment().also {
-                instance = it
-            }
-        }
-    }
 
     private lateinit var viewModel: CommunityViewModel
     private lateinit var userViewModel: UserViewModel
