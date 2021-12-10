@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.model.UserDTO
+import com.example.nutrihanjum.user.login.LoginFragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
@@ -346,16 +347,6 @@ object UserRepository {
                         .build()
 
                     GoogleSignIn.getClient(context, gso).signOut()
-                }
-                context.getString(R.string.kakao_provider_key) -> {
-                    userClient.logout { error ->
-                        if (error != null) {
-                            Log.e(TAG, "로그아웃 실패. SDK에서 토큰 삭제됨", error)
-                        }
-                        else {
-                            Log.i(TAG, "로그아웃 성공. SDK에서 토큰 삭제됨")
-                        }
-                    }
                 }
             }
         }

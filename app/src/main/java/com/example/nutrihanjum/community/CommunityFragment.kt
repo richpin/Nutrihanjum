@@ -56,7 +56,6 @@ class CommunityFragment : Fragment() {
 
         with(recyclerViewAdapter){
             initContents()
-            notifyDataSetChanged()
             initDialog(requireActivity())
         }
 

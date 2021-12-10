@@ -54,7 +54,7 @@ class CommunityRecyclerViewAdapter() :
     fun initContents() {
         val size = contentDTOs.size
         contentDTOs.clear()
-        notifyItemRangeRemoved(0, size)
+        notifyDataSetChanged()
     }
 
     private fun isLiked(likes: List<String>): Boolean {

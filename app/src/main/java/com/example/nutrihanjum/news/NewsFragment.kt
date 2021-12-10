@@ -49,7 +49,6 @@ class NewsFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(NewsViewModel::class.java)
 
         recyclerViewAdapter.initNews()
-        recyclerViewAdapter.notifyDataSetChanged()
         binding.newsfragmentRecylerview.layoutManager = LinearLayoutManager(activity)
         binding.newsfragmentRecylerview.setHasFixedSize(true)
         binding.newsfragmentRecylerview.adapter = recyclerViewAdapter
