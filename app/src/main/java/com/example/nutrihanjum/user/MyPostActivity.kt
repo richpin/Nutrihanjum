@@ -3,9 +3,11 @@ package com.example.nutrihanjum.user
 import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.nutrihanjum.R
 import com.example.nutrihanjum.community.CommunityRecyclerViewAdapter
 import com.example.nutrihanjum.community.CommunityViewModel
 import com.example.nutrihanjum.community.PostViewModel
@@ -89,9 +91,13 @@ class MyPostActivity : AppCompatActivity() {
             recyclerViewAdapter.updateContents(it)
             recyclerViewAdapter.notifyDataSetChanged()
         })
-        postViewModel.selectedContent.observe(this, {
-            recyclerViewAdapter.updateContents(arrayListOf(it))
-            recyclerViewAdapter.notifyDataSetChanged()
+        postViewModel.selectedContent.observe(this, { content ->
+            if(content == null)
+                Toast.makeText(this, this.getString(R.string.selected_post_null), Toast.LENGTH_LONG).show()
+            else {
+                recyclerViewAdapter.updateContents(arrayListOf(content))
+                recyclerViewAdapter.notifyDataSetChanged()
+            }
         })
     }
 

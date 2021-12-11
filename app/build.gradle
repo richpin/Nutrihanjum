@@ -57,6 +57,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-functions-ktx'
 
     implementation "com.kakao.sdk:v2-user:2.8.3"
+    implementation "com.kakao.sdk:v2-talk:2.8.4"
     implementation("com.android.volley:volley:1.2.1")
     implementation files('libs/naveridlogin_android_sdk_4.2.6.aar')
 

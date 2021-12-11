@@ -22,6 +22,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.FirebaseFunctionsException
 import com.google.firebase.storage.FirebaseStorage
+import com.kakao.sdk.common.util.KakaoCustomTabsClient
+import com.kakao.sdk.talk.TalkApiClient
 import com.kakao.sdk.user.UserApiClient
 import com.nhn.android.naverlogin.OAuthLogin
 import com.nhn.android.naverlogin.OAuthLoginHandler
@@ -33,6 +35,7 @@ object UserRepository {
     private val store get() = FirebaseFirestore.getInstance()
     private val storage get() = FirebaseStorage.getInstance()
     private val userClient get() = UserApiClient.instance
+    private val talkClient get() = TalkApiClient.instance
     private val functions = FirebaseFunctions.getInstance("asia-northeast3")
 
     val uid get() = auth.currentUser?.uid
@@ -334,6 +337,11 @@ object UserRepository {
             }
 
         return source.task
+    }
+
+    fun openKakaoChannel(mcontext: Context) {
+        val url = talkClient.channelChatUrl(mcontext.getString(R.string.kakao_channel_url))
+        KakaoCustomTabsClient.openWithDefault(mcontext, url)
     }
 
     fun signOut(context: Context) {

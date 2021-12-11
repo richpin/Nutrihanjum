@@ -17,8 +17,8 @@ class PostViewModel : ViewModel() {
     private val _myContents = MutableLiveData<ArrayList<ContentDTO>>()
     val myContents: LiveData<ArrayList<ContentDTO>> get() = _myContents
 
-    private val _selectedContent = MutableLiveData<ContentDTO>()
-    val selectedContent: LiveData<ContentDTO> get() = _selectedContent
+    private val _selectedContent = MutableLiveData<ContentDTO?>()
+    val selectedContent: LiveData<ContentDTO?> get() = _selectedContent
 
     fun loadSavedContents() = viewModelScope.launch {
         val list: ArrayList<ContentDTO> = arrayListOf()

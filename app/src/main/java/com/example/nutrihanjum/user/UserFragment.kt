@@ -16,6 +16,7 @@ import com.example.nutrihanjum.R
 import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.databinding.UserFragmentBinding
 import com.example.nutrihanjum.model.ContentDTO
+import com.example.nutrihanjum.repository.UserRepository.openKakaoChannel
 import com.example.nutrihanjum.user.login.LoginActivity
 import com.example.nutrihanjum.util.NHUtil
 import com.example.nutrihanjum.util.NHUtil.Setting.LOG_OUT
@@ -78,6 +79,10 @@ class UserFragment: Fragment() {
 
         binding.btnUserMyPost.setOnClickListener {
             startActivity(Intent(activity, MyPostActivity::class.java))
+        }
+
+        binding.btnUserKakaochannel.setOnClickListener {
+            openKakaoChannel(requireContext())
         }
     }
 }

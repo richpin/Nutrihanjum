@@ -1,4 +1,6 @@
 <resources>
+    <string name="app_package_name">com.example.nutrihanjum</string>
+
     <string name="app_name">영양한줌</string>
     <string name="home">홈</string>
     <string name="diary">식단일지</string>
@@ -11,6 +13,7 @@
     <string name="report_comment">댓글 신고</string>
     <string name="report_result_success">신고가 정상적으로 접수되었습니다.</string>
     <string name="report_result_fail">신고가 접수되지 않았습니다.</string>
+    <string name="selected_post_null">게시글이 존재하지 않습니다.</string>
 
     <string name="home_category">영양한줌</string>
     <string name="diary_category">식단일지</string>
@@ -152,6 +155,7 @@
     <string name="current_version">1.0</string>
 
     <string name="kakao_provider_key">KAKAO</string>
+    <string name="kakao_channel_url">_NMuDK</string>
     <string name="kakao_app_key">2f3850b999815f9941cc44f7c047a2c6</string>
     <string name="kakaotalk_packagename">com.kakao.talk</string>
     <string name="kakaotalk_login_failed">카카오톡 연동에 실패하였습니다.</string>
