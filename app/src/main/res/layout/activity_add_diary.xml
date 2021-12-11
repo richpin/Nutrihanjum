@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
     android:orientation="vertical"
     tools:context=".diary.AddDiaryActivity">
 
     <RelativeLayout
-        android:id="@+id/noticeActivity_toolbar"
+        android:id="@+id/layout_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="80dp">
+        android:layout_height="80dp"
+        android:layout_margin="10dp">
 
         <ImageView
             android:id="@+id/btn_back"
@@ -35,6 +35,8 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/layout_toolbar"
+        android:layout_marginHorizontal="10dp"
         android:overScrollMode="never"
         android:scrollbars="none">
 
@@ -324,23 +326,60 @@
 
             </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_register_diary"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="25dp"
                 android:layout_marginBottom="20dp"
-                android:background="@drawable/box_rounded_yellow"
-                android:backgroundTint="@color/orange"
-                android:fontFamily="@font/apple_gothic_neo_b"
-                android:text="@string/add_diary"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:background="@drawable/box_rounded_orange"
+                android:backgroundTint="@color/orange">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_register_diary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/apple_gothic_neo_b"
+                    android:text="@string/add_diary"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"/>
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/btn_loading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:indicatorColor="@color/white"
+                    app:trackColor="@color/orange"
+                    android:indeterminate="true"
+                    android:layout_centerInParent="true"
+                    style="Widget.MaterialComponents.CircularProgressIndicator.Small"
+                    android:visibility="gone"/>
+
+            </RelativeLayout>
 
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-</LinearLayout>
+    <RelativeLayout
+        android:id="@+id/layout_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:visibility="gone">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:indicatorColor="@color/orange"
+            app:trackColor="@android:color/transparent"
+            android:indeterminate="true"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
 

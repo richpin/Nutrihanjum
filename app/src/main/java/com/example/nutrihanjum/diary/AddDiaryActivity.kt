@@ -63,6 +63,7 @@ class AddDiaryActivity : AppCompatActivity() {
             if (savedInstanceState == null) {
                 viewModel.content = intent.getSerializableExtra("content") as ContentDTO
                 viewModel.loadDiaryById(viewModel.content.id)
+                binding.layoutLoading.visibility = View.VISIBLE
             }
             else if (viewModel.photoUrl.isNotEmpty())  {
                 viewModel.content.imageUrl = viewModel.photoUrl
@@ -93,6 +94,8 @@ class AddDiaryActivity : AppCompatActivity() {
             }
             else {
                 it.isClickable = false
+                it.visibility = View.INVISIBLE
+                binding.btnLoading.visibility = View.VISIBLE
 
                 val content = ContentDTO()
 
@@ -120,6 +123,10 @@ class AddDiaryActivity : AppCompatActivity() {
 
     private fun addLiveDataObserverForAddDairy() {
         viewModel.diaryResult.observe(this) {
+            binding.btnRegisterDiary.isClickable = true
+            binding.btnRegisterDiary.visibility = View.VISIBLE
+            binding.btnLoading.visibility = View.GONE
+
             if (it != null) {
                 val mIntent = Intent()
                 mIntent.putExtra("addedContent", it)
@@ -162,6 +169,8 @@ class AddDiaryActivity : AppCompatActivity() {
             val selectedMealTime = mapMealTimeIdToString(binding.radioGroupMealTime.checkedRadioButtonId)
 
             it.isClickable = false
+            it.visibility = View.INVISIBLE
+            binding.btnLoading.visibility = View.VISIBLE
 
             with(content) {
                 this.content = binding.edittextDiaryMemo.text.toString()
@@ -185,6 +194,10 @@ class AddDiaryActivity : AppCompatActivity() {
 
     private fun addLiveDataObserverForModifyDairy() {
         viewModel.diaryResult.observe(this) {
+            binding.btnRegisterDiary.isClickable = true
+            binding.btnRegisterDiary.visibility = View.VISIBLE
+            binding.btnLoading.visibility = View.GONE
+
             if (it != null) {
                 val mIntent = Intent()
                 mIntent.putExtra("modifiedContent", it)
@@ -198,6 +211,8 @@ class AddDiaryActivity : AppCompatActivity() {
         }
 
         viewModel.diary.observe(this) {
+            binding.layoutLoading.visibility = View.GONE
+
             if (it == null) {
                 Toast.makeText(this, "이미 삭제된 일지입니다.", Toast.LENGTH_SHORT).show()
 

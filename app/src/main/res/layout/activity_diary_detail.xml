@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".diary.DiaryDetailActivity">
 
     <RelativeLayout
-        android:id="@+id/noticeActivity_toolbar"
+        android:id="@+id/layout_toolbar"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/btn_back"
@@ -39,9 +39,13 @@
 
     </RelativeLayout>
 
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toBottomOf="@id/layout_toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:overScrollMode="never"
         android:scrollbars="none">
 
@@ -75,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_marginHorizontal="20dp"
-                android:background="@drawable/box_rounded_yellow"
+                android:background="@drawable/box_rounded_orange"
                 android:backgroundTint="@color/orange"
                 android:fontFamily="@font/apple_gothic_neo_b"
                 android:paddingHorizontal="15dp"
@@ -116,5 +120,27 @@
 
     </androidx.core.widget.NestedScrollView>
 
-</LinearLayout>
+    <RelativeLayout
+        android:id="@+id/layout_loading"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/layout_toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:visibility="gone">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:indicatorColor="@color/orange"
+            app:trackColor="@android:color/transparent"
+            android:indeterminate="true"
+            android:layout_centerInParent="true"/>
+
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 

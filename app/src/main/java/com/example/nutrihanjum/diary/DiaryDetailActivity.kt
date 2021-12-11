@@ -46,6 +46,7 @@ class DiaryDetailActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             binding.btnMore.isClickable = false
             viewModel.loadDiaryById(viewModel.content.id)
+            binding.layoutLoading.visibility = View.VISIBLE
         }
 
         addDiaryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -60,6 +61,8 @@ class DiaryDetailActivity : AppCompatActivity() {
         }
 
         viewModel.diary.observe(this) {
+            binding.layoutLoading.visibility = View.GONE
+
             if (it == null) {
                 Toast.makeText(this, "이미 삭제된 일지입니다.", Toast.LENGTH_SHORT).show()
 
