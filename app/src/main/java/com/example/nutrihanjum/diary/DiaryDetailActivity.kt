@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -29,8 +28,6 @@ class DiaryDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDiaryDetailBinding
     private lateinit var viewModel: DiaryViewModel
 
-    private lateinit var diary: ContentDTO
-
     private lateinit var modifyDialog: Dialog
     private lateinit var modifyBinding: LayoutPopupDeleteModifyBinding
     private lateinit var deleteCheckDialog: Dialog
@@ -42,33 +39,45 @@ class DiaryDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDiaryDetailBinding.inflate(layoutInflater)
         viewModel = ViewModelProvider(this).get(DiaryViewModel::class.java)
-        diary = intent.getSerializableExtra("content") as ContentDTO
+        viewModel.content = intent.getSerializableExtra("content") as ContentDTO
 
         initView()
-        viewModel.loadDiaryById(diary.id)
+
+        if (savedInstanceState == null) {
+            binding.btnMore.isClickable = false
+            viewModel.loadDiaryById(viewModel.content.id)
+        }
 
         addDiaryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.data?.hasExtra("modifiedContent") == true) {
-                diary = it.data?.getSerializableExtra("modifiedContent") as ContentDTO
+                viewModel.content = it.data?.getSerializableExtra("modifiedContent") as ContentDTO
 
                 val mIntent = Intent()
-                mIntent.putExtra("modifiedContent", diary)
+                mIntent.putExtra("modifiedContent", viewModel.content)
                 setResult(Activity.RESULT_OK, mIntent)
                 setView()
             }
         }
 
         viewModel.diary.observe(this) {
-            if (it != null && diary != it) {
-                diary = it
-                Log.wtf("asdf", "asdf")
+            if (it == null) {
+                Toast.makeText(this, "이미 삭제된 일지입니다.", Toast.LENGTH_SHORT).show()
 
+                val mIntent = Intent()
+                mIntent.putExtra("deletedContent", viewModel.content)
+                setResult(Activity.RESULT_OK, mIntent)
+                finish()
+            }
+            else if (viewModel.content != it) {
+                viewModel.content = it
                 setView()
 
                 val mIntent = Intent()
-                mIntent.putExtra("modifiedContent", diary)
+                mIntent.putExtra("modifiedContent", viewModel.content)
                 setResult(Activity.RESULT_OK, mIntent)
             }
+
+            binding.btnMore.isClickable = true
         }
 
         setContentView(binding.root)
@@ -88,7 +97,7 @@ class DiaryDetailActivity : AppCompatActivity() {
 
         modifyBinding.btnPopupModify.setOnClickListener {
             val mIntent = Intent(this, AddDiaryActivity::class.java)
-            mIntent.putExtra("content", diary)
+            mIntent.putExtra("content", viewModel.content)
 
             addDiaryLauncher.launch(mIntent)
             modifyDialog.dismiss()
@@ -100,7 +109,7 @@ class DiaryDetailActivity : AppCompatActivity() {
         }
 
         deleteCheckBinding.btnDeleteCheckYes.setOnClickListener {
-            viewModel.deleteDiary(diary.id, diary.imageUrl)
+            viewModel.deleteDiary(viewModel.content.id, viewModel.content.imageUrl)
         }
 
         deleteCheckBinding.btnDeleteCheckNo.setOnClickListener {
@@ -135,7 +144,7 @@ class DiaryDetailActivity : AppCompatActivity() {
         viewModel.diaryDeleteResult.observe(this) {
             if (it) {
                 val mIntent = Intent()
-                mIntent.putExtra("deletedContent", true)
+                mIntent.putExtra("deletedContent", viewModel.content)
                 setResult(Activity.RESULT_OK, mIntent)
                 finish()
             }
@@ -148,13 +157,13 @@ class DiaryDetailActivity : AppCompatActivity() {
     }
 
 
-    private fun setView() {
+    private fun setView() = synchronized(this) {
         Glide.with(this)
-            .load(diary.imageUrl)
+            .load(viewModel.content.imageUrl)
             .into(binding.imageviewPreview)
 
-        binding.textviewMealTime.text = diary.mealTime
-        binding.textviewMemo.text = diary.content
+        binding.textviewMealTime.text = viewModel.content.mealTime
+        binding.textviewMemo.text = viewModel.content.content
 
         setHashTag()
         setNutritionInfo()
@@ -162,12 +171,12 @@ class DiaryDetailActivity : AppCompatActivity() {
 
 
     private fun setNutritionInfo() {
-        val carbohydrate = diary.nutritionInfo.carbohydrate
-        val protein = diary.nutritionInfo.protein
-        val fat = diary.nutritionInfo.fat
+        val carbohydrate = viewModel.content.nutritionInfo.carbohydrate
+        val protein = viewModel.content.nutritionInfo.protein
+        val fat = viewModel.content.nutritionInfo.fat
         val total = max(carbohydrate + protein + fat, 1f)
 
-        binding.layoutFoodDetail.edittextCalorie.setText(diary.nutritionInfo.calorie.toString())
+        binding.layoutFoodDetail.edittextCalorie.setText(viewModel.content.nutritionInfo.calorie.toString())
         binding.layoutFoodDetail.edittextCarbohydrate.setText(carbohydrate.toString())
         binding.layoutFoodDetail.edittextProtein.setText(protein.toString())
         binding.layoutFoodDetail.edittextFat.setText(fat.toString())
@@ -178,7 +187,7 @@ class DiaryDetailActivity : AppCompatActivity() {
 
         var foodName = ""
 
-        diary.foods.forEach {
+        viewModel.content.foods.forEach {
             foodName += (it.name + ", ")
         }
 
@@ -196,6 +205,6 @@ class DiaryDetailActivity : AppCompatActivity() {
 
 
     private fun setHashTag() {
-        (binding.recyclerviewHashtag.adapter as HashTagAdapter).updateHashTag(diary.hashTagList)
+        (binding.recyclerviewHashtag.adapter as HashTagAdapter).updateHashTag(viewModel.content.hashTagList)
     }
 }

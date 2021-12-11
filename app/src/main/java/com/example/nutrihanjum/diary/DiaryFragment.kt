@@ -8,26 +8,21 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
-import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.DiaryFragmentBinding
 import com.example.nutrihanjum.model.ContentDTO
-import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.databinding.LayoutPopupYearMonthPickerBinding
 import com.example.nutrihanjum.diary.viewcontainer.CalendarDayBinder
 import com.example.nutrihanjum.diary.viewcontainer.CalendarHeaderBinder
-import com.kizitonwose.calendarview.CalendarView
 import com.kizitonwose.calendarview.model.InDateStyle
 import com.kizitonwose.calendarview.utils.yearMonth
 import java.time.DayOfWeek
@@ -40,13 +35,10 @@ class DiaryFragment: Fragment() {
     private var _binding: DiaryFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: DiaryViewModel
+    private lateinit var viewModel: CalendarDiaryViewModel
 
     private lateinit var addDiaryLauncher: ActivityResultLauncher<Intent>
     private lateinit var detailDiaryLauncher: ActivityResultLauncher<Intent>
-
-    private var updatePosition = RecyclerView.NO_POSITION
-    private var updateDate: Int = 0
 
     private lateinit var dayBinder: CalendarDayBinder
     private lateinit var headerBinder: CalendarHeaderBinder
@@ -56,10 +48,10 @@ class DiaryFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = DiaryFragmentBinding.inflate(layoutInflater)
-        viewModel = ViewModelProvider(this).get(DiaryViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(CalendarDiaryViewModel::class.java)
 
         if (savedInstanceState == null) {
-            viewModel.loadAllDiary(getFormattedDate(viewModel.firstMonth.atDay(1)), getFormattedDate(viewModel.lastMonth.atEndOfMonth()))
+            viewModel.refreshAll()
         }
 
         initCalendar()
@@ -83,10 +75,8 @@ class DiaryFragment: Fragment() {
             it.isClickable = false
             val mIntent = Intent(activity, AddDiaryActivity::class.java)
 
-            viewModel.selectedDate.let { date ->
-                mIntent.putExtra("date", getFormattedDate(date))
-            }
-            updateDate = getFormattedDate(viewModel.selectedDate)
+            mIntent.putExtra("date", viewModel.getFormattedDate(viewModel.selectedDate))
+
             addDiaryLauncher.launch(mIntent)
         }
 
@@ -96,6 +86,10 @@ class DiaryFragment: Fragment() {
             } else {
                 collapseCalendar()
             }
+        }
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.refreshAll()
         }
 
         initYearMonthPicker()
@@ -171,10 +165,7 @@ class DiaryFragment: Fragment() {
             binding.calendarView.setup(viewModel.firstMonth, viewModel.lastMonth, DayOfWeek.SUNDAY)
             binding.calendarView.scrollToDate(destDate)
 
-            viewModel.loadAllDiary(
-                getFormattedDate(viewModel.firstVisibleDate),
-                getFormattedDate(endMonth.atEndOfMonth())
-            )
+            viewModel.loadDiaryInRange(viewModel.firstVisibleDate, endMonth.atEndOfMonth())
 
         }
         else {
@@ -190,9 +181,12 @@ class DiaryFragment: Fragment() {
                 if (it.data?.hasExtra("addedContent") == true) {
                     val data = it.data?.getSerializableExtra("addedContent") as ContentDTO
                     viewModel.addToMap(data)
-                    binding.recyclerviewDiary.adapter?.notifyItemChanged(0)
-                    binding.recyclerviewDiary.adapter?.notifyItemInserted(viewModel.diaryMap.value!![updateDate]!!.size)
                     binding.calendarView.notifyDateChanged(viewModel.selectedDate)
+
+                    if (viewModel.getFormattedDate(viewModel.selectedDate) == data.date) {
+                        binding.recyclerviewDiary.adapter?.notifyItemChanged(0)
+                        binding.recyclerviewDiary.adapter?.notifyItemInserted(viewModel.diaryMap.value!![data.date]!!.size)
+                    }
                 }
             }
 
@@ -203,18 +197,24 @@ class DiaryFragment: Fragment() {
             if (it.data?.hasExtra("modifiedContent") == true) {
                 val data = it.data?.getSerializableExtra("modifiedContent") as ContentDTO
 
-                viewModel.diaryMap.value!![data.date]!![updatePosition] = data
-                binding.recyclerviewDiary.adapter?.notifyItemChanged(0)
-                binding.recyclerviewDiary.adapter?.notifyItemChanged(updatePosition + 1)
+                viewModel.diaryMap.value!![data.date]!![viewModel.updatePosition] = data
                 binding.calendarView.notifyDateChanged(viewModel.selectedDate)
-                updatePosition = RecyclerView.NO_POSITION
+
+                if (viewModel.getFormattedDate(viewModel.selectedDate) == data.date) {
+                    binding.recyclerviewDiary.adapter?.notifyItemChanged(0)
+                    binding.recyclerviewDiary.adapter?.notifyItemChanged(viewModel.updatePosition + 1)
+                }
             }
             else if (it.data?.hasExtra("deletedContent") == true) {
-                viewModel.diaryMap.value!![updateDate]!!.removeAt(updatePosition)
-                binding.recyclerviewDiary.adapter?.notifyItemChanged(0)
-                binding.recyclerviewDiary.adapter?.notifyItemRemoved(updatePosition + 1)
+                val data = it.data?.getSerializableExtra("deletedContent") as ContentDTO
+
+                viewModel.diaryMap.value!![data.date]!!.removeAt(viewModel.updatePosition)
                 binding.calendarView.notifyDateChanged(viewModel.selectedDate)
-                updatePosition = RecyclerView.NO_POSITION
+
+                if (viewModel.getFormattedDate(viewModel.selectedDate) == data.date) {
+                    binding.recyclerviewDiary.adapter?.notifyItemChanged(0)
+                    binding.recyclerviewDiary.adapter?.notifyItemRemoved(viewModel.updatePosition + 1)
+                }
             }
         }
     }
@@ -238,23 +238,30 @@ class DiaryFragment: Fragment() {
             DayOfWeek.SUNDAY
         )
 
-        setCalendarListener()
-
         if (viewModel.isWeekMode) {
-            collapseCalendar()
+            binding.calendarView.updateMonthConfiguration(
+                inDateStyle = InDateStyle.FIRST_MONTH,
+                maxRowCount = 1,
+                hasBoundaries = false
+            )
         }
         else {
-            expandCalendar()
+            binding.calendarView.updateMonthConfiguration(
+                inDateStyle = InDateStyle.ALL_MONTHS,
+                maxRowCount = 6,
+                hasBoundaries = true
+            )
         }
 
         binding.calendarView.scrollToDate(viewModel.currentDate)
+        setCalendarListener()
     }
 
 
 
     private fun setCalendarListener() {
         dayBinder.onDaySelectedListener = {
-            val data = viewModel.getDiaryList(getFormattedDate(it))
+            val data = viewModel.getDiaryList(it)
 
             (binding.recyclerviewDiary.adapter as DiaryRecyclerViewAdapter).updateDiary(data)
         }
@@ -268,7 +275,6 @@ class DiaryFragment: Fragment() {
             else {
                 viewModel.currentDate = it.weekDays.last().last().date
                 val yearMonth = viewModel.currentDate.yearMonth
-                Log.wtf("TEST", viewModel.currentDate.toString())
 
                 binding.textviewCalendarMonth.text = "${yearMonth.year}년 ${yearMonth.monthValue}월"
             }
@@ -277,16 +283,18 @@ class DiaryFragment: Fragment() {
 
 
 
-
     private fun addLiveDataObserver() {
         viewModel.diaryMap.observe(viewLifecycleOwner) {
             binding.calendarView.notifyCalendarChanged()
 
-            val data = viewModel.getDiaryList(getFormattedDate(viewModel.selectedDate))
+            val data = viewModel.getDiaryList(viewModel.selectedDate)
 
             (binding.recyclerviewDiary.adapter as DiaryRecyclerViewAdapter).updateDiary(data)
+            binding.swipeRefreshLayout.isRefreshing = false
         }
     }
+
+
 
 
     private val expandAnimator: ValueAnimator by lazy {
@@ -299,8 +307,6 @@ class DiaryFragment: Fragment() {
     }
 
     private fun expandCalendar() {
-        if (!viewModel.isWeekMode) return
-
         val firstDate = maxOf(viewModel.firstVisibleDate,
             binding.calendarView.findFirstVisibleDay()?.date ?: return)
         val lastDate = viewModel.currentDate
@@ -333,11 +339,7 @@ class DiaryFragment: Fragment() {
         animator
     }
 
-
     private fun collapseCalendar() {
-        if (viewModel.isWeekMode) return
-
-
         binding.calendarView.updateMonthConfiguration(
             inDateStyle = InDateStyle.FIRST_MONTH,
             maxRowCount = 1,
@@ -356,14 +358,8 @@ class DiaryFragment: Fragment() {
     }
 
 
-
-    private fun getFormattedDate(date: LocalDate) : Int {
-        return date.year * 10000 + date.monthValue * 100 + date.dayOfMonth
-    }
-
     private val diaryClickListener = { item: ContentDTO, pos: Int ->
-        updateDate = item.date
-        updatePosition = pos
+        viewModel.updatePosition = pos
 
         val mIntent = Intent(activity, DiaryDetailActivity::class.java)
         mIntent.putExtra("content", item)

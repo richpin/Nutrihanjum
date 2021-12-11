@@ -24,8 +24,6 @@ class UserViewModel : ViewModel() {
     val userName get() = UserRepository.userName
     val photoUrl get() = UserRepository.userPhoto
 
-    private val _signed = MutableLiveData<Boolean>()
-    val signed : LiveData<Boolean> get() = _signed
 
     private val _noticeFlag = MutableLiveData<Boolean>()
     val noticeFlag : LiveData<Boolean> get() = _noticeFlag
@@ -34,14 +32,6 @@ class UserViewModel : ViewModel() {
 
     fun signOut(context: Context) {
         UserRepository.signOut(context)
-    }
-
-    fun notifyUserSigned() {
-        _signed.value = true
-    }
-
-    fun notifyUserSignedOut() {
-        _signed.value = false
     }
 
     fun getNoticeFlag() = viewModelScope.launch {

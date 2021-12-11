@@ -20,11 +20,10 @@ object ChatBotRepository {
     private val storage get() = FirebaseStorage.getInstance()
     private val function = FirebaseFunctions.getInstance("asia-northeast1")
 
-    val uid get() = auth.currentUser?.uid
-
-    val userEmail get() = auth.currentUser?.email
-    val userName get() = auth.currentUser?.displayName
-    val userPhoto get() = auth.currentUser?.photoUrl
+    val uid get() = UserRepository.uid
+    val userEmail get() = UserRepository.userEmail
+    val userName get() = UserRepository.userName
+    val userPhoto get() = UserRepository.userPhoto
 
 
     fun loadAllChatBots() = callbackFlow {

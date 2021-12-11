@@ -21,11 +21,12 @@
             android:src="@drawable/ic_arrow_back" />
 
         <TextView
+            android:id="@+id/textview_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:fontFamily="@font/apple_gothic_neo_b"
-            android:text="작성하기"
+            android:text="@string/modify_diary"
             android:textColor="@color/black"
             android:textSize="17sp" />
 
@@ -279,7 +280,8 @@
                     android:padding="10dp"
                     android:gravity="top"
                     android:lines="6"
-                    android:maxLength="300"/>
+                    android:scrollbars="vertical"
+                    android:maxLength="500"/>
 
             </LinearLayout>
 

@@ -74,6 +74,7 @@
     <string name="web_client_id">913031910028-prr8utnrelive27pj4klm795ek1lm86n.apps.googleusercontent.com</string>
 
     <string name="add_diary">추가하기</string>
+    <string name="title_add_diary">작성하기</string>
     <string name="modify_diary">수정하기</string>
     <string name="request_login">로그인</string>
     <string name="reqeust_logout">로그아웃</string>

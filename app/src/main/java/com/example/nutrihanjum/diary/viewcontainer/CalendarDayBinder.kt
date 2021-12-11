@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.view.View
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.CalendarDayLayoutBinding
+import com.example.nutrihanjum.diary.CalendarDiaryViewModel
 import com.example.nutrihanjum.diary.DiaryViewModel
 import com.example.nutrihanjum.model.ContentDTO
 import com.kizitonwose.calendarview.CalendarView
@@ -17,7 +18,7 @@ import java.time.YearMonth
 
 class CalendarDayBinder(
     val calendarView: CalendarView,
-    private val viewModel: DiaryViewModel
+    private val viewModel: CalendarDiaryViewModel
 ): DayBinder<CalendarDayBinder.DayViewContainer> {
 
     var onDaySelectedListener: ((day: LocalDate) -> Unit)? = null
@@ -41,7 +42,7 @@ class CalendarDayBinder(
                     container.binding.textviewCalendarDay.background = null
                 }
 
-                if (viewModel.diaryMap.value!![getFormattedDate(day.date)].isNullOrEmpty()) {
+                if (viewModel.isDiaryEmptyAtDate(day.date)) {
                     container.binding.indicatorDiaryExist.visibility = View.GONE
                 }
                 else {
@@ -53,7 +54,7 @@ class CalendarDayBinder(
                 container.binding.textviewCalendarDay.setTextColor(Color.LTGRAY)
                 container.binding.textviewCalendarDay.background = null
 
-                if (viewModel.diaryMap.value!![getFormattedDate(day.date)].isNullOrEmpty()) {
+                if (viewModel.isDiaryEmptyAtDate(day.date)) {
                     container.binding.indicatorDiaryExist.visibility = View.GONE
                 }
                 else {
@@ -89,10 +90,5 @@ class CalendarDayBinder(
                 }
             }
         }
-    }
-
-
-    private fun getFormattedDate(date: LocalDate) : Int {
-        return date.year * 10000 + date.monthValue * 100 + date.dayOfMonth
     }
 }

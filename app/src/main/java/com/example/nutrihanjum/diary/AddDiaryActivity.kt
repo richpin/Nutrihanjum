@@ -3,16 +3,8 @@ package com.example.nutrihanjum.diary
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.Spannable
-import android.text.Spanned
-import android.text.TextWatcher
-import android.text.style.ForegroundColorSpan
-import android.util.Log
-import android.view.KeyEvent
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import com.example.nutrihanjum.databinding.ActivityAddDiaryBinding
@@ -32,16 +24,12 @@ import com.example.nutrihanjum.util.ProgressBarAnimationUtil.setProgressWithAnim
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
-import kotlin.collections.ArrayList
 import kotlin.math.max
 
 class AddDiaryActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityAddDiaryBinding
     private lateinit var cropImageLauncher: ActivityResultLauncher<CropImageContractOptions>
-
-    private var photoURI: Uri? = null
-    private var isPhotoExist = false
 
     private lateinit var viewModel: DiaryViewModel
 
@@ -55,22 +43,41 @@ class AddDiaryActivity : AppCompatActivity() {
         initCommonView()
 
         if (intent.hasExtra("date")) {
-            initForAddDiary()
-            getPhoto()
-        } else {
-            initForModifyDiary()
-        }
+            val date = intent.getIntExtra("date", 0)
 
+            initForAddDiary()
+            addListenerForAddDairy(date)
+            addLiveDataObserverForAddDairy()
+
+            if (viewModel.photoUrl.isNotEmpty()) {
+                Glide.with(this)
+                    .load(viewModel.photoUrl)
+                    .into(binding.imageviewPreview)
+            }
+
+            if (savedInstanceState == null) {
+                getPhoto()
+            }
+        }
+        else {
+            if (savedInstanceState == null) {
+                viewModel.content = intent.getSerializableExtra("content") as ContentDTO
+                viewModel.loadDiaryById(viewModel.content.id)
+            }
+            else if (viewModel.photoUrl.isNotEmpty())  {
+                viewModel.content.imageUrl = viewModel.photoUrl
+            }
+
+            initForModifyDiary()
+            addListenerForModifyDairy()
+            addLiveDataObserverForModifyDairy()
+        }
     }
 
 
     private fun initForAddDiary() {
-        val date = intent.getIntExtra("date", 0)
-
         binding.btnRegisterDiary.text = getString(R.string.add_diary)
-
-        addListenerForAddDairy(date)
-        addLiveDataObserverForAddDairy()
+        binding.textviewTitle.text = getString(R.string.title_add_diary)
     }
 
 
@@ -78,7 +85,7 @@ class AddDiaryActivity : AppCompatActivity() {
         binding.btnRegisterDiary.setOnClickListener {
             val selectedMealTime = mapMealTimeIdToString(binding.radioGroupMealTime.checkedRadioButtonId)
 
-            if (!isPhotoExist) {
+            if (viewModel.photoUrl.isEmpty()) {
                 Toast.makeText(this, getString(R.string.msg_photo_not_selected), Toast.LENGTH_LONG).show()
             }
             else if (selectedMealTime == null) {
@@ -104,7 +111,7 @@ class AddDiaryActivity : AppCompatActivity() {
                     }
                     content.hashTagList = binding.edittextHashtag.hashTagList
 
-                    viewModel.addDiary(content, photoURI.toString())
+                    viewModel.addDiary(content)
                 }
             }
         }
@@ -112,7 +119,7 @@ class AddDiaryActivity : AppCompatActivity() {
 
 
     private fun addLiveDataObserverForAddDairy() {
-        viewModel.diary.observe(this) {
+        viewModel.diaryResult.observe(this) {
             if (it != null) {
                 val mIntent = Intent()
                 mIntent.putExtra("addedContent", it)
@@ -127,8 +134,8 @@ class AddDiaryActivity : AppCompatActivity() {
     }
 
 
-    private fun initForModifyDiary() {
-        val content = intent.getSerializableExtra("content") as ContentDTO
+    private fun initForModifyDiary() = synchronized(this) {
+        val content = viewModel.content
 
         with(binding) {
             btnRegisterDiary.text = getString(R.string.modify_diary)
@@ -145,13 +152,12 @@ class AddDiaryActivity : AppCompatActivity() {
             binding.recyclerviewFoods.adapter?.notifyDataSetChanged()
             edittextHashtag.hashTagList = content.hashTagList
         }
-
-        addListenerForModifyDairy(content)
-        addLiveDataObserverForModifyDairy()
     }
 
 
-    private fun addListenerForModifyDairy(content: ContentDTO) {
+    private fun addListenerForModifyDairy() {
+        val content = viewModel.content
+
         binding.btnRegisterDiary.setOnClickListener {
             val selectedMealTime = mapMealTimeIdToString(binding.radioGroupMealTime.checkedRadioButtonId)
 
@@ -161,7 +167,6 @@ class AddDiaryActivity : AppCompatActivity() {
                 this.content = binding.edittextDiaryMemo.text.toString()
                 mealTime = selectedMealTime!!
                 isPublic = binding.switchPublic.isChecked
-                timestamp = System.currentTimeMillis()
                 foods = viewModel.foodList
                 nutritionInfo = NutritionInfo()
                 foods.forEach {
@@ -172,17 +177,14 @@ class AddDiaryActivity : AppCompatActivity() {
                 }
                 content.hashTagList = binding.edittextHashtag.hashTagList
 
-                viewModel.modifyDiary(
-                    this,
-                    if (isPhotoExist) photoURI.toString() else null
-                )
+                viewModel.modifyDiary(this)
             }
         }
     }
 
 
     private fun addLiveDataObserverForModifyDairy() {
-        viewModel.diary.observe(this) {
+        viewModel.diaryResult.observe(this) {
             if (it != null) {
                 val mIntent = Intent()
                 mIntent.putExtra("modifiedContent", it)
@@ -192,6 +194,21 @@ class AddDiaryActivity : AppCompatActivity() {
             else {
                 Toast.makeText(this, getString(R.string.failed_to_upload), Toast.LENGTH_SHORT).show()
                 binding.btnRegisterDiary.isClickable = true
+            }
+        }
+
+        viewModel.diary.observe(this) {
+            if (it == null) {
+                Toast.makeText(this, "이미 삭제된 일지입니다.", Toast.LENGTH_SHORT).show()
+
+                val mIntent = Intent()
+                mIntent.putExtra("deletedContent", viewModel.content)
+                setResult(Activity.RESULT_OK, mIntent)
+                finish()
+            }
+            else if (it != viewModel.content) {
+                viewModel.content = it
+                initForModifyDiary()
             }
         }
     }
@@ -204,9 +221,8 @@ class AddDiaryActivity : AppCompatActivity() {
 
         cropImageLauncher = registerForActivityResult(CropImageContract()) {
             if (it.isSuccessful) {
-                photoURI = it.uriContent
-                binding.imageviewPreview.setImageURI(photoURI)
-                isPhotoExist = true
+                viewModel.photoUrl = it.uriContent.toString()
+                binding.imageviewPreview.setImageURI(it.uriContent)
             }
         }
 

@@ -158,7 +158,7 @@ object DiaryRepository {
 
 
     fun addDiary(content: ContentDTO, imageUri: String) = callbackFlow {
-        val filename = "IMG_${SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())}.png"
+        val filename = "${uid}${content.timestamp}.png"
         storage.reference.child("images").child(filename)
             .putFile(Uri.parse(imageUri))
             .onSuccessTask {

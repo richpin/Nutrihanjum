@@ -54,7 +54,6 @@ class SettingActivity : AppCompatActivity() {
     private fun addViewListener(){
         binding.btnRequestLogout.setOnClickListener {
             userViewModel.signOut(it.context)
-            userViewModel.notifyUserSignedOut()
 
             val intent = Intent().apply{ putExtra("setting", NHUtil.Setting.LOG_OUT) }
             setResult(Activity.RESULT_OK, intent)
