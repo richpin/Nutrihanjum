@@ -186,9 +186,9 @@ class CommunityRecyclerViewAdapter() :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if(contentDTOs[position].profileUrl != "null")
+        if (contentDTOs[position].profileUrl != "null")
             Glide.with(holder.itemView.context).load(contentDTOs[position].profileUrl)
-            .circleCrop().into(holder.communityitem_profile_imageview)
+                .circleCrop().into(holder.communityitem_profile_imageview)
         holder.communityitem_profile_textview.text = contentDTOs[position].profileName
         Glide.with(holder.itemView.context).load(contentDTOs[position].imageUrl)
             .into(holder.communityitem_content_imageview)
@@ -200,13 +200,15 @@ class CommunityRecyclerViewAdapter() :
             )
         holder.communityitem_timeago_textview.text =
             NHUtil.formatTime(holder.itemView.context, contentDTOs[position].timestamp)
-            if (TextUtils.isEmpty(contentDTOs[position].content)) {
-                holder.communityitem_content_layout.visibility = View.GONE
-            } else {
-                holder.communityitem_content_textview.text = contentDTOs[position].content
-                setViewMore(holder.communityitem_content_textview,
-                    holder.communityitem_content_viewmore)
-            }
+        if (isEmpty(contentDTOs[position].content))
+            holder.communityitem_content_layout.visibility = View.GONE
+        else {
+            holder.communityitem_content_textview.text = contentDTOs[position].content
+            setViewMore(
+                holder.communityitem_content_textview,
+                holder.communityitem_content_viewmore
+            )
+        }
 
         with(holder.press_like_imageview) {
             if (isLiked(contentDTOs[position].likes)) {
@@ -225,14 +227,24 @@ class CommunityRecyclerViewAdapter() :
     }
 
     private fun setViewMore(contentTextView: TextView, viewMoreTextView: TextView) {
-        contentTextView.post {
-            val lineCount = contentTextView.layout.lineCount
-            if (lineCount > 0) {
-                if (contentTextView.layout.getEllipsisCount(lineCount - 1) > 0) {
-                    viewMoreTextView.visibility = View.VISIBLE
+        // getEllipsisCount()을 통한 더보기 표시 및 구현
+        val vto = contentTextView.viewTreeObserver
+        vto.addOnGlobalLayoutListener {
+            val layout = contentTextView.layout
+            layout?.let {
+                val lineCount = contentTextView.layout.lineCount
+                if (lineCount > 0) {
+                    if (contentTextView.layout.getEllipsisCount(lineCount - 1) > 0) {
+                        // 더보기 표시
+                        viewMoreTextView.visibility = View.VISIBLE
+
+                        // 더보기 클릭 이벤트
+                        viewMoreTextView.setOnClickListener {
+                            contentTextView.maxLines = Int.MAX_VALUE
+                            viewMoreTextView.visibility = View.GONE
+                        }
+                    }
                 }
-            } else {
-                viewMoreTextView.visibility = View.GONE
             }
         }
     }
@@ -270,7 +282,8 @@ class CommunityRecyclerViewAdapter() :
             LayoutPopupDeleteCheckBinding.inflate(LayoutInflater.from(mContext))
         popupReportCheckBinding =
             LayoutPopupReportCheckBinding.inflate(LayoutInflater.from(mContext))
-        popupReportResultBinding = LayoutPopupReportResultBinding.inflate(LayoutInflater.from(mContext))
+        popupReportResultBinding =
+            LayoutPopupReportResultBinding.inflate(LayoutInflater.from(mContext))
         popupDeleteModifyDialog.setContentView(popupDeleteModifyBinding.root)
         popupReportDialog.setContentView(popupReportBinding.root)
         popupDeleteCheckDialog.setContentView(popupDeleteCheckBinding.root)
@@ -335,11 +348,13 @@ class CommunityRecyclerViewAdapter() :
                 if (!task.isSuccessful) {
                     val e = task.exception
                     if (e is FirebaseFunctionsException) {
-                        popupReportResultBinding.btnPopupResult.text = mContext.getString(R.string.report_result_fail)
+                        popupReportResultBinding.btnPopupResult.text =
+                            mContext.getString(R.string.report_result_fail)
                         popupReportResultDialog.show()
                     }
                 } else {
-                    popupReportResultBinding.btnPopupResult.text = mContext.getString(R.string.report_result_success)
+                    popupReportResultBinding.btnPopupResult.text =
+                        mContext.getString(R.string.report_result_success)
                     popupReportResultDialog.show()
                 }
             }
@@ -351,7 +366,7 @@ class CommunityRecyclerViewAdapter() :
     }
 
     override fun getItemViewType(position: Int): Int {
-         return position
+        return position
     }
 
     override fun getItemId(position: Int): Long {

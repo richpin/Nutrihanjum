@@ -2,15 +2,18 @@ package com.example.nutrihanjum.user
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.MainActivity
+import com.example.nutrihanjum.R
 import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.databinding.ActivitySettingBinding
 import com.example.nutrihanjum.util.NHUtil
@@ -69,6 +72,13 @@ class SettingActivity : AppCompatActivity() {
 
         binding.switchNotice.setOnCheckedChangeListener { _, isChecked ->
             userViewModel.updateNoticeFlag(isChecked)
+        }
+
+        binding.btnLateVersion.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data =
+                Uri.parse("market://details?id=" + this.getString(R.string.app_package_name))
+            ContextCompat.startActivity(this, intent, null)
         }
     }
 }

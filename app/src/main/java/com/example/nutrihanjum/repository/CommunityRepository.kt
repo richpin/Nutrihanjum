@@ -313,7 +313,11 @@ object CommunityRepository {
             .document(contentId)
             .get().continueWith {
                 if (it.isSuccessful) {
-                    trySend(it.result.toObject(ContentDTO::class.java))
+                    val document = it.result
+                    if(document != null)
+                        trySend(document.toObject(ContentDTO::class.java))
+                    else
+                        trySend(null)
                 } else {
                     Log.wtf("Repository", it.exception?.message)
                 }

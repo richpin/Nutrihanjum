@@ -98,9 +98,15 @@ class CommunityFragment : Fragment() {
                 if (result.resultCode == Activity.RESULT_OK) {
                     with(adapter.contentPosition) {
                         if (this != -1) {
-                            adapter.contentDTOs[this] =
-                                result.data?.getSerializableExtra("modifiedContent") as ContentDTO
-                            adapter.notifyItemChanged(this)
+                            val data = result.data
+                            data?.let {
+                                if(data.hasExtra("deletedContent")) adapter.notifyItemRemoved(this)
+                                else {
+                                    adapter.contentDTOs[this] =
+                                        data.getSerializableExtra("modifiedContent") as ContentDTO
+                                    adapter.notifyItemChanged(this)
+                                }
+                            }
                         }
                     }
                     adapter.contentPosition = -1
