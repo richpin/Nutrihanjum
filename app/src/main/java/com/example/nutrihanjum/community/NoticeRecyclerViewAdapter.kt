@@ -68,10 +68,14 @@ class NoticeRecyclerViewAdapter() : RecyclerView.Adapter<NoticeRecyclerViewAdapt
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if(!isEmpty(users[noticeDTOs[position].senderId]!!.second))
-        Glide.with(holder.itemView.context).load(users[noticeDTOs[position].senderId]!!.second)
-            .circleCrop().into(holder.notice_profile_imageview)
-        holder.notice_name_textview.text = users[noticeDTOs[position].senderId]!!.first
+        if(users.contains(noticeDTOs[position].senderId)) {
+            if (!isEmpty(users[noticeDTOs[position].senderId]!!.second))
+                Glide.with(holder.itemView.context)
+                    .load(users[noticeDTOs[position].senderId]!!.second)
+                    .circleCrop().into(holder.notice_profile_imageview)
+
+            holder.notice_name_textview.text = users[noticeDTOs[position].senderId]!!.first
+        }
         with(holder.notice_comment_textview) {
             if (noticeDTOs[position].content.isEmpty()) visibility = View.GONE
             else text = noticeDTOs[position].content

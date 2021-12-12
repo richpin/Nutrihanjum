@@ -8,7 +8,6 @@
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/box_rounded_boarder.xml" value="0.37538461538461537" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/box_rounded_boarder_orange.xml" value="0.38125" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/box_rounded_chatbot.xml" value="0.37538461538461537" />
-        <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/box_rounded_orange.xml" value="0.2203125" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/chat_bubble_bot.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/chat_bubble_user.xml" value="0.37538461538461537" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/ic_add_a_photo.xml" value="0.38125" />
@@ -33,7 +32,6 @@
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/activity_login.xml" value="0.33611111111111114" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/activity_main.xml" value="0.33611111111111114" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/activity_my_post.xml" value="0.3985171455050973" />
-        <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/activity_news_detail.xml" value="0.3651041666666667" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/activity_sign_up.xml" value="0.33611111111111114" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/chatbot_fragment.xml" value="0.3277777777777778" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/community_fragment.xml" value="0.2046875" />
@@ -50,7 +48,6 @@
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/item_chatbot.xml" value="0.3594871794871795" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/item_community.xml" value="0.3388888888888889" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/item_diary.xml" value="0.3388888888888889" />
-        <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/item_food.xml" value="0.3651041666666667" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/item_hashtag.xml" value="0.3651041666666667" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/item_quick_reply.xml" value="0.3592592592592593" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/layout_nutrition_info_black.xml" value="0.3651041666666667" />
@@ -102,7 +99,7 @@
         <entry key="app/src/main/res/layout/item_community.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_diary.xml" value="0.18697916666666667" />
         <entry key="app/src/main/res/layout/item_news.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/item_notice.xml" value="0.18931159420289856" />
+        <entry key="app/src/main/res/layout/item_notice.xml" value="0.375" />
         <entry key="app/src/main/res/layout/item_post.xml" value="0.19375" />
         <entry key="app/src/main/res/layout/layout_pop_up.xml" value="0.240625" />
         <entry key="app/src/main/res/layout/layout_pop_up_delete.xml" value="0.335" />

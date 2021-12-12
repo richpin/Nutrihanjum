@@ -43,6 +43,7 @@
 
     <string name="age">나이</string>
     <string name="gender">성별</string>
+    <string name="unknown">(알수없음)</string>
 
     <string name="saved_post">저장한 글</string>
     <string name="my_post">내 게시글</string>

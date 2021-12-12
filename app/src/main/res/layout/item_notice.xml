@@ -11,7 +11,7 @@
         android:layout_height="35dp"
         android:layout_centerVertical="true"
         android:layout_marginHorizontal="15dp"
-        android:src="@drawable/ic_account_circle"/>
+        android:src="@drawable/ic_account_circle" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -30,8 +30,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/apple_gothic_neo_b"
+                android:text="@string/unknown"
                 android:textColor="@color/black"
-                android:textSize="15dp" />
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/notice_content_textview"
@@ -51,7 +52,7 @@
             android:layout_marginTop="5dp"
             android:fontFamily="@font/apple_gothic_neo_r"
             android:textColor="@color/black"
-            android:textSize="15dp" />
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/notice_timeago_textview"
@@ -60,7 +61,7 @@
             android:layout_marginTop="10dp"
             android:fontFamily="@font/apple_gothic_neo_r"
             android:textColor="@color/black"
-            android:textSize="12dp" />
+            android:textSize="12sp" />
 
     </LinearLayout>
 
