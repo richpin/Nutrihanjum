@@ -12,9 +12,8 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.R
-import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.model.UserDTO
-import com.example.nutrihanjum.user.MyPostActivity
+import com.example.nutrihanjum.user.MyContentActivity
 import com.example.nutrihanjum.util.NHUtil
 
 class NoticeRecyclerViewAdapter() : RecyclerView.Adapter<NoticeRecyclerViewAdapter.ViewHolder>() {
@@ -54,7 +53,7 @@ class NoticeRecyclerViewAdapter() : RecyclerView.Adapter<NoticeRecyclerViewAdapt
             notice_item_layout = view.findViewById(R.id.notice_item_layout)
 
             notice_item_layout.setOnClickListener {
-                val intent = Intent(view.context, MyPostActivity::class.java)
+                val intent = Intent(view.context, MyContentActivity::class.java)
                 intent.putExtra("contentId", noticeDTOs[bindingAdapterPosition].contentId)
                 startActivity(view.context, intent, null)
             }

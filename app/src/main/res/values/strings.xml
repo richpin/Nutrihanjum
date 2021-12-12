@@ -46,7 +46,7 @@
 
     <string name="saved_post">저장한 글</string>
     <string name="my_post">내 게시글</string>
-    <string name="notice">공지사항</string>
+    <string name="anmt">공지사항</string>
     <string name="faq">자주 묻는 질문</string>
     <string name="question">1:1 문의</string>
 
@@ -138,7 +138,7 @@
     <string name="notification_setting">푸시 알림 설정</string>
     <string name="etc">기타</string>
     <string name="launguage_setting">언어 설정</string>
-    <string name="late_version_update">최신버전 업데이트</string> 
+    <string name="late_version_update">최신버전 업데이트</string>
 
     <string name="chat_bot_hint">키워드를 입력해보세요</string>
     <string name="chat_empty_input">내용을 입력해주세요</string>

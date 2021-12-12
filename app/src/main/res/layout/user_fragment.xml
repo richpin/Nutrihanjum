@@ -366,12 +366,12 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/btn_user_notice"
+                android:id="@+id/btn_user_announcement"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:fontFamily="@font/apple_gothic_neo_r"
                 android:gravity="center_vertical"
-                android:text="@string/notice"
+                android:text="@string/anmt"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
 

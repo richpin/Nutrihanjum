@@ -81,11 +81,13 @@
         <entry key="app/src/main/res/layout/activity_diary_detail.xml" value="0.221875" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.20652173913043478" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25102880658436216" />
+        <entry key="app/src/main/res/layout/activity_my_content.xml" value="0.19375" />
         <entry key="app/src/main/res/layout/activity_my_post.xml" value="0.334375" />
         <entry key="app/src/main/res/layout/activity_news_detail.xml" value="0.21240942028985507" />
         <entry key="app/src/main/res/layout/activity_notice.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_pop_up.xml" value="0.334375" />
         <entry key="app/src/main/res/layout/activity_post.xml" value="0.240625" />
+        <entry key="app/src/main/res/layout/activity_post_detail.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_saved_post.xml" value="0.12135416666666667" />
         <entry key="app/src/main/res/layout/activity_setting.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_update_profile.xml" value="0.335" />
@@ -101,6 +103,7 @@
         <entry key="app/src/main/res/layout/item_diary.xml" value="0.18697916666666667" />
         <entry key="app/src/main/res/layout/item_news.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_notice.xml" value="0.18931159420289856" />
+        <entry key="app/src/main/res/layout/item_post.xml" value="0.19375" />
         <entry key="app/src/main/res/layout/layout_pop_up.xml" value="0.240625" />
         <entry key="app/src/main/res/layout/layout_pop_up_delete.xml" value="0.335" />
         <entry key="app/src/main/res/layout/layout_pop_up_other.xml" value="0.1234375" />

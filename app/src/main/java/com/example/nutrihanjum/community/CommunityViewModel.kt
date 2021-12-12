@@ -82,8 +82,8 @@ class CommunityViewModel : ViewModel() {
         }
     }
 
-    fun loadBannerImage() = viewModelScope.launch {
-        CommunityRepository.loadBannerImage().collect { item ->
+    fun loadBannerImage(case: Int) = viewModelScope.launch {
+        CommunityRepository.loadBannerImage(case).collect { item ->
             item.let { _bannerUri.postValue(item) }
         }
     }

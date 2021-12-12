@@ -8,14 +8,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
 import com.example.nutrihanjum.MainActivity
-import com.example.nutrihanjum.R
 import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.databinding.UserFragmentBinding
-import com.example.nutrihanjum.model.ContentDTO
 import com.example.nutrihanjum.repository.UserRepository.openKakaoChannel
 import com.example.nutrihanjum.user.login.LoginActivity
 import com.example.nutrihanjum.util.NHUtil
@@ -74,11 +71,23 @@ class UserFragment: Fragment() {
 
     private fun addViewListener() {
         binding.btnUserSavedPost.setOnClickListener {
-            startActivity(Intent(activity, SavedPostActivity::class.java))
+            startActivity(Intent(activity, SavedContentActivity::class.java))
         }
 
         binding.btnUserMyPost.setOnClickListener {
-            startActivity(Intent(activity, MyPostActivity::class.java))
+            startActivity(Intent(activity, MyContentActivity::class.java))
+        }
+
+        binding.btnUserAnnouncement.setOnClickListener {
+            val intent = Intent(requireContext(), PostActivity::class.java)
+            intent.putExtra("isFaq", false)
+            startActivity(intent)
+        }
+
+        binding.btnUserFaq.setOnClickListener {
+            val intent = Intent(requireContext(), PostActivity::class.java)
+            intent.putExtra("isFaq", true)
+            startActivity(intent)
         }
 
         binding.btnUserKakaochannel.setOnClickListener {
