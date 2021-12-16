@@ -85,6 +85,7 @@ class CommentRecyclerViewAdapter : RecyclerView.Adapter<CommentRecyclerViewAdapt
             if(!isEmpty(users[commentDTOs[position].uid]!!.second))
                 Glide.with(holder.itemView.context).load(users[commentDTOs[position].uid]!!.second).circleCrop()
                     .into(holder.comment_profile_imageview)
+
             holder.comment_profile_textview.text = users[commentDTOs[position].uid]!!.first
         }
         holder.comment_timeago_textview.text = NHUtil.formatTime(

@@ -134,9 +134,12 @@ object CommunityRepository {
             .document(uid)
             .get().continueWith {
                 if (it.isSuccessful) {
-                    val name = it.result.get("name") as String
-                    val url = it.result.get("profileUrl") as String
-                    trySend(Pair(name, url))
+                    if (it.result.data == null) trySend(null)
+                    else {
+                        val name = it.result.get("name") as String
+                        val url = it.result.get("profileUrl") as String
+                        trySend(Pair(name, url))
+                    }
                 } else {
                     Log.wtf("Repository", it.exception?.message)
                 }
@@ -315,7 +318,7 @@ object CommunityRepository {
             .get().continueWith {
                 if (it.isSuccessful) {
                     val document = it.result
-                    if(document != null)
+                    if (document != null)
                         trySend(document.toObject(ContentDTO::class.java))
                     else
                         trySend(null)
@@ -328,7 +331,7 @@ object CommunityRepository {
     }
 
     fun loadPosts(isFaq: Boolean) = callbackFlow {
-        val ref = when(isFaq) {
+        val ref = when (isFaq) {
             true -> store.collection("faq").orderBy("timestamp", Query.Direction.DESCENDING)
             false -> store.collection("anmt").orderBy("timestamp", Query.Direction.DESCENDING)
         }
@@ -347,7 +350,7 @@ object CommunityRepository {
     }
 
     fun loadBannerImage(case: Int) = callbackFlow {
-        val path = when(case) {
+        val path = when (case) {
             0 -> "banner/communityBanner.png"
             1 -> "banner/anmtBanner.png"
             2 -> "banner/faqBanner.png"

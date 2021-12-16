@@ -56,7 +56,7 @@ class PostRecyclerViewAdapter: RecyclerView.Adapter<PostRecyclerViewAdapter.View
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.postitem_title_textview.text = postDTOs[position].title
-        holder.postitem_timestamp_textview.text = df.format(postDTOs[position].timeStamp)
+        holder.postitem_timestamp_textview.text = df.format(postDTOs[position].timestamp)
     }
 
     override fun getItemCount(): Int {
