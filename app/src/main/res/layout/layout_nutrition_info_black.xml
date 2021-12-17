@@ -315,7 +315,7 @@
             android:id="@+id/layout_vertical_division"
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:layout_marginVertical="2dp"
+            android:layout_marginVertical="3dp"
             android:background="@color/colorDivision"/>
 
         <Button

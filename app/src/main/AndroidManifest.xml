@@ -20,7 +20,7 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.Nutrihanjum">
         <activity
-            android:name=".user.SettingActivity"
+            android:name=".user.settings.SettingActivity"
             android:exported="false" />
         <activity
             android:name=".community.NoticeActivity"
@@ -46,7 +46,7 @@
             android:name=".community.CommentActivity"
             android:exported="true" />
         <activity
-            android:name=".user.UpdateProfileActivity"
+            android:name=".user.settings.UpdateProfileActivity"
             android:exported="true" />
 
         <provider

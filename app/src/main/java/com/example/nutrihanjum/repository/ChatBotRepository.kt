@@ -2,7 +2,6 @@ package com.example.nutrihanjum.repository
 
 import android.util.Log
 import com.example.nutrihanjum.chatbot.model.ChatBotDTO
-import com.example.nutrihanjum.chatbot.model.ChatBotRequestDTO
 import com.example.nutrihanjum.chatbot.model.ChatBotResponseDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -15,10 +14,8 @@ import kotlinx.coroutines.flow.callbackFlow
 object ChatBotRepository {
     private val TAG = this.javaClass.simpleName
 
-    private val auth get() = FirebaseAuth.getInstance()
     private val store get() = FirebaseFirestore.getInstance()
-    private val storage get() = FirebaseStorage.getInstance()
-    private val function = FirebaseFunctions.getInstance("asia-northeast1")
+    private val function get() = FirebaseFunctions.getInstance("asia-northeast3")
 
     val uid get() = UserRepository.uid
     val userEmail get() = UserRepository.userEmail
@@ -44,14 +41,15 @@ object ChatBotRepository {
 
 
     fun sendMessage(message: String, type: String, chatBot: ChatBotDTO) = callbackFlow {
-        val data = ChatBotRequestDTO(
-            chatBot.id,
-            message,
-            type,
+        val data = hashMapOf(
+            "botId" to chatBot.id,
+            "query" to message,
+            "type" to type,
+            "name" to userName,
         )
 
         function.getHttpsCallable("detectIntent")
-            .call(data.toMap())
+            .call(data)
             .addOnSuccessListener {
                 val responseDTO = Gson().fromJson(it.data.toString(), ChatBotResponseDTO::class.java)
 

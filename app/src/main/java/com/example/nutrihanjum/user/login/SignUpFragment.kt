@@ -104,9 +104,8 @@ class SignUpFragment : Fragment() {
                 activity?.onBackPressed()
             } else {
                 Toast.makeText(activity, getString(R.string.signup_failed), Toast.LENGTH_LONG).show()
+                binding.btnSignUp.isClickable = true
             }
-
-            binding.btnSignUp.isClickable = true
         }
 
         binding.btnSignUp.setOnClickListener {
@@ -127,10 +126,10 @@ class SignUpFragment : Fragment() {
 
 
     private fun hideKeyboard() {
-        val imm = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
         val view = activity?.currentFocus
 
-        if (view != null) {
+        if (view != null && imm != null) {
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }

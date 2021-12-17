@@ -28,6 +28,9 @@ class UserViewModel : ViewModel() {
     private val _noticeFlag = MutableLiveData<Boolean>()
     val noticeFlag : LiveData<Boolean> get() = _noticeFlag
 
+    private val _userDeleteResult = MutableLiveData<Boolean>()
+    val userDeleteResult : LiveData<Boolean> get() = _userDeleteResult
+
     fun isSigned() = UserRepository.isSigned()
 
     fun signOut(context: Context) {
@@ -35,14 +38,24 @@ class UserViewModel : ViewModel() {
     }
 
     fun getNoticeFlag() = viewModelScope.launch {
-        UserRepository.getNoticeFlag().collect() { flag ->
+        UserRepository.getNoticeFlag().collect { flag ->
             _noticeFlag.postValue(flag)
         }
     }
 
+    fun setNoticeFlag(flag: Boolean)  {
+        _noticeFlag.value = flag
+    }
+
     fun updateNoticeFlag(isChecked: Boolean) = viewModelScope.launch {
         UserRepository.updateNoticeFlag(isChecked).collect {
-            if (!it) Log.wtf("NoticeFlag", "Update Failed")
+            _noticeFlag.postValue(it xor (_noticeFlag.value ?: true))
+        }
+    }
+
+    fun removeUser() = viewModelScope.launch {
+        UserRepository.removeUser().collect {
+            _userDeleteResult.postValue(it)
         }
     }
 }

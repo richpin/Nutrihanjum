@@ -273,6 +273,8 @@ class AddDiaryActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener {
             onBackPressed()
         }
+
+        binding.layoutFoodDetail.lineDivision.visibility = View.GONE
     }
 
 

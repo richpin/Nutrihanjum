@@ -5,10 +5,8 @@ import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.nutrihanjum.chatbot.ChatBotFragment
 import com.example.nutrihanjum.community.CommunityFragment
@@ -17,10 +15,8 @@ import com.example.nutrihanjum.databinding.ActivityMainBinding
 import com.example.nutrihanjum.diary.DiaryFragment
 import com.example.nutrihanjum.news.NewsFragment
 import com.example.nutrihanjum.repository.UserRepository
-import com.example.nutrihanjum.user.SettingActivity
+import com.example.nutrihanjum.user.settings.SettingActivity
 import com.example.nutrihanjum.user.UserFragment
-import com.example.nutrihanjum.util.NHFirebaseMessagingService
-import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : AppCompatActivity() {

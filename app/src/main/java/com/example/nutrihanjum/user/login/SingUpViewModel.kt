@@ -20,7 +20,6 @@ class SingUpViewModel: ViewModel() {
     private val _emailValid = MutableLiveData(false)
     val emailValid: LiveData<Boolean> get() = _emailValid
 
-    private var userNameValidJob: Job? = null
     private val _userNameValid = MutableLiveData(false)
     val userNameValid: LiveData<Boolean> get() = _userNameValid
 
@@ -37,21 +36,8 @@ class SingUpViewModel: ViewModel() {
             && passwordCheck.value == true
 
 
-    private val userNameLock = Any()
-
-    fun checkUserNameValid(name: String) = synchronized(userNameLock) {
-        userNameValidJob?.cancel()
-
-        if (!NHPatternUtil.USER_NAME.matcher(name).matches()) {
-            _userNameValid.value = false
-            return@synchronized
-        }
-
-        userNameValidJob = viewModelScope.launch {
-            UserRepository.checkUserNameUnique(name).collectLatest {
-                _userNameValid.postValue(it)
-            }
-        }
+    fun checkUserNameValid(name: String) {
+        _userNameValid.value = NHPatternUtil.USER_NAME.matcher(name).matches()
     }
 
     private val emailLock = Any()

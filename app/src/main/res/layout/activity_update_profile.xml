@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,12 +8,13 @@
     android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/updateprofileActivity_toolbar"
+        android:id="@+id/layout_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="60dp">
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true">
 
         <ImageView
-            android:id="@+id/updateprofileActivity_back_button"
+            android:id="@+id/btn_back"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_centerVertical="true"
@@ -27,18 +28,20 @@
             android:fontFamily="@font/apple_gothic_neo_b"
             android:text="@string/profile_edit"
             android:textColor="@color/black"
-            android:textSize="15sp" />
+            android:textSize="17sp" />
 
     </RelativeLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/layout_toolbar"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="15dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="15dp"
             android:layout_gravity="center"
             android:gravity="center"
             android:orientation="vertical"
@@ -62,10 +65,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/apple_gothic_neo_b"
-                    android:paddingStart="4dp"
+                    android:layout_marginStart="4dp"
                     android:text="@string/nick_name"
                     android:textColor="@color/black"
-                    android:textSize="13sp" />
+                    android:textSize="17sp" />
 
                 <EditText
                     android:id="@+id/edittext_user_name"
@@ -77,40 +80,102 @@
                     android:hint="@string/login_nickname_hint"
                     android:inputType="textPersonName"
                     android:paddingBottom="16dp"
-                    android:textSize="12sp" />
+                    android:textSize="15sp" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:orientation="vertical">
+                android:layout_marginTop="30dp"
+                android:orientation="horizontal">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/apple_gothic_neo_b"
-                    android:paddingStart="4dp"
-                    android:text="@string/login_email"
-                    android:textColor="@color/black"
-                    android:textSize="13sp" />
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/edittext_email"
-                    android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/apple_gothic_neo_b"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/age"
+                        android:textColor="@color/black"
+                        android:textSize="17sp" />
+
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/spinner_age"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:backgroundTint="@color/gray"
-                    android:fontFamily="@font/apple_gothic_neo_r"
-                    android:hint="@string/login_email_hint"
-                    android:inputType="textEmailAddress"
-                    android:paddingBottom="16dp"
-                    android:textSize="12sp" />
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/apple_gothic_neo_b"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/gender"
+                        android:textColor="@color/black"
+                        android:textSize="17sp" />
+
+                    <RadioGroup
+                        android:id="@+id/radio_group_gender"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="5dp"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/radio_btn_male"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minHeight="0dp"
+                            android:paddingVertical="3dp"
+                            android:layout_marginEnd="7dp"
+                            android:background="@drawable/selector_meal_time_radio_button"
+                            android:button="@null"
+                            android:fontFamily="@font/apple_gothic_neo_r"
+                            android:text="@string/male"
+                            android:textAlignment="center"
+                            android:textColor="@drawable/selector_meal_time_radio_text"
+                            android:textSize="14sp" />
+
+                        <RadioButton
+                            android:id="@+id/radio_btn_female"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minHeight="0dp"
+                            android:paddingVertical="3dp"
+                            android:layout_marginEnd="7dp"
+                            android:background="@drawable/selector_meal_time_radio_button"
+                            android:button="@null"
+                            android:fontFamily="@font/apple_gothic_neo_r"
+                            android:text="@string/female"
+                            android:textAlignment="center"
+                            android:textColor="@drawable/selector_meal_time_radio_text"
+                            android:textSize="14sp" />
+
+                    </RadioGroup>
+
+                </LinearLayout>
 
             </LinearLayout>
 
+
             <RelativeLayout
+                android:id="@+id/layout_password_reset"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp">
@@ -119,45 +184,77 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/apple_gothic_neo_b"
-                    android:paddingStart="4dp"
+                    android:layout_marginStart="4dp"
                     android:text="@string/login_password"
                     android:textColor="@color/black"
-                    android:textSize="13sp" />
+                    android:textSize="17sp" />
 
                 <TextView
                     android:id="@+id/btn_password_reset"
-                    android:layout_width="50dp"
-                    android:layout_height="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp"
                     android:layout_alignParentEnd="true"
                     android:background="@drawable/box_rounded_boarder_orange"
                     android:fontFamily="@font/apple_gothic_neo_b"
                     android:gravity="center"
                     android:text="@string/reset"
                     android:textColor="@color/orange"
-                    android:textSize="11sp" />
+                    android:textSize="14sp" />
 
             </RelativeLayout>
 
-            <androidx.cardview.widget.CardView
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="120dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp">
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/box_rounded_orange"
+                android:backgroundTint="@color/orange">
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_update_profile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/orange"
+                    android:background="@android:color/transparent"
                     android:fontFamily="@font/apple_gothic_neo_b"
                     android:text="@string/action_edit"
                     android:textColor="@color/white"
-                    android:textSize="14sp" />
+                    android:textSize="16sp" />
 
-            </androidx.cardview.widget.CardView>
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/btn_loading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:indicatorColor="@color/white"
+                    app:trackColor="@color/orange"
+                    android:indeterminate="true"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone"/>
+
+            </RelativeLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-</LinearLayout>
+    <RelativeLayout
+        android:id="@+id/layout_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:visibility="gone">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:indicatorColor="@color/orange"
+            app:trackColor="@android:color/transparent"
+            android:indeterminate="true"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

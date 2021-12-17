@@ -43,6 +43,8 @@
 
     <string name="age">나이</string>
     <string name="gender">성별</string>
+    <string name="male">남</string>
+    <string name="female">여</string>
 
     <string name="saved_post">저장한 글</string>
     <string name="my_post">내 게시글</string>
@@ -65,13 +67,15 @@
     <string name="google_login">구글로 로그인</string>
     <string name="login_not_filled">이메일과 비밀번호를 입력해주세요</string>
     <string name="login_failed">이메일 혹은 비밀번호가 틀렸습니다.</string>
+    <string name="re_auth_failed">비밀번호가 틀렸습니다.</string>
     <string name="logout_failed">로그아웃에 실패했습니다. 잠시 후 다시 시도해주세요.</string>
     <string name="login_btn">로그인</string>
     <string name="logout_btn">로그아웃</string>
 
     <string name="login_nickname_hint">이름 / 닉네임을 입력해주세요</string>
     <string name="login_email_hint">이메일 주소를 입력해주세요</string>
-    <string name="login_password_hint">영문, 숫자 조합 최소 8~20자</string>
+    <string name="prev_password_hint">지금 사용 중인 비밀번호를 입력해주세요</string>
+    <string name="login_password_hint">영문, 숫자, 특수문자를 적어도 하나씩 조합 8~16자</string>
     <string name="login_password_check_hint">비밀번호를 다시 입력해주세요</string>
 
     <string name="web_client_id">913031910028-prr8utnrelive27pj4klm795ek1lm86n.apps.googleusercontent.com</string>
@@ -111,6 +115,9 @@
     <string name="popup_modify">수정하기</string>
     <string name="diary_popup_public">비공개</string>
     <string name="login_email">이메일</string>
+
+    <string name="prev_password">기존 비밀번호</string>
+    <string name="new_password">새로운 비밀번호</string>
     <string name="login_password">비밀번호</string>
     <string name="password_check">비밀번호 확인</string>
 
@@ -131,14 +138,18 @@
     <string name="request_sign_up">회원가입</string>
     <string name="signup_not_filled">아직 입력이 완료되지 않았어요</string>
     <string name="signup_failed">가입에 실패했어요. 잠시 후에 다시 시도해주세요</string>
+    <string name="update_password_failed">인터넷 연결을 확인 후 잠시 후 다시 시도해주세요</string>
+    <string name="update_password_succeed">비밀번호가 변경되었습니다.</string>
     <string name="update_profile">프로필 수정</string>
+    <string name="network_failed">연결이 불안정합니다. 잠시 후 다시 시도해주세요</string>
 
     <string name="setting">설정</string>
     <string name="user_setting">사용자 설정</string>
     <string name="notification_setting">푸시 알림 설정</string>
     <string name="etc">기타</string>
     <string name="launguage_setting">언어 설정</string>
-    <string name="late_version_update">최신버전 업데이트</string> 
+    <string name="late_version_update">최신버전 업데이트</string>
+    <string name="warning_password_check">회원탈퇴를 위해 회원정보를 확인합니다. 다시 한번 로그인해주세요.</string>
 
     <string name="chat_bot_hint">키워드를 입력해보세요</string>
     <string name="chat_empty_input">내용을 입력해주세요</string>
@@ -164,4 +175,22 @@
     <string name="naver_client_id">mxrQwyd6MdXhiw6vOWPX</string>
     <string name="naver_client_secret">sGExIUfD7b</string>
     <string name="naver_login_failed">네이버 연동에 실패하였습니다.</string>
+    
+    
+    <string-array name="age_range">
+        <item>선택안함</item>
+        <item>1세 이하</item>
+        <item>1–2세</item>
+        <item>3–5세</item>
+        <item>6–8세</item>
+        <item>9–11세</item>
+        <item>12–14세</item>
+        <item>15–18세</item>
+        <item>19–29세</item>
+        <item>30–49세</item>
+        <item>50–64세</item>
+        <item>65–74세</item>
+        <item>75세 이상</item>
+    </string-array>
+    
 </resources>

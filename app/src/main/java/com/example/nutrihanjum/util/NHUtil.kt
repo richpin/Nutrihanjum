@@ -5,6 +5,8 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import com.example.nutrihanjum.R
 
 object NHUtil {
@@ -40,5 +42,21 @@ object NHUtil {
     enum class Setting{
         LOG_OUT,
         PROFILE_EDIT
+    }
+
+
+
+    fun <T, K, R> LiveData<T>.combineWith(
+        liveData: LiveData<K>,
+        block: (T?, K?) -> R
+    ): LiveData<R> {
+        val result = MediatorLiveData<R>()
+        result.addSource(this) {
+            result.value = block(this.value, liveData.value)
+        }
+        result.addSource(liveData) {
+            result.value = block(this.value, liveData.value)
+        }
+        return result
     }
 }

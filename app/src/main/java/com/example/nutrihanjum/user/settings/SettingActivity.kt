@@ -1,21 +1,24 @@
-package com.example.nutrihanjum.user
+package com.example.nutrihanjum.user.settings
 
 import android.app.Activity
+import android.app.Dialog
+import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
-import com.example.nutrihanjum.MainActivity
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.databinding.ActivitySettingBinding
+import com.example.nutrihanjum.databinding.LayoutPopupPasswordCheckBinding
 import com.example.nutrihanjum.util.NHUtil
 
 class SettingActivity : AppCompatActivity() {
@@ -24,6 +27,10 @@ class SettingActivity : AppCompatActivity() {
     private lateinit var userViewModel : UserViewModel
 
     private lateinit var profileLauncher: ActivityResultLauncher<Intent>
+
+    private val preference by lazy {
+        getPreferences(Context.MODE_PRIVATE)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,14 +42,34 @@ class SettingActivity : AppCompatActivity() {
         addLiveDataObserver()
         addViewListener()
 
-        userViewModel.getNoticeFlag()
+        userViewModel.setNoticeFlag(preference.getBoolean("notice", true))
+
+        if (savedInstanceState == null) {
+            userViewModel.getNoticeFlag()
+        }
+
         setContentView(binding.root)
     }
 
     private fun addLiveDataObserver() {
-        userViewModel.noticeFlag.observe(this, Observer {
+        userViewModel.noticeFlag.observe(this) {
+            preference.edit().apply {
+                putBoolean("notice", it)
+                apply()
+            }
             binding.switchNotice.isChecked = it
-        })
+        }
+
+        userViewModel.userDeleteResult.observe(this) {
+            if (it) {
+                val intent = Intent().apply{ putExtra("setting", NHUtil.Setting.LOG_OUT) }
+                setResult(Activity.RESULT_OK, intent)
+                finish()
+            }
+            else {
+                Toast.makeText(this, getString(R.string.network_failed), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun makeActivityLauncher() {
@@ -69,8 +96,8 @@ class SettingActivity : AppCompatActivity() {
 
         binding.settingActivityBackButton.setOnClickListener { onBackPressed() }
 
-        binding.switchNotice.setOnCheckedChangeListener { _, isChecked ->
-            userViewModel.updateNoticeFlag(isChecked)
+        binding.switchNotice.setOnClickListener {
+            userViewModel.updateNoticeFlag(binding.switchNotice.isChecked)
         }
 
         binding.btnLateVersion.setOnClickListener {
@@ -79,5 +106,24 @@ class SettingActivity : AppCompatActivity() {
                 Uri.parse("market://details?id=" + this.getString(R.string.app_package_name))
             ContextCompat.startActivity(this, intent, null)
         }
+
+        binding.btnRequestWithdrawal.setOnClickListener {
+            makeDialog()
+        }
+    }
+
+
+    private fun makeDialog() {
+        val passwordCheckBinding = LayoutPopupPasswordCheckBinding.inflate(layoutInflater)
+        val passwordCheckDialog = Dialog(this@SettingActivity)
+
+        passwordCheckDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        passwordCheckDialog.setContentView(passwordCheckBinding.root)
+
+        passwordCheckBinding.btnSetPassword.setOnClickListener {
+            userViewModel.removeUser()
+        }
+
+        passwordCheckDialog.show()
     }
 }

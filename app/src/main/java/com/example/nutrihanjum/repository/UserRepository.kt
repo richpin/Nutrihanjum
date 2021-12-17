@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat.startActivity
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.model.UserDTO
 import com.example.nutrihanjum.user.login.LoginFragment
+import com.example.nutrihanjum.util.NHUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
@@ -19,6 +20,7 @@ import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.auth.User
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.FirebaseFunctionsException
 import com.google.firebase.storage.FirebaseStorage
@@ -27,8 +29,11 @@ import com.kakao.sdk.talk.TalkApiClient
 import com.kakao.sdk.user.UserApiClient
 import com.nhn.android.naverlogin.OAuthLogin
 import com.nhn.android.naverlogin.OAuthLoginHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.withContext
 
 object UserRepository {
     private val auth get() = FirebaseAuth.getInstance()
@@ -36,7 +41,7 @@ object UserRepository {
     private val storage get() = FirebaseStorage.getInstance()
     private val userClient get() = UserApiClient.instance
     private val talkClient get() = TalkApiClient.instance
-    private val functions = FirebaseFunctions.getInstance("asia-northeast3")
+    private val functions get() = FirebaseFunctions.getInstance("asia-northeast3")
 
     val uid get() = auth.currentUser?.uid
 
@@ -44,6 +49,21 @@ object UserRepository {
     val userName get() = auth.currentUser?.displayName
     val userPhoto get() = auth.currentUser?.photoUrl
     val signedDate get() = auth.currentUser?.metadata?.creationTimestamp
+
+    val authProvider get() = auth.currentUser!!.providerData[1].providerId
+
+
+    fun getUserInfo() = callbackFlow {
+        store.collection("users").document(uid!!).get().addOnSuccessListener {
+            trySend(it.toObject(UserDTO::class.java)!!)
+            close()
+        }.addOnFailureListener {
+            trySend(UserDTO())
+            close()
+        }
+
+        awaitClose()
+    }
 
 
     fun reAuthenticate(password: String) = callbackFlow {
@@ -62,12 +82,19 @@ object UserRepository {
     }
 
 
-    fun updateUserProfile(email: String, name: String, photo: Uri?) = callbackFlow {
+    fun updatePassword(password: String) = callbackFlow {
+        auth.currentUser!!.updatePassword(password).continueWith {
+            trySend(it.isSuccessful)
+            close()
+        }
+
+        awaitClose()
+    }
+
+
+    fun updateUserProfile(name: String, photo: Uri?, userAge: Int, userGender: String) = callbackFlow {
         val tasks = ArrayList<Task<Void>>()
 
-        if (email != userEmail) {
-            tasks.add(updateEmail(email))
-        }
         if (name != userName) {
             tasks.add(updateName(name))
         }
@@ -76,14 +103,17 @@ object UserRepository {
         }
 
         Tasks.whenAllComplete(tasks).onSuccessTask {
-            trySend(true)
-            updateUserDB(
-                userEmail!!,
-                userName!!,
-                if (userPhoto == null) "" else userPhoto.toString()
+            val data = hashMapOf(
+                "gender" to userGender,
+                "age" to userAge,
+                "name" to name,
+                "photo" to (photo?.toString() ?: (userPhoto?.toString() ?: ""))
             )
 
+            functions.getHttpsCallable("updateUserDB").call(data)
+
         }.continueWith {
+            trySend(it.isSuccessful)
             close()
         }
 
@@ -110,11 +140,6 @@ object UserRepository {
     }
 
 
-    private fun updateEmail(email: String): Task<Void> {
-        return auth.currentUser!!.updateEmail(email)
-    }
-
-
     private fun updateName(name: String): Task<Void> {
         return auth.currentUser!!.updateProfile(userProfileChangeRequest {
             displayName = name
@@ -122,31 +147,6 @@ object UserRepository {
     }
 
 
-    private fun updateUserDB(email: String, name: String, photo: String): Task<Void> {
-        val doc = store.collection("users").document(uid!!)
-
-        return store.runTransaction { transaction ->
-            val snapshot = transaction.get(doc)
-            val posts = snapshot.get("posts") as List<*>
-
-            posts.forEach { postId ->
-                transaction.update(
-                    store.collection("posts").document(postId.toString()),
-                    "profileName", name,
-                    "profileUrl", photo
-                )
-            }
-
-            transaction.update(
-                doc,
-                "email", email,
-                "name", name,
-                "profileUrl", photo
-            )
-
-            null
-        }
-    }
 
 
     fun checkEmailUnique(email: String) = callbackFlow {
@@ -162,21 +162,8 @@ object UserRepository {
     }
 
 
-    fun checkUserNameUnique(name: String) = callbackFlow {
-        val registration = store.collection("users")
-            .whereEqualTo("name", name)
-            .addSnapshotListener { snapshot, err ->
-                if (err != null || snapshot == null) return@addSnapshotListener
-
-                trySend(snapshot.documents.isNullOrEmpty())
-            }
-
-        awaitClose { registration.remove() }
-    }
-
-
     fun createUserWithEmail(email: String, password: String, name: String) = callbackFlow {
-        var userID: String = ""
+        var userID = ""
 
         auth.createUserWithEmailAndPassword(email, password).onSuccessTask { result ->
             userID = result.user!!.uid
@@ -209,16 +196,27 @@ object UserRepository {
 
     fun signInWithEmail(email: String, password: String) = callbackFlow {
         auth.signInWithEmailAndPassword(email, password).continueWith {
-            if (it.isSuccessful) {
-                trySend(true)
-            } else {
-                trySend(false)
-            }
+//            trySend(
+//                if (it.isSuccessful) {
+//                    NHUtil.LoginResult.SUCCESS
+//                }
+//                else if (it.exception is FirebaseAuthInvalidUserException) {
+//                    NHUtil.LoginResult.EMAIL_WRONG
+//                }
+//                else if (it.exception is FirebaseAuthInvalidCredentialsException) {
+//                    NHUtil.LoginResult.PASSWORD_WRONG
+//                }
+//                else {
+//                    NHUtil.LoginResult.NETWORK_FAILED
+//                }
+//            )
+            trySend(it.isSuccessful)
             close()
         }
 
         awaitClose()
     }
+
 
 
     fun authWithCredential(credential: AuthCredential) = callbackFlow {
@@ -232,7 +230,8 @@ object UserRepository {
                     user.profileUrl = this.photoUrl.toString()
                 }
                 store.collection("users").document(result.user!!.uid).set(user)
-            } else {
+            }
+            else {
                 throw Exception("NOT NEW USER")
             }
         }.continueWith { task ->
@@ -249,27 +248,32 @@ object UserRepository {
         awaitClose()
     }
 
+
+
     fun signInWithKakaotalk(mContext: Context) = callbackFlow{
         if (!userClient.isKakaoTalkLoginAvailable(mContext)) {
             val intent = Intent(Intent.ACTION_VIEW)
-            intent.data =
-                Uri.parse("market://details?id=" + mContext.getString(R.string.kakaotalk_packagename))
+            intent.data = Uri.parse("market://details?id=" + mContext.getString(R.string.kakaotalk_packagename))
             startActivity(mContext, intent, null)
             trySend(false)
             close()
-        } else userClient.loginWithKakaoTalk(mContext) { token, error ->
+        }
+        else userClient.loginWithKakaoTalk(mContext) { token, error ->
             if (error != null) {
                 Log.wtf("로그인 실패", error)
                 trySend(false)
                 close()
-            } else if (token != null) {
+            }
+            else if (token != null) {
                 Log.wtf("로그인 성공", token.accessToken)
                 getKaKaoFirebaseJwt(token.accessToken).onSuccessTask { result ->
                     auth.signInWithCustomToken(result)
+
                 }.continueWith {  task ->
                     if (task.isSuccessful) {
                         trySend(true)
-                    } else {
+                    }
+                    else {
                         val e = task.exception
                         if(e is FirebaseFunctionsException){
                             Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()
@@ -279,12 +283,16 @@ object UserRepository {
                         Log.wtf("Firebase Auth Failed with Kakaotalk", task.exception.toString())
                         trySend(false)
                     }
+
                     close()
                 }
             }
         }
+
         awaitClose()
     }
+
+
 
     private fun getKaKaoFirebaseJwt(accessToken: String): Task<String> {
         val source = TaskCompletionSource<String>()
@@ -302,6 +310,8 @@ object UserRepository {
         return source.task
     }
 
+
+
     fun signInWithNaver(accessToken: String, mContext: Context) = callbackFlow {
         getNaverFirebaseJwt(accessToken).onSuccessTask { result ->
             auth.signInWithCustomToken(result)
@@ -310,10 +320,14 @@ object UserRepository {
                 trySend(true)
             } else {
                 val e = task.exception
-                if(e is FirebaseFunctionsException){
+                if (e is FirebaseFunctionsException) {
                     Toast.makeText(mContext, e.message, Toast.LENGTH_LONG).show()
                 } else {
-                    Toast.makeText(mContext, mContext.getString(R.string.naver_login_failed), Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        mContext,
+                        mContext.getString(R.string.naver_login_failed),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
                 Log.wtf("Firebase Auth Failed with Naver", task.exception.toString())
                 trySend(false)
@@ -322,6 +336,8 @@ object UserRepository {
         }
         awaitClose()
     }
+
+
 
     private fun getNaverFirebaseJwt(accessToken: String): Task<String> {
         val source = TaskCompletionSource<String>()
@@ -339,13 +355,16 @@ object UserRepository {
         return source.task
     }
 
+
     fun openKakaoChannel(mcontext: Context) {
         val url = talkClient.channelChatUrl(mcontext.getString(R.string.kakao_channel_url))
         KakaoCustomTabsClient.openWithDefault(mcontext, url)
     }
 
+
     fun signOut(context: Context) {
         for (provider in auth.currentUser!!.providerData) {
+            Log.wtf("PROVIDER", provider.providerId)
             when (provider.providerId) {
                 FirebaseAuthProvider.PROVIDER_ID -> {
                     auth.signOut()
@@ -361,6 +380,22 @@ object UserRepository {
         }
     }
 
+
+    fun removeUser() = callbackFlow {
+        store.collection("users").document(uid!!).delete().onSuccessTask {
+            storage.reference.child("profileImages").child(uid!!).delete()
+
+        }.onSuccessTask {
+            auth.currentUser!!.delete()
+        }.continueWith {
+            trySend(it.isSuccessful)
+            close()
+        }
+
+        awaitClose()
+    }
+
+
     fun getNoticeFlag() = callbackFlow {
         store.collection("users")
             .document(uid!!)
@@ -374,6 +409,7 @@ object UserRepository {
             }
         awaitClose()
     }
+
 
     fun updateNoticeFlag(isChecked: Boolean) = callbackFlow {
         store.collection("users")
@@ -389,6 +425,7 @@ object UserRepository {
             }
         awaitClose()
     }
+
 
     fun updateToken(newToken: String) {
         if (isSigned()) {
