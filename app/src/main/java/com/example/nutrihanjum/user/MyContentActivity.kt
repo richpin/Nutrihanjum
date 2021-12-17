@@ -10,15 +10,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.community.CommunityRecyclerViewAdapter
 import com.example.nutrihanjum.community.CommunityViewModel
-import com.example.nutrihanjum.community.PostViewModel
-import com.example.nutrihanjum.databinding.ActivityMyPostBinding
+import com.example.nutrihanjum.community.ContentViewModel
+import com.example.nutrihanjum.databinding.ActivityMyContentBinding
 import com.example.nutrihanjum.diary.DiaryViewModel
 import com.example.nutrihanjum.model.ContentDTO
 
-class MyPostActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMyPostBinding
+class MyContentActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMyContentBinding
 
-    private lateinit var postViewModel: PostViewModel
+    private lateinit var contentViewModel: ContentViewModel
     private lateinit var communityViewModel: CommunityViewModel
     private lateinit var diaryViewModel: DiaryViewModel
 
@@ -27,28 +27,28 @@ class MyPostActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMyPostBinding.inflate(layoutInflater)
-        postViewModel = ViewModelProvider(this).get(PostViewModel::class.java)
+        binding = ActivityMyContentBinding.inflate(layoutInflater)
+        contentViewModel = ViewModelProvider(this).get(ContentViewModel::class.java)
         communityViewModel= ViewModelProvider(this).get(CommunityViewModel::class.java)
         diaryViewModel = ViewModelProvider(this).get(DiaryViewModel::class.java)
 
-        binding.MyPostActivityRecyclerview.layoutManager = layoutManager
-        binding.MyPostActivityRecyclerview.setHasFixedSize(true)
+        makeLauncher(recyclerViewAdapter)
+        recyclerViewAdapter.initDialog(this)
+        recyclerViewAdapter.initContents()
 
+        binding.MyPostActivityRecyclerview.layoutManager = layoutManager
         binding.MyPostActivityRecyclerview.adapter = recyclerViewAdapter
 
         addLiveDataObserver()
         addViewListener()
         modifyLayoutManager()
-        makeLauncher(recyclerViewAdapter)
-        recyclerViewAdapter.initDialog(this)
 
         val contentId = intent.getStringExtra("contentId")
 
         if(contentId == null) {
-            postViewModel.loadMyContents()
+            contentViewModel.loadMyContents()
         } else {
-            postViewModel.loadSelectedContent(contentId)
+            contentViewModel.loadSelectedContent(contentId)
         }
 
         setContentView(binding.root)
@@ -87,16 +87,16 @@ class MyPostActivity : AppCompatActivity() {
     }
 
     private fun addLiveDataObserver() {
-        postViewModel.myContents.observe(this, {
+        contentViewModel.myContents.observe(this, {
             recyclerViewAdapter.updateContents(it)
-            recyclerViewAdapter.notifyDataSetChanged()
+            recyclerViewAdapter.notifyItemRangeInserted(0, it.size)
         })
-        postViewModel.selectedContent.observe(this, { content ->
+        contentViewModel.selectedContent.observe(this, { content ->
             if(content == null)
                 Toast.makeText(this, this.getString(R.string.selected_post_null), Toast.LENGTH_LONG).show()
             else {
                 recyclerViewAdapter.updateContents(arrayListOf(content))
-                recyclerViewAdapter.notifyDataSetChanged()
+                recyclerViewAdapter.notifyItemInserted(0)
             }
         })
     }

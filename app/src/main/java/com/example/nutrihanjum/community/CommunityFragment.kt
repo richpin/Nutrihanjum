@@ -51,7 +51,7 @@ class CommunityFragment : Fragment() {
         setRecyclerview()
         addViewListener()
 
-        viewModel.loadBannerImage()
+        viewModel.loadBannerImage(0)
         viewModel.loadContentsInit()
 
         return binding.root
@@ -100,7 +100,10 @@ class CommunityFragment : Fragment() {
                         if (this != -1) {
                             val data = result.data
                             data?.let {
-                                if(data.hasExtra("deletedContent")) adapter.notifyItemRemoved(this)
+                                if(data.hasExtra("deletedContent")) {
+                                    adapter.contentDTOs.removeAt(this)
+                                    adapter.notifyItemRemoved(this)
+                                }
                                 else {
                                     adapter.contentDTOs[this] =
                                         data.getSerializableExtra("modifiedContent") as ContentDTO

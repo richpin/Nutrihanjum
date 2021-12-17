@@ -44,26 +44,26 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="70dp"
                 android:fontFamily="@font/apple_gothic_neo_b"
                 android:gravity="center_vertical"
                 android:text="@string/user_setting"
                 android:textColor="@color/black"
-                android:textSize="14sp"/>
+                android:textSize="15sp"/>
 
             <TextView
                 android:id="@+id/btn_profile_edit"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:fontFamily="@font/apple_gothic_neo_r"
                 android:gravity="center_vertical"
                 android:text="@string/profile_edit"
                 android:textColor="@color/black"
-                android:textSize="14sp"/>
+                android:textSize="15sp"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp">
+                android:layout_height="60dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -72,7 +72,7 @@
                     android:gravity="center_vertical"
                     android:text="@string/notification_setting"
                     android:textColor="@color/black"
-                    android:textSize="14sp" />
+                    android:textSize="15sp" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_notice"
@@ -95,17 +95,17 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="70dp"
                 android:fontFamily="@font/apple_gothic_neo_b"
                 android:gravity="center_vertical"
                 android:text="@string/etc"
                 android:textColor="@color/black"
-                android:textSize="14sp"/>
+                android:textSize="15sp"/>
 
             <RelativeLayout
                 android:id="@+id/btn_launguage_edit"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -115,7 +115,7 @@
                     android:gravity="center_vertical"
                     android:text="@string/launguage_setting"
                     android:textColor="@color/black"
-                    android:textSize="14sp"/>
+                    android:textSize="15sp"/>
 
                 <TextView
                     android:id="@+id/launguage_textview"
@@ -133,7 +133,7 @@
             <RelativeLayout
                 android:id="@+id/btn_late_version"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -143,7 +143,7 @@
                     android:gravity="center_vertical"
                     android:text="@string/late_version_update"
                     android:textColor="@color/black"
-                    android:textSize="14sp"/>
+                    android:textSize="15sp"/>
 
                 <TextView
                     android:id="@+id/version_texview"
@@ -161,22 +161,22 @@
             <TextView
                 android:id="@+id/btn_request_logout"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:fontFamily="@font/apple_gothic_neo_r"
                 android:gravity="center_vertical"
                 android:text="@string/reqeust_logout"
                 android:textColor="@color/black"
-                android:textSize="14sp"/>
+                android:textSize="15sp"/>
 
             <TextView
                 android:id="@+id/btn_request_withdrawal"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:fontFamily="@font/apple_gothic_neo_r"
                 android:gravity="center_vertical"
                 android:text="@string/request_withdrawal"
                 android:textColor="@color/black"
-                android:textSize="14sp"/>
+                android:textSize="15sp"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

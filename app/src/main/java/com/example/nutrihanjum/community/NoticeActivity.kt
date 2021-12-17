@@ -63,14 +63,18 @@ class NoticeActivity : AppCompatActivity() {
         communityViewModel.notices.observe(this, {
             recyclerViewAdapter.updateNotices(it)
 
+            val usersUid = arrayListOf<String>()
             it.forEach { notice ->
-                if (recyclerViewAdapter.isUserEmpty(notice.senderId)) {
-                    communityViewModel.loadUserInfo(notice.senderId)
-                }
+                if (recyclerViewAdapter.isUserEmpty(notice.senderId)) usersUid.add(notice.senderId)
             }
+
+            communityViewModel.loadUserInfo(usersUid)
         })
-        communityViewModel.user.observe(this, {
-            recyclerViewAdapter.users[it.first] = it.second
+        communityViewModel.users.observe(this, {
+            it.forEach { user ->
+                recyclerViewAdapter.users[user.first] = user.second
+            }
+
             recyclerViewAdapter.notifyItemRangeInserted(
                 ((page - 1) * boardLimit).toInt(),
                 boardLimit.toInt()

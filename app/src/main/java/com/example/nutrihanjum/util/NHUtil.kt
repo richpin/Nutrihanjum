@@ -1,15 +1,16 @@
 package com.example.nutrihanjum.util
 
-import android.animation.AnimatorSet
-import android.animation.ValueAnimator
+
 import android.content.Context
-import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.example.nutrihanjum.R
+import java.text.SimpleDateFormat
+import java.util.*
 
 object NHUtil {
+    val df = SimpleDateFormat("yyyy.MM.dd", Locale.KOREA)
+
     private object TIME_MAXIMUM {
         const val SEC = 60
         const val MIN = 60

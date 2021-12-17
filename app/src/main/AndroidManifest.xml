@@ -17,8 +17,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/app_icon_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.Nutrihanjum">
+        android:theme="@style/Theme.Nutrihanjum"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".user.PostDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".user.PostActivity"
+            android:exported="false" />
         <activity
             android:name=".user.settings.SettingActivity"
             android:exported="false" />
@@ -31,16 +37,16 @@
             android:exported="true" />
         <activity
             android:name=".news.NewsDetailActivity"
-            android:hardwareAccelerated="true"
-            android:exported="false" />
+            android:exported="false"
+            android:hardwareAccelerated="true" />
         <activity
             android:name=".chatbot.ChatActivity"
             android:exported="true" />
         <activity
-            android:name=".user.MyPostActivity"
-            android:exported="true"/>
+            android:name=".user.MyContentActivity"
+            android:exported="true" />
         <activity
-            android:name=".user.SavedPostActivity"
+            android:name=".user.SavedContentActivity"
             android:exported="true" />
         <activity
             android:name=".community.CommentActivity"
@@ -83,6 +89,7 @@
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -93,21 +100,23 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Nutrihanjum"
-            tools:ignore="LockedOrientationActivity">
-        </activity>
+            tools:ignore="LockedOrientationActivity"></activity>
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakao_app_key" />
+
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:host="oauth"
+                <data
+                    android:host="oauth"
                     android:scheme="kakao2f3850b999815f9941cc44f7c047a2c6" />
             </intent-filter>
         </activity>

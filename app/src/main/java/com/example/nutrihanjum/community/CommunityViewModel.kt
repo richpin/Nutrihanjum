@@ -23,8 +23,8 @@ class CommunityViewModel : ViewModel() {
     private val _notices = MutableLiveData<ArrayList<UserDTO.NoticeDTO>>()
     val notices: LiveData<ArrayList<UserDTO.NoticeDTO>> get() = _notices
 
-    private val _user = MutableLiveData<Pair<String,Pair<String, String>>>()
-    val user: LiveData<Pair<String,Pair<String, String>>> get() = _user
+    private val _users = MutableLiveData<ArrayList<Pair<String, Pair<String, String>>>>()
+    val users: LiveData<ArrayList<Pair<String, Pair<String, String>>>> get() = _users
 
     private val _bannerUri = MutableLiveData<Uri>()
     val bannerUri: LiveData<Uri> get() = _bannerUri
@@ -67,7 +67,7 @@ class CommunityViewModel : ViewModel() {
         _notices.postValue(list)
     }
 
-    fun loadComments(contentId : String) = viewModelScope.launch {
+    fun loadComments(contentId: String) = viewModelScope.launch {
         val list: ArrayList<ContentDTO.CommentDTO> = arrayListOf()
 
         CommunityRepository.loadComments(contentId).collect { item ->
@@ -76,39 +76,46 @@ class CommunityViewModel : ViewModel() {
         _comments.postValue(list)
     }
 
-    fun loadUserInfo(uid: String) = viewModelScope.launch {
-        CommunityRepository.loadUserInfo(uid).collect { item ->
-            item.let { _user.postValue(Pair(uid, item)) }
+    fun loadUserInfo(usersUid: ArrayList<String>) = viewModelScope.launch {
+        val list: ArrayList<Pair<String, Pair<String, String>>> = arrayListOf()
+
+        usersUid.forEach { uid ->
+            CommunityRepository.loadUserInfo(uid).collect { item ->
+                item?.let { list.add(Pair(uid, item)) }
+            }
         }
+
+        _users.postValue(list)
     }
 
-    fun loadBannerImage() = viewModelScope.launch {
-        CommunityRepository.loadBannerImage().collect { item ->
+    fun loadBannerImage(case: Int) = viewModelScope.launch {
+        CommunityRepository.loadBannerImage(case).collect { item ->
             item.let { _bannerUri.postValue(item) }
         }
     }
 
-    fun addComment(contentDTO: ContentDTO, commentDTO: ContentDTO.CommentDTO) = viewModelScope.launch {
-        CommunityRepository.addComment(contentDTO, commentDTO).collect {
-            if(!it) Log.wtf("AddComment", it.toString())
+    fun addComment(contentDTO: ContentDTO, commentDTO: ContentDTO.CommentDTO) =
+        viewModelScope.launch {
+            CommunityRepository.addComment(contentDTO, commentDTO).collect {
+                if (!it) Log.wtf("AddComment", it.toString())
+            }
         }
-    }
 
     fun deleteComment(contentId: String, commentId: String) = viewModelScope.launch {
         CommunityRepository.deleteComment(contentId, commentId).collect {
-            if(!it) Log.wtf("DeleteComment", it.toString())
+            if (!it) Log.wtf("DeleteComment", it.toString())
         }
     }
 
     fun eventLikes(contentDTO: ContentDTO, isLiked: Boolean) = viewModelScope.launch {
         CommunityRepository.eventLikes(contentDTO, isLiked).collect {
-            if(!it) Log.wtf("Likes", it.toString())
+            if (!it) Log.wtf("Likes", it.toString())
         }
     }
 
     fun eventSaved(contentDTO: ContentDTO, isSaved: Boolean) = viewModelScope.launch {
         CommunityRepository.eventSaved(contentDTO, isSaved).collect {
-            if(!it) Log.wtf("Saved", it.toString())
+            if (!it) Log.wtf("Saved", it.toString())
         }
     }
 }

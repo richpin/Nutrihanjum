@@ -47,7 +47,7 @@
             android:layout_marginTop="15dp"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp"
-            android:src="@drawable/ic_account_circle"/>
+            android:src="@drawable/ic_account_circle" />
 
         <TextView
             android:id="@+id/comment_profile_textview"
@@ -55,9 +55,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="17dp"
             android:layout_toEndOf="@+id/comment_profile_imageview"
+            android:text="@string/unknown"
             android:fontFamily="@font/apple_gothic_neo_b"
             android:textColor="@color/black"
-            android:textSize="15dp" />
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/comment_timeago_textview"
@@ -68,7 +69,7 @@
             android:layout_toEndOf="@+id/comment_profile_textview"
             android:fontFamily="@font/apple_gothic_neo_r"
             android:textColor="@color/black"
-            android:textSize="12dp" />
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/comment_content_textview"
@@ -81,7 +82,7 @@
             android:layout_toEndOf="@id/comment_profile_imageview"
             android:fontFamily="@font/apple_gothic_neo_r"
             android:textColor="@color/black"
-            android:textSize="14dp" />
+            android:textSize="14sp" />
     </RelativeLayout>
 
 </FrameLayout>

@@ -7,14 +7,10 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.NotificationTarget
 import com.example.nutrihanjum.ApplicationClass
-import com.example.nutrihanjum.MainActivity
 import com.example.nutrihanjum.R
-import com.example.nutrihanjum.community.CommentActivity
 import com.example.nutrihanjum.community.NoticeActivity
 import com.example.nutrihanjum.repository.UserRepository
-import com.example.nutrihanjum.user.MyPostActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 

@@ -45,10 +45,11 @@
     <string name="gender">성별</string>
     <string name="male">남</string>
     <string name="female">여</string>
+    <string name="unknown">(알수없음)</string>
 
     <string name="saved_post">저장한 글</string>
     <string name="my_post">내 게시글</string>
-    <string name="notice">공지사항</string>
+    <string name="anmt">공지사항</string>
     <string name="faq">자주 묻는 질문</string>
     <string name="question">1:1 문의</string>
 
@@ -148,8 +149,8 @@
     <string name="notification_setting">푸시 알림 설정</string>
     <string name="etc">기타</string>
     <string name="launguage_setting">언어 설정</string>
-    <string name="late_version_update">최신버전 업데이트</string>
     <string name="warning_password_check">회원탈퇴를 위해 회원정보를 확인합니다. 다시 한번 로그인해주세요.</string>
+    <string name="late_version_update">최신버전 업데이트</string>
 
     <string name="chat_bot_hint">키워드를 입력해보세요</string>
     <string name="chat_empty_input">내용을 입력해주세요</string>
@@ -175,8 +176,8 @@
     <string name="naver_client_id">mxrQwyd6MdXhiw6vOWPX</string>
     <string name="naver_client_secret">sGExIUfD7b</string>
     <string name="naver_login_failed">네이버 연동에 실패하였습니다.</string>
-    
-    
+
+
     <string-array name="age_range">
         <item>선택안함</item>
         <item>1세 이하</item>
@@ -192,5 +193,5 @@
         <item>65–74세</item>
         <item>75세 이상</item>
     </string-array>
-    
+
 </resources>

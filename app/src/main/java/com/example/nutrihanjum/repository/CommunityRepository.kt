@@ -3,6 +3,7 @@ package com.example.nutrihanjum.repository
 
 import android.util.Log
 import com.example.nutrihanjum.model.ContentDTO
+import com.example.nutrihanjum.model.PostDTO
 import com.example.nutrihanjum.model.UserDTO
 import com.example.nutrihanjum.repository.UserRepository.uid
 import com.example.nutrihanjum.repository.UserRepository.userName
@@ -133,9 +134,12 @@ object CommunityRepository {
             .document(uid)
             .get().continueWith {
                 if (it.isSuccessful) {
-                    val name = it.result.get("name") as String
-                    val url = it.result.get("profileUrl") as String
-                    trySend(Pair(name, url))
+                    if (it.result.data == null) trySend(null)
+                    else {
+                        val name = it.result.get("name") as String
+                        val url = it.result.get("profileUrl") as String
+                        trySend(Pair(name, url))
+                    }
                 } else {
                     Log.wtf("Repository", it.exception?.message)
                 }
@@ -314,7 +318,7 @@ object CommunityRepository {
             .get().continueWith {
                 if (it.isSuccessful) {
                     val document = it.result
-                    if(document != null)
+                    if (document != null)
                         trySend(document.toObject(ContentDTO::class.java))
                     else
                         trySend(null)
@@ -326,8 +330,33 @@ object CommunityRepository {
         awaitClose()
     }
 
-    fun loadBannerImage() = callbackFlow {
-        storage.reference.child("banner/banner.png").downloadUrl.continueWith {
+    fun loadPosts(isFaq: Boolean) = callbackFlow {
+        val ref = when (isFaq) {
+            true -> store.collection("faq").orderBy("timestamp", Query.Direction.DESCENDING)
+            false -> store.collection("anmt").orderBy("timestamp", Query.Direction.DESCENDING)
+        }
+
+        ref.get().continueWith {
+            if (it.isSuccessful) {
+                it.result.documents.forEach { snapshot ->
+                    trySend(snapshot.toObject(PostDTO::class.java))
+                }
+            } else {
+                Log.wtf("Repository", it.exception?.message)
+            }
+            close()
+        }
+        awaitClose()
+    }
+
+    fun loadBannerImage(case: Int) = callbackFlow {
+        val path = when (case) {
+            0 -> "banner/communityBanner.png"
+            1 -> "banner/anmtBanner.png"
+            2 -> "banner/faqBanner.png"
+            else -> ""
+        }
+        storage.reference.child(path).downloadUrl.continueWith {
             if (it.isSuccessful) {
                 trySend(it.result)
             } else {

@@ -91,14 +91,18 @@ class CommentActivity : AppCompatActivity() {
         communityViewModel.comments.observe(this, {
             recyclerViewAdapter.updateComments(it)
 
+            val usersUid = arrayListOf<String>()
             it.forEach { comment ->
-                if (recyclerViewAdapter.isUserEmpty(comment.uid)) {
-                    communityViewModel.loadUserInfo(comment.uid)
-                }
+                if (recyclerViewAdapter.isUserEmpty(comment.uid)) usersUid.add(comment.uid)
             }
+
+            communityViewModel.loadUserInfo(usersUid)
         })
-        communityViewModel.user.observe(this, {
-            recyclerViewAdapter.users[it.first] = it.second
+        communityViewModel.users.observe(this, {
+            it.forEach { user ->
+                recyclerViewAdapter.users[user.first] = user.second
+            }
+
             recyclerViewAdapter.notifyDataSetChanged()
         })
     }
