@@ -91,7 +91,7 @@
         <entry key="app/src/main/res/layout/chatbot_fragment.xml" value="0.2617753623188406" />
         <entry key="app/src/main/res/layout/community_fragment.xml" value="0.2617753623188406" />
         <entry key="app/src/main/res/layout/community_recycler_header.xml" value="0.240625" />
-        <entry key="app/src/main/res/layout/fragment_login.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/fragment_login.xml" value="0.30791788856304986" />
         <entry key="app/src/main/res/layout/fragment_sign_up.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_banner.xml" value="0.17753623188405798" />
         <entry key="app/src/main/res/layout/item_chatbot.xml" value="0.335" />
@@ -101,17 +101,23 @@
         <entry key="app/src/main/res/layout/item_news.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_notice.xml" value="0.375" />
         <entry key="app/src/main/res/layout/item_post.xml" value="0.19375" />
+        <entry key="app/src/main/res/layout/layout_nutrition_info_white.xml" value="0.2630208333333333" />
         <entry key="app/src/main/res/layout/layout_pop_up.xml" value="0.240625" />
         <entry key="app/src/main/res/layout/layout_pop_up_delete.xml" value="0.335" />
         <entry key="app/src/main/res/layout/layout_pop_up_other.xml" value="0.1234375" />
         <entry key="app/src/main/res/layout/layout_popup_delete.xml" value="0.335" />
         <entry key="app/src/main/res/layout/layout_popup_delete_check.xml" value="0.25" />
         <entry key="app/src/main/res/layout/layout_popup_delete_modify.xml" value="0.1829353491282325" />
+        <entry key="app/src/main/res/layout/layout_popup_forgot_password.xml" value="0.2630208333333333" />
         <entry key="app/src/main/res/layout/layout_popup_my.xml" value="0.7576219512195121" />
+        <entry key="app/src/main/res/layout/layout_popup_password_check.xml" value="0.2630208333333333" />
+        <entry key="app/src/main/res/layout/layout_popup_password_reset.xml" value="0.2630208333333333" />
         <entry key="app/src/main/res/layout/layout_popup_report.xml" value="0.24166666666666667" />
         <entry key="app/src/main/res/layout/layout_popup_report_check.xml" value="0.20652173913043478" />
         <entry key="app/src/main/res/layout/layout_popup_report_result.xml" value="0.23854166666666668" />
         <entry key="app/src/main/res/layout/layout_popup_report_success.xml" value="0.10989583333333333" />
+        <entry key="app/src/main/res/layout/layout_popup_reset_password.xml" value="0.2630208333333333" />
+        <entry key="app/src/main/res/layout/layout_popup_year_month_picker.xml" value="0.2630208333333333" />
         <entry key="app/src/main/res/layout/news_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/user_fragment.xml" value="0.23135058156024405" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.24479166666666666" />

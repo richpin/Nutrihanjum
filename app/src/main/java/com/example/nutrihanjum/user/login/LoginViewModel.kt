@@ -1,6 +1,7 @@
 package com.example.nutrihanjum.user.login
 
 import android.content.Context
+import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,6 +18,9 @@ import java.util.regex.Pattern
 class LoginViewModel : ViewModel() {
     private val _loginResult = MutableLiveData<Boolean>()
     val loginResult: LiveData<Boolean> get() = _loginResult
+
+    private val _forgotResult = MutableLiveData<Boolean>()
+    val forgotResult : LiveData<Boolean> get() = _forgotResult
 
     fun authWithCredential(credential: AuthCredential) = viewModelScope.launch {
         UserRepository.authWithCredential(credential).collect {
@@ -39,6 +43,13 @@ class LoginViewModel : ViewModel() {
     fun signInWithNaver(accessToken: String, mContext: Context) = viewModelScope.launch {
         UserRepository.signInWithNaver(accessToken, mContext).collect {
             _loginResult.postValue(it)
+        }
+    }
+
+    fun resetPassword(email: String) = viewModelScope.launch {
+        Log.wtf("Gang", email)
+        UserRepository.resetPassword(email).collect {
+            _forgotResult.postValue(it)
         }
     }
 }
