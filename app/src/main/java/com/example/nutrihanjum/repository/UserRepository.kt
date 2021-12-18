@@ -245,7 +245,17 @@ object UserRepository {
         awaitClose()
     }
 
-
+    fun resetPassword(email: String) = callbackFlow {
+        auth.sendPasswordResetEmail(email).continueWith {
+            if(it.isSuccessful) {
+                Log.wtf("resetPassword", "Email sent")
+                trySend(true)
+            }
+            else trySend(false)
+            close()
+        }
+        awaitClose()
+    }
 
     fun signInWithKakaotalk(mContext: Context) = callbackFlow{
         if (!userClient.isKakaoTalkLoginAvailable(mContext)) {

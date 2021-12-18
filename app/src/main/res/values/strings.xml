@@ -150,7 +150,10 @@
     <string name="etc">기타</string>
     <string name="launguage_setting">언어 설정</string>
     <string name="late_version_update">최신버전 업데이트</string>
-    <string name="warning_password_check">탈퇴 시 모든 정보가 삭제되고 되돌릴 수 없습니다. 정말 탈퇴하실껀가요?</string>
+    <string name="warning_password_check">탈퇴 시 모든 정보가 삭제되고 되돌릴 수 없습니다. 정말 탈퇴하시겠습니?</string>
+    <string name="warning_forgot_password">해당 계정의 이메일로 비밀번호 재설정 메일을 보내드립니다.</string>
+    <string name="send_email">전송</string>
+    <string name="send_email_fail">잘못된 이메일입니다.</string>
 
     <string name="chat_bot_hint">키워드를 입력해보세요</string>
     <string name="chat_empty_input">내용을 입력해주세요</string>

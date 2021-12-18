@@ -1,8 +1,12 @@
 package com.example.nutrihanjum.user.login
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Layout
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,9 +15,11 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.FragmentLoginBinding
+import com.example.nutrihanjum.databinding.LayoutPopupForgotPasswordBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.GoogleAuthProvider
@@ -29,6 +35,9 @@ class LoginFragment : Fragment() {
     private lateinit var viewModel: LoginViewModel
     private lateinit var googleLoginLauncher: ActivityResultLauncher<Intent>
 
+    private lateinit var popupForgotPassword: Dialog
+    private lateinit var popupForgotPasswordBinding: LayoutPopupForgotPasswordBinding
+
     private val mOAuthLoginModule get() = OAuthLogin.getInstance()
 
     override fun onCreateView(
@@ -39,9 +48,30 @@ class LoginFragment : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(LoginViewModel::class.java)
 
+        initDialog()
+        addLiveDataObserver()
         setLoginListener()
 
         return binding.root
+    }
+
+    private fun addLiveDataObserver() {
+        viewModel.forgotResult.observe(viewLifecycleOwner, Observer {
+            if(it) popupForgotPassword.dismiss()
+            else Toast.makeText(activity, getString(R.string.send_email_fail), Toast.LENGTH_LONG).show()
+        })
+    }
+
+    private fun initDialog() {
+        popupForgotPassword = Dialog(requireContext())
+        popupForgotPasswordBinding = LayoutPopupForgotPasswordBinding.inflate(LayoutInflater.from(requireContext()))
+        popupForgotPassword.setContentView(popupForgotPasswordBinding.root)
+        popupForgotPassword.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        popupForgotPasswordBinding.btnCancelSendEmail.setOnClickListener { popupForgotPassword.dismiss() }
+        popupForgotPasswordBinding.btnSendEmail.setOnClickListener {
+            viewModel.resetPassword(popupForgotPasswordBinding.edittextEmailForgot.text.toString())
+        }
     }
 
     private fun googleLogin() {
@@ -128,6 +158,10 @@ class LoginFragment : Fragment() {
                 addToBackStack(null)
                 commit()
             }
+        }
+
+        binding.btnForgotPassword.setOnClickListener {
+            popupForgotPassword.show()
         }
     }
 
