@@ -58,20 +58,6 @@ class CalendarDiaryViewModel: ViewModel() {
 
     var isWeekMode = true
 
-    fun loadAllDiaryAtDate(_date: LocalDate) = viewModelScope.launch {
-        val diaryMap = _diaryMap.value!!
-        val date = getFormattedDate(_date)
-
-        diaryMap[date] = arrayListOf()
-
-        DiaryRepository.loadAllDiaryAtDate(date).collect {
-            diaryMap[date]!!.addAll(it)
-        }
-
-        _diaryMap.postValue(diaryMap)
-    }
-
-
     fun loadDiaryInRange(start: LocalDate, end: LocalDate) = viewModelScope.launch {
         DiaryRepository.loadAllDiary(getFormattedDate(start), getFormattedDate(end)).collect {
             it.forEach { content ->

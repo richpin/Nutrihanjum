@@ -27,6 +27,7 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
         userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
 
+
         if(userViewModel.isSigned()){
             startActivity(Intent(this, MainActivity::class.java))
             finish()

@@ -149,8 +149,8 @@
     <string name="notification_setting">푸시 알림 설정</string>
     <string name="etc">기타</string>
     <string name="launguage_setting">언어 설정</string>
-    <string name="warning_password_check">회원탈퇴를 위해 회원정보를 확인합니다. 다시 한번 로그인해주세요.</string>
     <string name="late_version_update">최신버전 업데이트</string>
+    <string name="warning_password_check">탈퇴 시 모든 정보가 삭제되고 되돌릴 수 없습니다. 정말 탈퇴하실껀가요?</string>
 
     <string name="chat_bot_hint">키워드를 입력해보세요</string>
     <string name="chat_empty_input">내용을 입력해주세요</string>
@@ -177,6 +177,7 @@
     <string name="naver_client_secret">sGExIUfD7b</string>
     <string name="naver_login_failed">네이버 연동에 실패하였습니다.</string>
 
+    <string name="age_not_selected">나이미상</string>
 
     <string-array name="age_range">
         <item>선택안함</item>

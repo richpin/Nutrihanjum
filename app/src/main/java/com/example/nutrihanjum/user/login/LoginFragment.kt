@@ -1,5 +1,6 @@
 package com.example.nutrihanjum.user.login
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -54,7 +55,8 @@ class LoginFragment : Fragment() {
         googleLoginLauncher.launch(client.signInIntent)
     }
 
-    private val mOAuthLoginHandler: OAuthLoginHandler = object: OAuthLoginHandler() {
+    private val mOAuthLoginHandler: OAuthLoginHandler = @SuppressLint("HandlerLeak")
+    object: OAuthLoginHandler() {
         override fun run(success: Boolean) {
             if (success) {
                 val accessToken = mOAuthLoginModule.getAccessToken(requireContext())

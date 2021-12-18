@@ -135,15 +135,13 @@ object DiaryRepository {
 
 
     fun deleteDiary(documentId: String, imageUrl: String) = callbackFlow {
-        storage.getReferenceFromUrl(imageUrl).delete().onSuccessTask {
-            store.runBatch { batch ->
-                batch.update(
-                    store.collection("users").document(uid!!),
-                    "posts",
-                    FieldValue.arrayRemove(documentId)
-                )
-                batch.delete(store.collection("posts").document(documentId))
-            }
+        store.runBatch { batch ->
+            batch.update(
+                store.collection("users").document(uid!!),
+                "posts",
+                FieldValue.arrayRemove(documentId)
+            )
+            batch.delete(store.collection("posts").document(documentId))
         }.continueWith {
             if (it.isSuccessful) {
                 trySend(true)
@@ -158,7 +156,7 @@ object DiaryRepository {
 
 
     fun addDiary(content: ContentDTO, imageUri: String) = callbackFlow {
-        val filename = "${uid}${content.timestamp}.png"
+        val filename = uid + content.timestamp
         storage.reference.child("images").child(filename)
             .putFile(Uri.parse(imageUri))
             .onSuccessTask {

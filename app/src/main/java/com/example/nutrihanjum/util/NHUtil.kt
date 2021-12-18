@@ -42,9 +42,15 @@ object NHUtil {
 
     enum class Setting{
         LOG_OUT,
-        PROFILE_EDIT
+        PROFILE_EDIT,
+        WITHDRAW
     }
 
+    enum class WithdrawResult {
+        SUCCESS,
+        RE_AUTHENTICATE_NEEDED,
+        FAILED
+    }
 
 
     fun <T, K, R> LiveData<T>.combineWith(

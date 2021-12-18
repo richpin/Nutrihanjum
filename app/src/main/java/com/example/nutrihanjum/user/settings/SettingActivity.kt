@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,6 +20,7 @@ import com.example.nutrihanjum.R
 import com.example.nutrihanjum.UserViewModel
 import com.example.nutrihanjum.databinding.ActivitySettingBinding
 import com.example.nutrihanjum.databinding.LayoutPopupPasswordCheckBinding
+import com.example.nutrihanjum.user.login.LoginActivity
 import com.example.nutrihanjum.util.NHUtil
 
 class SettingActivity : AppCompatActivity() {
@@ -27,6 +29,9 @@ class SettingActivity : AppCompatActivity() {
     private lateinit var userViewModel : UserViewModel
 
     private lateinit var profileLauncher: ActivityResultLauncher<Intent>
+
+    private lateinit var passwordCheckBinding: LayoutPopupPasswordCheckBinding
+    private lateinit var passwordCheckDialog: Dialog
 
     private val preference by lazy {
         getPreferences(Context.MODE_PRIVATE)
@@ -41,6 +46,7 @@ class SettingActivity : AppCompatActivity() {
         makeActivityLauncher()
         addLiveDataObserver()
         addViewListener()
+        makeDialog()
 
         userViewModel.setNoticeFlag(preference.getBoolean("notice", true))
 
@@ -61,13 +67,25 @@ class SettingActivity : AppCompatActivity() {
         }
 
         userViewModel.userDeleteResult.observe(this) {
-            if (it) {
-                val intent = Intent().apply{ putExtra("setting", NHUtil.Setting.LOG_OUT) }
-                setResult(Activity.RESULT_OK, intent)
-                finish()
-            }
-            else {
-                Toast.makeText(this, getString(R.string.network_failed), Toast.LENGTH_SHORT).show()
+            passwordCheckBinding.layoutLoading.visibility = View.GONE
+
+            when (it) {
+                NHUtil.WithdrawResult.SUCCESS -> {
+                    val intent = Intent().apply { putExtra("setting", NHUtil.Setting.WITHDRAW) }
+                    setResult(Activity.RESULT_OK, intent)
+                    finish()
+                }
+                NHUtil.WithdrawResult.RE_AUTHENTICATE_NEEDED -> {
+                    userViewModel.signOut(this)
+
+                    val intent = Intent().apply { putExtra("setting", NHUtil.Setting.LOG_OUT) }
+                    setResult(Activity.RESULT_OK, intent)
+                    finish()
+                }
+                else -> {
+                    Toast.makeText(this, getString(R.string.network_failed), Toast.LENGTH_SHORT).show()
+                    passwordCheckDialog.dismiss()
+                }
             }
         }
     }
@@ -108,22 +126,23 @@ class SettingActivity : AppCompatActivity() {
         }
 
         binding.btnRequestWithdrawal.setOnClickListener {
-            makeDialog()
+            passwordCheckDialog.show()
         }
     }
 
 
     private fun makeDialog() {
-        val passwordCheckBinding = LayoutPopupPasswordCheckBinding.inflate(layoutInflater)
-        val passwordCheckDialog = Dialog(this@SettingActivity)
+        passwordCheckBinding = LayoutPopupPasswordCheckBinding.inflate(layoutInflater)
+        passwordCheckDialog = Dialog(this@SettingActivity)
 
         passwordCheckDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         passwordCheckDialog.setContentView(passwordCheckBinding.root)
 
-        passwordCheckBinding.btnSetPassword.setOnClickListener {
+        passwordCheckBinding.btnPositive.setOnClickListener {
             userViewModel.removeUser()
         }
 
-        passwordCheckDialog.show()
+
+        passwordCheckBinding.btnNegative.setOnClickListener { passwordCheckDialog.dismiss() }
     }
 }

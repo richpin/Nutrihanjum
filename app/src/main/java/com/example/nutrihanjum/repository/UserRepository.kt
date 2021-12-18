@@ -382,13 +382,17 @@ object UserRepository {
 
 
     fun removeUser() = callbackFlow {
-        store.collection("users").document(uid!!).delete().onSuccessTask {
-            storage.reference.child("profileImages").child(uid!!).delete()
+        functions.getHttpsCallable("removeUser").call().continueWith {
+            if (it.isSuccessful) {
+                trySend(NHUtil.WithdrawResult.SUCCESS)
+            }
+            else if (it.exception is FirebaseAuthRecentLoginRequiredException) {
+                trySend(NHUtil.WithdrawResult.RE_AUTHENTICATE_NEEDED)
+            }
+            else {
+                trySend(NHUtil.WithdrawResult.FAILED)
+            }
 
-        }.onSuccessTask {
-            auth.currentUser!!.delete()
-        }.continueWith {
-            trySend(it.isSuccessful)
             close()
         }
 
