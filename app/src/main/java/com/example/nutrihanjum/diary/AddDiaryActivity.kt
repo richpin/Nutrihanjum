@@ -35,6 +35,7 @@ class AddDiaryActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
 
         binding = ActivityAddDiaryBinding.inflate(layoutInflater)
         viewModel = ViewModelProvider(this).get(DiaryViewModel::class.java)
@@ -448,5 +449,11 @@ class AddDiaryActivity : AppCompatActivity() {
         getString(R.string.meal_time_snack) -> R.id.radio_btn_snack
         getString(R.string.meal_time_midnight_snack) -> R.id.radio_btn_midnight
         else -> View.NO_ID
+    }
+
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 }

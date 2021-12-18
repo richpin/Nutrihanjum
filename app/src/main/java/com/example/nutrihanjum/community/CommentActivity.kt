@@ -57,6 +57,7 @@ class CommentActivity : AppCompatActivity() {
         communityViewModel.loadComments(contentDTO.id)
 
         setContentView(binding.root)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
     private fun addRecyclerView() {
@@ -148,5 +149,11 @@ class CommentActivity : AppCompatActivity() {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0)
         }
+    }
+
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 }

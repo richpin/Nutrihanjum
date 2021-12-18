@@ -181,25 +181,37 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <androidx.cardview.widget.CardView
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="15dp"
                 android:layout_marginTop="70dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp">
+                android:background="@drawable/box_rounded_orange"
+                android:backgroundTint="@color/orange">
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_sign_up"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/orange"
+                    android:background="@android:color/transparent"
                     android:fontFamily="@font/apple_gothic_neo_b"
                     android:text="@string/request_sign_up"
                     android:textColor="@color/white"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"/>
 
-            </androidx.cardview.widget.CardView>
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/btn_loading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:indicatorColor="@color/white"
+                    app:trackColor="@color/orange"
+                    android:indeterminate="true"
+                    android:layout_centerInParent="true"
+                    style="Widget.MaterialComponents.CircularProgressIndicator.Small"
+                    android:visibility="gone"/>
+
+            </RelativeLayout>
 
 
         </LinearLayout>

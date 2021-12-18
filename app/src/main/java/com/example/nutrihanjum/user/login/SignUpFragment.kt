@@ -105,11 +105,16 @@ class SignUpFragment : Fragment() {
             } else {
                 Toast.makeText(activity, getString(R.string.signup_failed), Toast.LENGTH_LONG).show()
                 binding.btnSignUp.isClickable = true
+                binding.btnSignUp.visibility = View.VISIBLE
+                binding.btnLoading.visibility = View.GONE
             }
         }
 
         binding.btnSignUp.setOnClickListener {
             if (viewModel.isValid) {
+                it.visibility = View.INVISIBLE
+                binding.btnLoading.visibility = View.VISIBLE
+
                 val email = binding.edittextEmail.text.toString()
                 val password = binding.edittextPassword.text.toString()
                 val name = binding.edittextUserName.text.toString()

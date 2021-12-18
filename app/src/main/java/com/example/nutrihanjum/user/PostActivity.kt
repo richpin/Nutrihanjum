@@ -19,7 +19,7 @@ class PostActivity : AppCompatActivity() {
 
     private val recyclerViewAdapter = PostRecyclerViewAdapter()
 
-        override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPostBinding.inflate(layoutInflater)
         viewModel = ViewModelProvider(this).get(ContentViewModel::class.java)
@@ -39,6 +39,7 @@ class PostActivity : AppCompatActivity() {
         viewModel.loadPosts(isFaq)
 
         setContentView(binding.root)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
     private fun addLiveDataObserver() {
@@ -60,5 +61,11 @@ class PostActivity : AppCompatActivity() {
             true -> this.getString(R.string.faq)
             false -> this.getString(R.string.anmt)
         }
+    }
+
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 }

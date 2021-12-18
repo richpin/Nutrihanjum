@@ -42,21 +42,20 @@ class UpdateProfileActivity : AppCompatActivity() {
         addLiveDataObserver()
         addTextInputValidChecker()
         setActivityLauncher()
+        initView()
 
         if (savedInstanceState == null) {
             binding.layoutLoading.visibility = View.VISIBLE
             viewModel.getUserProfile()
 
             viewModel.user.observe(this) {
-                initView()
+                setView()
                 binding.layoutLoading.visibility = View.GONE
             }
         }
-        else {
-            initView()
-        }
 
         setContentView(binding.root)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
 
@@ -124,6 +123,20 @@ class UpdateProfileActivity : AppCompatActivity() {
 
         binding.edittextUserName.setText(viewModel.userName)
 
+        setViewListener()
+    }
+
+
+    private fun setView() {
+        viewModel.userPhoto?.let {
+            Glide.with(this)
+                .load(viewModel.userPhoto)
+                .circleCrop()
+                .into(binding.imageviewProfileImage)
+        }
+
+        binding.edittextUserName.setText(viewModel.userName)
+
         if (viewModel.userAge >= 0) {
             binding.spinnerAge.setSelection(viewModel.userAge)
         }
@@ -134,8 +147,6 @@ class UpdateProfileActivity : AppCompatActivity() {
                 else binding.radioBtnFemale.id
             )
         }
-
-        setViewListener()
     }
 
 
@@ -245,5 +256,11 @@ class UpdateProfileActivity : AppCompatActivity() {
         }
 
         binding.btnPasswordReset.setOnClickListener { passwordResetDialog.show() }
+    }
+
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 }

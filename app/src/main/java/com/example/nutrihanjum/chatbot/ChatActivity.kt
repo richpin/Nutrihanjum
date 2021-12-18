@@ -27,6 +27,7 @@ class ChatActivity : AppCompatActivity() {
         initView()
 
         setContentView(binding.root)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
 
@@ -89,6 +90,13 @@ class ChatActivity : AppCompatActivity() {
 
             return@setOnEditorActionListener true
         }
+    }
+
+
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 
 }

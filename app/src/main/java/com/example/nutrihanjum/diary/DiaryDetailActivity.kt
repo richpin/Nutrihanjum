@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.ActivityDiaryDetailBinding
 import com.example.nutrihanjum.databinding.LayoutPopupDeleteCheckBinding
 import com.example.nutrihanjum.databinding.LayoutPopupDeleteModifyBinding
@@ -37,6 +38,7 @@ class DiaryDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityDiaryDetailBinding.inflate(layoutInflater)
         viewModel = ViewModelProvider(this).get(DiaryViewModel::class.java)
         viewModel.content = intent.getSerializableExtra("content") as ContentDTO
@@ -84,6 +86,7 @@ class DiaryDetailActivity : AppCompatActivity() {
         }
 
         setContentView(binding.root)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
 
@@ -209,5 +212,11 @@ class DiaryDetailActivity : AppCompatActivity() {
 
     private fun setHashTag() {
         (binding.recyclerviewHashtag.adapter as HashTagAdapter).updateHashTag(viewModel.content.hashTagList)
+    }
+
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 }

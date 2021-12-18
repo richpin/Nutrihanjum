@@ -3,6 +3,7 @@ package com.example.nutrihanjum.user
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.bumptech.glide.Glide
+import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.ActivityPostBinding
 import com.example.nutrihanjum.databinding.ActivityPostDetailBinding
 import com.example.nutrihanjum.model.PostDTO
@@ -20,6 +21,7 @@ class PostDetailActivity : AppCompatActivity() {
         addViewListener()
 
         setContentView(binding.root)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
     private fun setLayout(postDTO: PostDTO){
@@ -29,5 +31,10 @@ class PostDetailActivity : AppCompatActivity() {
 
     private fun addViewListener() {
         binding.PostDetailActivityBackButton.setOnClickListener { onBackPressed() }
+    }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 }

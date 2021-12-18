@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.nutrihanjum.R
 import com.example.nutrihanjum.community.CommunityRecyclerViewAdapter
 import com.example.nutrihanjum.community.CommunityViewModel
 import com.example.nutrihanjum.community.ContentViewModel
@@ -40,6 +41,7 @@ class SavedContentActivity : AppCompatActivity() {
         contentViewModel.loadSavedContents()
 
         setContentView(binding.root)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
     private fun makeLauncher(adapter: CommunityRecyclerViewAdapter) {
@@ -94,5 +96,11 @@ class SavedContentActivity : AppCompatActivity() {
     private fun modifyLayoutManager() {
         layoutManager.reverseLayout = true
         layoutManager.stackFromEnd = true
+    }
+
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 }

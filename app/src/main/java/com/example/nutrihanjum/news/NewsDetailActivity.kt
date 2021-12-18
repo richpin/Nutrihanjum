@@ -8,6 +8,7 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AlertDialog
+import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.ActivityNewsDetailBinding
 
 class NewsDetailActivity : AppCompatActivity() {
@@ -39,5 +40,12 @@ class NewsDetailActivity : AppCompatActivity() {
         }
 
         setContentView(binding.root)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+    }
+
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 }

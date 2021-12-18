@@ -38,9 +38,6 @@ class LoginActivity : AppCompatActivity() {
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
-            else {
-                Toast.makeText(this, getString(R.string.login_failed), Toast.LENGTH_LONG).show()
-            }
         }
 
         if (savedInstanceState == null) {

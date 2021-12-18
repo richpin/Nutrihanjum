@@ -194,23 +194,20 @@ object UserRepository {
     }
 
 
-    fun signInWithEmail(email: String, password: String) = callbackFlow {
+    fun signInWithEmail(email: String, password: String, context: Context) = callbackFlow {
         auth.signInWithEmailAndPassword(email, password).continueWith {
-//            trySend(
-//                if (it.isSuccessful) {
-//                    NHUtil.LoginResult.SUCCESS
-//                }
-//                else if (it.exception is FirebaseAuthInvalidUserException) {
-//                    NHUtil.LoginResult.EMAIL_WRONG
-//                }
-//                else if (it.exception is FirebaseAuthInvalidCredentialsException) {
-//                    NHUtil.LoginResult.PASSWORD_WRONG
-//                }
-//                else {
-//                    NHUtil.LoginResult.NETWORK_FAILED
-//                }
-//            )
-            trySend(it.isSuccessful)
+            if (it.isSuccessful) {
+                trySend(true)
+            }
+            else if (it.exception is FirebaseAuthInvalidCredentialsException) {
+                trySend(false)
+                Toast.makeText(context, context.getString(R.string.login_failed), Toast.LENGTH_SHORT).show()
+            }
+            else {
+                trySend(false)
+                Toast.makeText(context, context.getString(R.string.network_failed), Toast.LENGTH_SHORT).show()
+            }
+
             close()
         }
 

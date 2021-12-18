@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.nutrihanjum.R
 import com.example.nutrihanjum.databinding.ActivityNoticeBinding
 import com.example.nutrihanjum.repository.CommunityRepository.boardLimit
 
@@ -34,6 +35,7 @@ class NoticeActivity : AppCompatActivity() {
         communityViewModel.loadNoticesInit()
 
         setContentView(binding.root)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
     private fun addViewListener() {
@@ -80,5 +82,11 @@ class NoticeActivity : AppCompatActivity() {
                 boardLimit.toInt()
             )
         })
+    }
+
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 }

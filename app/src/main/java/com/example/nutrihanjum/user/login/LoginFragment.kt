@@ -112,7 +112,8 @@ class LoginFragment : Fragment() {
             val password = binding.edittextPassword.text.toString()
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                viewModel.signInWithEmail(email, password)
+                viewModel.signInWithEmail(email, password, requireContext())
+
             } else {
                 Toast.makeText(activity, getString(R.string.login_not_filled), Toast.LENGTH_SHORT)
                     .show()
@@ -121,6 +122,7 @@ class LoginFragment : Fragment() {
 
         binding.btnSignUp.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction().apply {
+                setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
                 hide(this@LoginFragment)
                 add(R.id.layout_fragment_container, SignUpFragment())
                 addToBackStack(null)

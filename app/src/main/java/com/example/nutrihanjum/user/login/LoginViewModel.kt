@@ -24,8 +24,8 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-    fun signInWithEmail(email: String, password: String) = viewModelScope.launch {
-        UserRepository.signInWithEmail(email, password).collect {
+    fun signInWithEmail(email: String, password: String, context: Context) = viewModelScope.launch {
+        UserRepository.signInWithEmail(email, password, context).collect {
             _loginResult.postValue(it)
         }
     }
