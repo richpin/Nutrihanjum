@@ -180,7 +180,7 @@
     <string name="naver_client_secret">sGExIUfD7b</string>
     <string name="naver_login_failed">네이버 연동에 실패하였습니다.</string>
 
-    <string name="age_not_selected">나이미상</string>
+    <string name="age_not_selected">나이 미상</string>
 
     <string-array name="age_range">
         <item>선택안함</item>

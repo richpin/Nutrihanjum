@@ -26,7 +26,7 @@ class PostDetailActivity : AppCompatActivity() {
 
     private fun setLayout(postDTO: PostDTO){
         binding.postDetailActivityTitleTextview.text = postDTO.title
-        Glide.with(this).load(postDTO.imageUrl).into(binding.postDetailActivityImageview)
+        binding.postDetailActivityContentTextview.text = postDTO.content.replace("\\n","\n")
     }
 
     private fun addViewListener() {
