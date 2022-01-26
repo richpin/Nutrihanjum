@@ -6,61 +6,56 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".diary.DiaryFragment">
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top|center_horizontal"
-        app:cardCornerRadius="15dp">
+        android:layout_gravity="top"
+        android:background="@drawable/box_bottom_rounded_white"
+        android:elevation="5dp"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:id="@+id/layout_calendar_month"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginBottom="10dp">
 
-            <RelativeLayout
-                android:id="@+id/layout_calendar_month"
+            <TextView
+                android:id="@+id/textview_calendar_month"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="15dp"
-                android:layout_marginBottom="10dp">
+                android:fontFamily="@font/apple_gothic_neo_b"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
 
-                <TextView
-                    android:id="@+id/textview_calendar_month"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/apple_gothic_neo_b"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"/>
+            <View
+                android:id="@+id/calendar_mode_controller"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:backgroundTint="@color/black"
+                android:background="@drawable/ic_arrow_down"/>
 
-                <View
-                    android:id="@+id/calendar_mode_controller"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:backgroundTint="@color/black"
-                    android:background="@drawable/ic_arrow_down"/>
+        </RelativeLayout>
 
-            </RelativeLayout>
+        <com.kizitonwose.calendarview.CalendarView
+            android:id="@+id/calendar_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:overScrollMode="never"
+            app:cv_dayViewResource="@layout/calendar_day_layout"
+            app:cv_monthHeaderResource="@layout/calendar_header_layout"
+            app:cv_maxRowCount="1"
+            app:cv_orientation="horizontal"
+            app:cv_hasBoundaries="false"
+            app:cv_outDateStyle="endOfRow"
+            app:cv_inDateStyle="firstMonth"
+            app:cv_scrollMode="paged"/>
 
-            <com.kizitonwose.calendarview.CalendarView
-                android:id="@+id/calendar_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
-                android:overScrollMode="never"
-                app:cv_dayViewResource="@layout/calendar_day_layout"
-                app:cv_monthHeaderResource="@layout/calendar_header_layout"
-                app:cv_maxRowCount="1"
-                app:cv_orientation="horizontal"
-                app:cv_hasBoundaries="false"
-                app:cv_outDateStyle="endOfRow"
-                app:cv_inDateStyle="firstMonth"
-                app:cv_scrollMode="paged"/>
-
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
+    </LinearLayout>
     
     <LinearLayout
         android:layout_width="match_parent"

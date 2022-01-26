@@ -99,11 +99,17 @@ class SignUpFragment : Fragment() {
 
     private fun initForSignUp() {
         viewModel.signUpResult.observe(viewLifecycleOwner) {
-            if (it) {
+            if (it == "success") {
                 hideKeyboard()
                 activity?.onBackPressed()
             } else {
-                Toast.makeText(activity, getString(R.string.signup_failed), Toast.LENGTH_LONG).show()
+                if (it == "emailCollision") {
+                    Toast.makeText(activity, getString(R.string.email_collision), Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    Toast.makeText(activity, getString(R.string.signup_failed), Toast.LENGTH_LONG).show()
+                }
+
                 binding.btnSignUp.isClickable = true
                 binding.btnSignUp.visibility = View.VISIBLE
                 binding.btnLoading.visibility = View.GONE

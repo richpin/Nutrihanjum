@@ -34,7 +34,7 @@ class CalendarDiaryViewModel: ViewModel() {
             else value
         }
 
-    val lastVisibleDate: LocalDate = YearMonth.now().atEndOfMonth()
+    var lastVisibleDate: LocalDate = YearMonth.now().atEndOfMonth()
     var firstVisibleDate: LocalDate = YearMonth.now().minusMonths(10).atDay(1)
     val today: LocalDate = LocalDate.now()
 
@@ -50,7 +50,18 @@ class CalendarDiaryViewModel: ViewModel() {
         }
 
     var lastMonth: YearMonth = YearMonth.now()
-    val signedDate: LocalDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(UserRepository.signedDate!!), ZoneId.systemDefault()).toLocalDate()
+        set(value) {
+            field = if (value.isAfter(today.yearMonth)) {
+                lastVisibleDate = today.yearMonth.atEndOfMonth()
+                today.yearMonth
+            }
+            else {
+                lastVisibleDate = value.atEndOfMonth()
+                value
+            }
+        }
+
+    val signedDate: LocalDate = LocalDate.of(2010,1,1)
 
     init {
         firstMonth = YearMonth.now().minusMonths(10)
@@ -58,7 +69,7 @@ class CalendarDiaryViewModel: ViewModel() {
 
     var isWeekMode = true
 
-    fun loadDiaryInRange(start: LocalDate, end: LocalDate) = viewModelScope.launch {
+    private fun loadDiaryInRange(start: LocalDate, end: LocalDate) = viewModelScope.launch {
         DiaryRepository.loadAllDiary(getFormattedDate(start), getFormattedDate(end)).collect {
             it.forEach { content ->
                 addToMap(content)

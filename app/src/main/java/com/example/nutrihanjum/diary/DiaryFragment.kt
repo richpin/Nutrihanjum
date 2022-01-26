@@ -110,9 +110,11 @@ class DiaryFragment: Fragment() {
             pickerYear.setOnValueChangedListener { _, oldVal, newVal ->
                 if (oldVal == newVal) return@setOnValueChangedListener
 
-                pickerMonth.value = min(viewModel.today.monthValue, pickerMonth.value)
-                pickerMonth.minValue = if (newVal == viewModel.signedDate.year) viewModel.signedDate.monthValue else 1
-                pickerMonth.maxValue = if (newVal == viewModel.lastMonth.year) viewModel.lastMonth.monthValue else 12
+                pickerMonth.maxValue = if (newVal == viewModel.today.year) {
+                    pickerMonth.value = min(viewModel.today.monthValue, pickerMonth.value)
+                    viewModel.today.monthValue
+                } else 12
+
                 pickerMonth.displayedValues = (pickerMonth.minValue..pickerMonth.maxValue).map { "${it}월" }.toTypedArray()
             }
         }
@@ -128,7 +130,7 @@ class DiaryFragment: Fragment() {
                 val currentMonth = viewModel.currentDate.monthValue
                 val currentYear = viewModel.currentDate.year
 
-                pickerMonth.minValue = if (currentYear == viewModel.signedDate.year) viewModel.signedDate.monthValue else 1
+                pickerMonth.minValue = 1
                 pickerMonth.maxValue = if (currentYear == viewModel.today.year) viewModel.today.monthValue else 12
                 pickerMonth.displayedValues = (pickerMonth.minValue..pickerMonth.maxValue).map { "${it}월" }.toTypedArray()
 
@@ -152,24 +154,18 @@ class DiaryFragment: Fragment() {
 
 
     private fun scrollToPickedMonth(yearMonth: YearMonth) {
-        val destDate = if (yearMonth == viewModel.signedDate.yearMonth) {
-            viewModel.signedDate
-        } else {
-            yearMonth.atDay(1)
+        val destDate = yearMonth.atDay(1)
+
+        if (yearMonth in viewModel.firstMonth..viewModel.lastMonth) {
+            binding.calendarView.scrollToDate(destDate)
         }
-
-        if (yearMonth.isBefore(viewModel.firstMonth)) {
-            val endMonth = viewModel.firstMonth.minusMonths(1)
-
-            viewModel.firstMonth = yearMonth.minusMonths(5)
+        else {
+            viewModel.lastMonth = yearMonth.plusMonths(5)
+            viewModel.firstMonth = viewModel.lastMonth.minusMonths(10)
             binding.calendarView.setup(viewModel.firstMonth, viewModel.lastMonth, DayOfWeek.SUNDAY)
             binding.calendarView.scrollToDate(destDate)
 
-            viewModel.loadDiaryInRange(viewModel.firstVisibleDate, endMonth.atEndOfMonth())
-
-        }
-        else {
-            binding.calendarView.scrollToDate(destDate)
+            viewModel.refreshAll()
         }
     }
 
@@ -322,6 +318,7 @@ class DiaryFragment: Fragment() {
             maxRowCount = 6,
             hasBoundaries = true
         )
+
 
         binding.calendarView.scrollToMonth(dest)
         expandAnimator.start()

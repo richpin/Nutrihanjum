@@ -148,20 +148,6 @@ object UserRepository {
 
 
 
-
-    fun checkEmailUnique(email: String) = callbackFlow {
-        val registration = store.collection("users")
-            .whereEqualTo("email", email)
-            .addSnapshotListener { snapshot, err ->
-                if (err != null || snapshot == null) return@addSnapshotListener
-
-                trySend(snapshot.documents.isNullOrEmpty())
-            }
-
-        awaitClose { registration.remove() }
-    }
-
-
     fun createUserWithEmail(email: String, password: String, name: String) = callbackFlow {
         var userID = ""
 
@@ -182,9 +168,13 @@ object UserRepository {
 
         }.continueWith {
             if (it.isSuccessful) {
-                trySend(true)
-            } else {
-                trySend(false)
+                trySend("success")
+            }
+            else if (it.exception is FirebaseAuthUserCollisionException) {
+                trySend("emailCollision")
+            }
+            else {
+                trySend("fail")
             }
             auth.signOut()
             close()

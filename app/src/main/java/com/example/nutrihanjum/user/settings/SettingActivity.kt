@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -72,9 +73,14 @@ class SettingActivity : AppCompatActivity() {
 
             when (it) {
                 NHUtil.WithdrawResult.SUCCESS -> {
-                    val intent = Intent().apply { putExtra("setting", NHUtil.Setting.WITHDRAW) }
-                    setResult(Activity.RESULT_OK, intent)
-                    finish()
+                    userViewModel.signOut(this)
+                    Log.wtf("Hello", userViewModel.isSigned().toString())
+
+                    val mIntent = Intent(this, LoginActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    }
+
+                    startActivity(mIntent)
                 }
                 NHUtil.WithdrawResult.RE_AUTHENTICATE_NEEDED -> {
                     userViewModel.signOut(this)

@@ -13,8 +13,8 @@ import kotlinx.coroutines.launch
 
 class SingUpViewModel: ViewModel() {
 
-    private val _signUpResult = MutableLiveData<Boolean>()
-    val signUpResult: LiveData<Boolean> get() = _signUpResult
+    private val _signUpResult = MutableLiveData<String>()
+    val signUpResult: LiveData<String> get() = _signUpResult
 
     private var emailValidJob: Job? = null
     private val _emailValid = MutableLiveData(false)
@@ -40,22 +40,9 @@ class SingUpViewModel: ViewModel() {
         _userNameValid.value = NHPatternUtil.USER_NAME.matcher(name).matches()
     }
 
-    private val emailLock = Any()
 
-    fun checkEmailValid(email: String) = synchronized(emailLock) {
-        emailValidJob?.cancel()
-        emailValidJob = null
-
-        if (!NHPatternUtil.EMAIL.matcher(email).matches()) {
-            _emailValid.value = false
-            return@synchronized
-        }
-
-        emailValidJob = viewModelScope.launch {
-            UserRepository.checkEmailUnique(email).collectLatest {
-                _emailValid.postValue(it)
-            }
-        }
+    fun checkEmailValid(email: String) {
+        _emailValid.value = NHPatternUtil.EMAIL.matcher(email).matches()
     }
 
 

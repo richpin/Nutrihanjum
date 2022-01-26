@@ -122,6 +122,7 @@ class UserFragment: Fragment() {
                         requireActivity().finish()
                     }
                     WITHDRAW -> {
+                        startActivity(Intent(requireContext(), LoginActivity::class.java))
                         requireActivity().finish()
                     }
                 }

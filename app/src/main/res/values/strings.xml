@@ -139,6 +139,7 @@
     <string name="request_sign_up">회원가입</string>
     <string name="signup_not_filled">아직 입력이 완료되지 않았어요</string>
     <string name="signup_failed">가입에 실패했어요. 잠시 후에 다시 시도해주세요</string>
+    <string name="email_collision">이미 사용 중인 이메일입니다</string>
     <string name="update_password_failed">인터넷 연결을 확인 후 잠시 후 다시 시도해주세요</string>
     <string name="update_password_succeed">비밀번호가 변경되었습니다.</string>
     <string name="update_profile">프로필 수정</string>
