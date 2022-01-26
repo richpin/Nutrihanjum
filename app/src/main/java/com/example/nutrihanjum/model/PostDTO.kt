@@ -5,5 +5,5 @@ import java.io.Serializable
 data class PostDTO(
     var title: String = "",
     var timestamp: Long = 0,
-    var imageUrl: String = ""
+    var content: String = ""
 ): Serializable
