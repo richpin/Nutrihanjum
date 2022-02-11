@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.38125" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/app_logo.xml" value="0.38125" />
+        <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/box_bottom_rounded_white.xml" value="0.38125" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/box_rounded_boarder.xml" value="0.37538461538461537" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/box_rounded_boarder_orange.xml" value="0.38125" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/drawable/box_rounded_boarder_white.xml" value="0.19166666666666668" />
@@ -40,6 +41,7 @@
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/activity_setting.xml" value="0.3594871794871795" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/activity_sign_up.xml" value="0.33611111111111114" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/activity_update_profile.xml" value="0.3594871794871795" />
+        <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/calendar_header_layout.xml" value="0.3594871794871795" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/chatbot_fragment.xml" value="0.3277777777777778" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/community_fragment.xml" value="0.2046875" />
         <entry key="..\:/Users/jungs/StudioProjects/Nutrihanjum/app/src/main/res/layout/diary_fragment.xml" value="0.19010416666666666" />

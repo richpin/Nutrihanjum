@@ -162,7 +162,7 @@ class DiaryFragment: Fragment() {
         else {
             viewModel.lastMonth = yearMonth.plusMonths(5)
             viewModel.firstMonth = viewModel.lastMonth.minusMonths(10)
-            binding.calendarView.setup(viewModel.firstMonth, viewModel.lastMonth, DayOfWeek.SUNDAY)
+            binding.calendarView.updateMonthRange(viewModel.firstMonth, viewModel.lastMonth)
             binding.calendarView.scrollToDate(destDate)
 
             viewModel.refreshAll()
@@ -319,7 +319,6 @@ class DiaryFragment: Fragment() {
             hasBoundaries = true
         )
 
-
         binding.calendarView.scrollToMonth(dest)
         expandAnimator.start()
         viewModel.isWeekMode = false
@@ -349,6 +348,7 @@ class DiaryFragment: Fragment() {
         else {
             binding.calendarView.scrollToDate(viewModel.currentDate)
         }
+
 
         collapseAnimator.start()
         viewModel.isWeekMode = true
