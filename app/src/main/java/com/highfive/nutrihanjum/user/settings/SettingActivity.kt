@@ -147,6 +147,7 @@ class SettingActivity : AppCompatActivity() {
 
         passwordCheckBinding.btnPositive.setOnClickListener {
             userViewModel.removeUser()
+            passwordCheckBinding.layoutLoading.visibility = View.VISIBLE
         }
 
 
